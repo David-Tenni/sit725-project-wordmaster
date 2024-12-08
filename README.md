@@ -1,2 +1,3 @@
 # SIT725-project
-Repository of the project in SIT725
+
+This is the ReadMe for our SIT725 project in trimester 3 2024.
