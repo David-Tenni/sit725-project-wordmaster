@@ -18,13 +18,12 @@ SIT725-PROJECT/
 ├── node_modules/
 │
 ├── views/
-│   ├── js/
-│   │   └── script.js
-│   │
-│   ├── index.html
-│   └── scoreBoard.css
+│   └── js/
+│       └── script.js
 │
+├── scoreBoard.css
 ├── .gitignore
+├── index.html
 ├── package-lock.json
 ├── package.json
 ├── README.md

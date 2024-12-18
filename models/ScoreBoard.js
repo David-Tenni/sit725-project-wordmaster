@@ -1,19 +1,32 @@
 class ScoreBoard {
-    constructor() {
-      this.BASE_GROWTH = 4.7;
-      this.GROWTH_VARIATION = 0.25;
-      this.players = ['emma', 'james', 'sofia', 'lucas', 'ante'];
-      this.scores = new Map();
-      this.eliminated = new Set();
-      this.resetScores();
-    }
+  constructor() {
+    this.BASE_GROWTH = 4.7;
+    this.GROWTH_VARIATION = 0.25;
+    this.players = ['player', 'james', 'sofia', 'lucas', 'ante'];
+    this.scores = new Map();
+    this.eliminated = new Set();
+    this.categories = ['animals', 'periodic elements', 'countries', 'best picture winning movies'];
+    this.currentRound = 1;
+    this.currentCategory = this.getRandomCategory();
+    this.resetScores();
+    
+    console.log('Initialized players:', this.players);
+  }
   
-    resetScores() {
-      this.players.forEach(player => {
-        this.scores.set(player, 0);
-      });
-      this.eliminated.clear();
-    }
+  getRandomCategory() {
+    return this.categories[Math.floor(Math.random() * this.categories.length)];
+  }
+  
+  resetScores() {
+    this.scores.clear();
+    this.players.forEach(player => {
+      this.scores.set(player, 0);
+    });
+    this.eliminated.clear();
+    this.currentRound = 1; 
+    
+    console.log('Reset scores:', Array.from(this.scores.entries()));
+  }
   
     growScores() {
       this.players.forEach(player => {
