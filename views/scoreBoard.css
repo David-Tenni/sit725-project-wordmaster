@@ -1,0 +1,97 @@
+#scoreBoard .chart-container {
+  padding: 20px;
+  max-width: 800px;
+  font-family: system-ui, sans-serif;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin: 0 auto;
+}
+
+#scoreBoard .chart {
+  height: 500px;
+  display: flex;
+  align-items: flex-end;
+  padding: 20px;
+  gap: 30px;
+}
+
+#scoreBoard .bar-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  height: 100%;
+  justify-content: flex-end;
+}
+
+#scoreBoard .bar-label {
+  font-weight: bold;
+  margin-top: 12px;
+  font-size: 16px;
+}
+
+#scoreBoard .bar {
+  width: 70px;
+  height: 0;
+  transition: height 1s ease-out;
+  border-radius: 6px 6px 0 0;
+  position: relative;
+}
+
+#scoreBoard #emma { background: #FF6B6B; }
+#scoreBoard #james { background: #4ECDC4; }
+#scoreBoard #sofia { background: #9B59B6; }
+#scoreBoard #lucas { background: #F7D794; }
+#scoreBoard #ante { 
+  background: #000000;
+  border: 3px solid red;
+}
+
+#scoreBoard .bar.eliminated {
+  opacity: 0.2;
+  filter: grayscale(100%);
+  margin-top: 40px;
+}
+
+#scoreBoard .bar-value {
+  position: absolute;
+  top: -35px;
+  width: 100%;
+  text-align: center;
+  color: #333;
+  font-size: 18px;
+  font-weight: bold;
+  white-space: nowrap;
+}
+
+#scoreBoard .bar.eliminated .bar-value {
+  text-decoration: line-through;
+}
+
+#scoreBoard .title {
+  margin-bottom: 30px;
+  color: #333;
+  font-size: 24px;
+}
+
+#scoreBoard .buttons {
+  margin-bottom: 30px;
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+#scoreBoard .eliminated-label {
+  color: red;
+  font-size: 14px;
+  position: absolute;
+  bottom: -25px;
+  width: 100%;
+  text-align: center;
+  font-weight: bold;
+}
+
+#scoreBoard #ante-container .bar-label {
+  color: red;
+}
