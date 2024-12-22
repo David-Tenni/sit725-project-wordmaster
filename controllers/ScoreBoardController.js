@@ -72,12 +72,13 @@ class ScoreBoardController {
 
     console.log("Initializing event listeners");
 
-    const submitButton = document.getElementById("submitPoints");
-    console.log("Submit button found:", submitButton);
+    const wordForm = document.getElementById("wordForm");
+    console.log("Word form found:", wordForm);
 
-    if (submitButton) {
-      submitButton.addEventListener("click", () => {
-        console.log("Submit button clicked");
+    if (wordForm) {
+      wordForm.addEventListener("submit", (e) => {
+        e.preventDefault();
+        console.log("Form submitted");
         const wordInput = document.getElementById("playerPoints");
         const word = wordInput.value.trim();
         const wordLength = word.length;
@@ -122,7 +123,7 @@ class ScoreBoardController {
         this.startTimer();
       });
     } else {
-      console.error("Submit button not found!");
+      console.error("Word form not found!");
     }
 
     // Start initial timer
