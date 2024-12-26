@@ -129,10 +129,10 @@ class GameController {
     }
 
     generateSimulatedWord() {
-        // Temporary simulation - replace with actual historical data
+        // for testing
         const wordLengths = [3, 4, 5, 6, 7, 8];
         const length = wordLengths[Math.floor(Math.random() * wordLengths.length)];
-        return 'A'.repeat(length); // Placeholder response
+        return 'A'.repeat(length);
     }
 
     startTimer() {

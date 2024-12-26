@@ -23,6 +23,10 @@
       return this.currentRound;
     }
 
+    getNumberOfRounds() {
+      return this.currentRound;
+    }
+
     getCurrentCategory() {
       return this.currentCategory;
     }

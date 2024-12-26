@@ -6,6 +6,7 @@
       this.timerInterval = null;
       this.timeLimit = 7000; // 7 seconds in milliseconds
       this.startTime = null;
+      this.numberOfRounds =  3;
       this.createScoreBoardHTML();
       this.initializeEventListeners();
       this.updateView();
@@ -17,7 +18,7 @@
         <div class="chart-container">
           <h2 class="title">Word Master Challenge</h2>
           <div class="round-display">
-            <h5>Round: <span id="current-round">${this.model.getCurrentRound()}</span>/10</h5>
+            <h5>Round: <span id="current-round">${this.model.getCurrentRound()}</span>/${this.numberOfRounds+1}</h5>
           </div>
           <div class="category-display">
             <h5>Category: <span id="current-category">${this.model.getCurrentCategory()}</span></h5>
@@ -136,8 +137,8 @@
           }
           
           this.stopTimer();
-          
-          if (this.model.getCurrentRound() <= 10) {
+          //I have no damn idea why setting <= this.numberOfRounds works but setting it to == breaks this is why this.numberofrounds +1 is used in the html 
+          if (this.model.getCurrentRound() <= this.numberOfRounds) {
             // Slight delay before starting next round
             setTimeout(() => {
               this.model.advanceRound();
@@ -151,6 +152,7 @@
     }
 
     stopTimer() {
+      console.log("Stopping timer");
       clearInterval(this.timerInterval);
       this.timerInterval = null;
     }
@@ -160,7 +162,7 @@
       bars.forEach((bar) => {
         const playerId = bar.id;
         const value = this.model.getPlayerScore(playerId);
-        console.log(`Updating ${playerId} with value ${value}`);
+        // console.log(`Updating ${playerId} with value ${value}`);
 
         bar.style.height = `${value * 10}px`;
         bar.setAttribute("data-value", value);
@@ -192,7 +194,9 @@
 
     handleGameOver() {
       this.stopTimer();
-      
+      let timerBar = document.querySelector('.timer-bar');
+ 
+      timerBar.classList.add('hide');
       // Create and show modal
       const modalHtml = `
         <div id="gameOverModal" class="modal">
