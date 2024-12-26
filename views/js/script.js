@@ -1,21 +1,18 @@
-$(document).ready(function(){
-  $('.modal').modal();
-});
-// Initialize materialize components
 document.addEventListener('DOMContentLoaded', function() {
+  // Initialize modal
   var elems = document.querySelectorAll('.modal');
   var instances = M.Modal.init(elems);
   
   // Initialize ScoreBoard
-  import('/models/ScoreBoard.js') 
-    .then(module => {
-      const ScoreBoard = module.default;
-      return import('/controllers/ScoreBoardController.js') 
-        .then(controllerModule => {
-          const ScoreBoardController = controllerModule.default;
-          const scoreBoard = new ScoreBoard();
-          const scoreBoardController = new ScoreBoardController(scoreBoard, 'scoreBoard');
-        });
-    })
-    .catch(error => console.error('Error loading ScoreBoard:', error));
+  try {
+    console.log('Initializing ScoreBoard...');
+    const scoreBoard = new window.ScoreBoard();
+    console.log('ScoreBoard initialized:', scoreBoard);
+    
+    console.log('Initializing ScoreBoardController...');
+    const scoreBoardController = new window.ScoreBoardController(scoreBoard, 'scoreBoard');
+    console.log('ScoreBoardController initialized');
+  } catch (error) {
+    console.error('Error initializing scoreboard:', error);
+  }
 });

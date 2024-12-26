@@ -1,106 +1,76 @@
-class ScoreBoard {
-  constructor() {
-    this.BASE_GROWTH = 4.7;
-    this.GROWTH_VARIATION = 0.25;
-    this.players = ['player', 'james', 'sofia', 'lucas', 'ante'];
-    this.scores = new Map();
-    this.eliminated = new Set();
-    this.categories = ['animals', 'periodic elements', 'countries', 'best picture winning movies'];
-    this.currentRound = 1;
-    this.currentCategory = this.getRandomCategory();
-    this.resetScores();
-    
-    console.log('Initialized players:', this.players);
-  }
-  
-  getRandomCategory() {
-    return this.categories[Math.floor(Math.random() * this.categories.length)];
-  }
-  
-  resetScores() {
-    this.scores.clear();
-    this.players.forEach(player => {
-      this.scores.set(player, 0);
-    });
-    this.eliminated.clear();
-    this.currentRound = 1; 
-    
-    console.log('Reset scores:', Array.from(this.scores.entries()));
-  }
-  
-    growScores() {
-      this.players.forEach(player => {
-        if (!this.eliminated.has(player)) {
-          const currentValue = this.scores.get(player);
-          const growthRange = this.BASE_GROWTH * this.GROWTH_VARIATION * 2;
-          const randomGrowth = (this.BASE_GROWTH * (1 - this.GROWTH_VARIATION)) + 
-                             (Math.random() * growthRange);
-          this.scores.set(player, currentValue + randomGrowth);
-        }
-      });
+(function(window) {
+  class ScoreBoard {
+    constructor() {
+      // Initialize players
+      this.players = {
+        player: { score: 0, eliminated: false },
+        james: { score: 0, eliminated: false },
+        sofia: { score: 0, eliminated: false },
+        lucas: { score: 0, eliminated: false },
+        ante: { score: 0, eliminated: false }
+      };
+      
+      this.currentRound = 1;
+      this.categories = ['animals', 'periodic elements', 'countries', 'best picture winning movies'];
+      this.currentCategory = this.getRandomCategory();
+      
+      console.log('Initialized ScoreBoard');
     }
-  
-    getHighestPlayer() {
-      let highestValue = -Infinity;
-      let highestPlayer = null;
-  
-      this.players.forEach(player => {
-        if (player !== 'ante' && !this.eliminated.has(player)) {
-          const value = this.scores.get(player);
-          if (value > highestValue) {
-            highestValue = value;
-            highestPlayer = player;
-          }
-        }
-      });
-  
-      return highestPlayer;
+
+    getRandomCategory() {
+      return this.categories[Math.floor(Math.random() * this.categories.length)];
     }
-  
-    eliminateLowest() {
-      let lowestValue = Infinity;
-      let lowestPlayer = null;
-  
-      this.players.forEach(player => {
-        if (player !== 'ante' && !this.eliminated.has(player)) {
-          const value = this.scores.get(player);
-          if (value < lowestValue) {
-            lowestValue = value;
-            lowestPlayer = player;
-          }
+
+    getCurrentRound() {
+      return this.currentRound;
+    }
+
+    getCurrentCategory() {
+      return this.currentCategory;
+    }
+
+    getPlayerScore(playerName) {
+      return this.players[playerName.toLowerCase()]?.score || 0;
+    }
+
+    findPlayer(playerName) {
+      return this.players[playerName.toLowerCase()];
+    }
+
+    recordAnswer(playerName, answer, time) {
+      const player = this.players[playerName.toLowerCase()];
+      if (player) {
+        player.score = answer.length; // Simple scoring based on word length
+        
+        // Generate AI responses after player submission
+        if (playerName.toLowerCase() === 'player') {
+          this.generateAIResponses();
+          this.advanceRound();
         }
-      });
-  
-      if (lowestPlayer) {
-        this.eliminated.add(lowestPlayer);
       }
-      return lowestPlayer;
     }
-  
-    eliminateBelowAnte() {
-      const anteValue = this.scores.get('ante');
-      const eliminated = [];
-  
-      this.players.forEach(player => {
-        if (player !== 'ante' && !this.eliminated.has(player)) {
-          const value = this.scores.get(player);
-          if (value < anteValue) {
-            this.eliminated.add(player);
-            eliminated.push(player);
-          }
-        }
+
+    generateAIResponses() {
+      const aiPlayers = ['james', 'sofia', 'lucas'];
+      aiPlayers.forEach(name => {
+        const wordLength = Math.floor(Math.random() * 5) + 3; // Random length 3-7
+        this.players[name].score = wordLength;
       });
-  
-      return eliminated;
+
+      // Calculate ANTE score
+      const scores = aiPlayers.map(name => this.players[name].score);
+      const avgScore = Math.floor(scores.reduce((a, b) => a + b, 0) / scores.length);
+      this.players['ante'].score = avgScore;
     }
-  
-    getScore(player) {
-      return this.scores.get(player);
-    }
-  
-    isEliminated(player) {
-      return this.eliminated.has(player);
+
+    advanceRound() {
+      if (this.currentRound < 10) {
+        this.currentRound++;
+        this.currentCategory = this.getRandomCategory();
+      }
     }
   }
-  
-  export default ScoreBoard;
+
+  // Add to window object
+  window.ScoreBoard = ScoreBoard;
+})(window);

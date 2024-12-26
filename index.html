@@ -4,21 +4,21 @@
     <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
-    <link rel="stylesheet" href="views/scoreboard.css">
+    <link rel="stylesheet" href="/views/scoreboard.css">
   </head>
   <body>
-
     <div id="modal1" class="modal">
         <div class="modal-content">
-        <h4>Hi</h4>
-        <p>This is just a test to ensure that everything is working with the files and with materialize</p>
+        <h4>Welcome to Word Master Challenge</h4>
+        <p>Test your vocabulary against AI opponents!</p>
         </div>
         <div class="modal-footer">
-        <a href="" class="modal-close waves-effect waves-green btn-flat">Ok</a>
+        <a href="#!" class="modal-close waves-effect waves-green btn-flat">Let's Play!</a>
         </div>
     </div>
-    <div id="scoreBoard">
-    </div>
+    
+    <div id="scoreBoard"></div>
+    
     <div class="input-section">
       <form id="wordForm" onsubmit="return false;">
         <div class="input-field">
@@ -27,7 +27,10 @@
         </div>
       </form>
     </div>
-    </div>
-    <script type="module" src="views/js/script.js"></script>
+
+    <!-- Load scripts in correct order -->
+    <script src="/models/ScoreBoard.js"></script>
+    <script src="/controllers/ScoreBoardController.js"></script>
+    <script src="/views/js/script.js"></script>
   </body>
 </html>
