@@ -55,22 +55,11 @@
           const word = wordInput.value.trim();
           console.log("Word entered:", word);
 
-          if (word) {
+          if (word && !this.model.hasPlayerResponded()) {
             const responseTime = Date.now() - this.startTime;
             this.model.recordAnswer("player", word, responseTime);
-
-            // Update displays
             this.updateView();
             wordInput.value = "";
-            
-            // Stop current timer and start new one for next round
-            this.stopTimer();
-            
-            if (this.model.getCurrentRound() <= 10) {
-              this.startTimer();
-            } else {
-              this.handleGameOver();
-            }
           }
         });
       } else {
@@ -82,6 +71,12 @@
     }
 
     startTimer() {
+      // Don't start timer if game is over
+      if (this.model.getCurrentRound() > 10) {
+        this.handleGameOver();
+        return;
+      }
+
       const timerBar = document.querySelector('.timer-bar');
       const wordInput = document.getElementById('playerPoints');
       const submitButton = document.getElementById('submitPoints');
@@ -91,6 +86,9 @@
       this.startTime = Date.now();
       timerBar.style.width = '0%';
       timerBar.classList.remove('warning', 'danger');
+      
+      // Prepare AI responses for this round
+      this.model.prepareAIResponses();
       
       this.timerInterval = setInterval(() => {
         const elapsed = Date.now() - this.startTime;
@@ -108,14 +106,30 @@
           timerBar.classList.add('danger');
         }
         
-        // Time's up!
-        if (elapsed >= this.timeLimit) {
-          clearInterval(this.timerInterval);
-          
-          // Submit 'a' as default answer
-          if (wordInput && submitButton) {
+        // Check for AI responses based on their individual times
+        if (!this.model.isRoundComplete()) {
+          this.model.checkAIResponses(elapsed);
+          this.updateView();
+        }
+        
+        // Time's up or round complete!
+        if (elapsed >= this.timeLimit || this.model.isRoundComplete()) {
+          // If player hasn't submitted, submit default answer
+          if (!this.model.hasPlayerResponded() && wordInput && submitButton) {
             wordInput.value = 'a';
             submitButton.click();
+          }
+          
+          this.stopTimer();
+          
+          if (this.model.getCurrentRound() <= 10) {
+            // Slight delay before starting next round
+            setTimeout(() => {
+              this.model.advanceRound();
+              this.startTimer();
+            }, 1000);
+          } else {
+            this.handleGameOver();
           }
         }
       }, 100);
@@ -136,7 +150,7 @@
         bar.style.height = `${value * 10}px`;
         bar.setAttribute("data-value", value);
 
-        this.updateValueLabel(bar, value);
+        this.updateValueLabel(bar);
       });
 
       // Update the current category and round
@@ -144,7 +158,7 @@
       document.getElementById("current-round").textContent = this.model.getCurrentRound();
     }
 
-    updateValueLabel(bar, value) {
+    updateValueLabel(bar) {
       const existingLabel = bar.querySelector(".bar-value");
       if (existingLabel) {
         existingLabel.remove();
@@ -152,24 +166,56 @@
 
       const valueLabel = document.createElement("div");
       valueLabel.className = "bar-value";
-      valueLabel.textContent = value.toString();
+      
+      // Show the latest answer instead of just the score
+      const playerId = bar.id;
+      const answer = this.model.getLatestAnswer(playerId);
+      valueLabel.textContent = answer || '0';
+      
       bar.appendChild(valueLabel);
     }
 
     handleGameOver() {
       this.stopTimer();
-      const container = document.getElementById(this.containerId);
-      const gameOverDiv = document.createElement('div');
-      gameOverDiv.className = 'game-over';
-      gameOverDiv.innerHTML = `
-        <h3>Game Over!</h3>
-        <p>Final Scores:</p>
-        <ul>
-          ${this.generateFinalScores()}
-        </ul>
-        <p>Thanks for playing!</p>
+      
+      // Create and show modal
+      const modalHtml = `
+        <div id="gameOverModal" class="modal">
+          <div class="modal-content">
+            <h3>Game Over!</h3>
+            <p>Final Scores:</p>
+            <ul>
+              ${this.generateFinalScores()}
+            </ul>
+            <p>Thanks for playing!</p>
+          </div>
+          <div class="modal-footer">
+            <a href="#!" class="modal-close waves-effect waves-green btn-flat">Close</a>
+          </div>
+        </div>
       `;
-      container.appendChild(gameOverDiv);
+
+      // Add modal to document if it doesn't exist
+      if (!document.getElementById('gameOverModal')) {
+        document.body.insertAdjacentHTML('beforeend', modalHtml);
+      }
+
+      // Initialize and open modal
+      const modalElement = document.getElementById('gameOverModal');
+      const modalInstance = M.Modal.init(modalElement, {
+        dismissible: true,
+        onCloseEnd: () => {
+          console.log('Game over modal closed');
+        }
+      });
+      
+      modalInstance.open();
+
+      // Disable input
+      const wordInput = document.getElementById('playerPoints');
+      const submitButton = document.getElementById('submitPoints');
+      if (wordInput) wordInput.disabled = true;
+      if (submitButton) submitButton.disabled = true;
     }
 
     generateFinalScores() {
