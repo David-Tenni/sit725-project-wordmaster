@@ -11,16 +11,12 @@
       };
       
       this.currentRound = 1;
-      this.categories = ['animals', 'periodic elements', 'countries', 'best picture winning movies'];
-      this.currentCategory = this.getRandomCategory();
+      // Use categories from test data to match the predefined answers
+      this.currentCategory = window.gameTestData.rounds[0].category;
       this.aiResponded = new Set(); // Track which AI players have responded this round
       this.roundComplete = false;
       
-      console.log('Initialized ScoreBoard');
-    }
-
-    getRandomCategory() {
-      return this.categories[Math.floor(Math.random() * this.categories.length)];
+      console.log('Initialized ScoreBoard with test data');
     }
 
     getCurrentRound() {
@@ -96,17 +92,20 @@
       }
     }
 
-    // Prepare AI response times for this round
+    // Prepare AI response times from test data
     prepareAIResponses() {
       const aiPlayers = ['james', 'sofia', 'lucas'];
-      this.aiResponded.clear(); // Reset for new round
+      this.aiResponded.clear();
       this.roundComplete = false;
+      
+      // Get test data for current round
+      const roundData = window.gameTestData.rounds[this.currentRound - 1];
       
       aiPlayers.forEach(name => {
         const player = this.players[name];
-        // Random response time between 1 and 7 seconds
-        player.responseTime = Math.floor(Math.random() * 6000) + 1000;
-        console.log(`${name} will respond in ${player.responseTime}ms`);
+        // Use predefined response time from test data
+        player.responseTime = roundData.answers[name].time;
+        console.log(`${name} will respond in ${player.responseTime}ms with "${roundData.answers[name].word}"`);
       });
     }
 
@@ -115,23 +114,14 @@
       if (this.roundComplete) return;
 
       const aiPlayers = ['james', 'sofia', 'lucas'];
+      const roundData = window.gameTestData.rounds[this.currentRound - 1];
       
       aiPlayers.forEach(name => {
         const player = this.players[name];
         if (!this.aiResponded.has(name) && elapsedTime >= player.responseTime) {
-          // Generate and record AI response
-          const words = {
-            'animals': ['cat', 'dog', 'elephant', 'giraffe', 'penguin', 'lion', 'zebra', 'kangaroo'],
-            'countries': ['france', 'spain', 'japan', 'brazil', 'italy', 'germany', 'canada', 'australia'],
-            'periodic elements': ['hydrogen', 'helium', 'lithium', 'carbon', 'nitrogen', 'oxygen', 'sodium', 'iron'],
-            'best picture winning movies': ['titanic', 'parasite', 'coda', 'spotlight', 'argo', 'gladiator', 'chicago', 'nomadland']
-          };
-          
-          const category = this.currentCategory;
-          const possibleWords = words[category] || words['animals'];
-          const word = possibleWords[Math.floor(Math.random() * possibleWords.length)];
-          
-          this.recordAIResponse(name, word, player.responseTime);
+          // Use predefined word from test data
+          const testAnswer = roundData.answers[name];
+          this.recordAIResponse(name, testAnswer.word, testAnswer.time);
         }
       });
     }
@@ -168,9 +158,14 @@
     advanceRound() {
       if (this.currentRound < 10) {
         this.currentRound++;
-        this.currentCategory = this.getRandomCategory();
+        // Get next category from test data
+        this.currentCategory = window.gameTestData.rounds[this.currentRound - 1].category;
         this.aiResponded.clear();
         this.roundComplete = false;
+      } else if (this.currentRound === 10) {
+        // Mark the game as complete without advancing the round
+        this.roundComplete = true;
+        this.gameOver = true;
       }
     }
 
@@ -180,6 +175,10 @@
         return player.scores[player.scores.length - 1].answer;
       }
       return '';
+    }
+
+    isGameOver() {
+      return this.currentRound === 10 && this.roundComplete;
     }
   }
 
