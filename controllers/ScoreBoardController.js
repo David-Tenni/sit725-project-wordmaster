@@ -113,7 +113,7 @@
         }
         
         // Time's up or round complete!
-        if (elapsed >= this.timeLimit || this.model.isRoundComplete()) {
+        if (elapsed >= this.timeLimit || this.model.isRoundComplete()&&this.playerHasResponded()) {
           // If player hasn't submitted, submit default answer
           if (!this.model.hasPlayerResponded() && wordInput && submitButton) {
             wordInput.value = 'a';
