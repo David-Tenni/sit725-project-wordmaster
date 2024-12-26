@@ -60,6 +60,13 @@
             this.model.recordAnswer("player", word, responseTime);
             this.updateView();
             wordInput.value = "";
+            const submitButton = document.getElementById('submitPoints');
+            if (submitButton) {
+                submitButton.disabled = true;
+                submitButton.classList.add('disabled');
+                submitButton.classList.add('grey');
+                submitButton.classList.remove('waves-effect');
+            }
           }
         });
       } else {
@@ -80,6 +87,14 @@
       const timerBar = document.querySelector('.timer-bar');
       const wordInput = document.getElementById('playerPoints');
       const submitButton = document.getElementById('submitPoints');
+      
+      // Enable submit button at start of round
+      if (submitButton) {
+        submitButton.disabled = false;
+        submitButton.classList.remove('disabled');
+        submitButton.classList.remove('grey');
+        submitButton.classList.add('waves-effect');
+      }
       
       // Reset timer state
       clearInterval(this.timerInterval);
@@ -113,7 +128,7 @@
         }
         
         // Time's up or round complete!
-        if (elapsed >= this.timeLimit || this.model.isRoundComplete()&&this.playerHasResponded()) {
+        if (elapsed >= this.timeLimit || this.model.isRoundComplete() && this.model.hasPlayerResponded()) {
           // If player hasn't submitted, submit default answer
           if (!this.model.hasPlayerResponded() && wordInput && submitButton) {
             wordInput.value = 'a';
