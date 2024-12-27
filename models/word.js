@@ -14,4 +14,10 @@ async function getWords(category, callback) {
     callback(null, result);
 }
 
-module.exports = {getWords,postWord}
+async function getCategories(callback){
+    const categories = await db.listCollections().toArray();
+    const result =  categories.map(category => category.name);
+    callback(null, result);
+}
+
+module.exports = {getWords,postWord,getCategories}

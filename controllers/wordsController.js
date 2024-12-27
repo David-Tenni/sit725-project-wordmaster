@@ -11,6 +11,14 @@ const getWords = (req,res) => {
     });
 }
 
+const getCategories = (req,res) => {
+    db.getCategories((error,result)=>{
+        if (!error) {
+            res.json({statusCode:200,data:result,message:'success'});
+        }
+    });
+}
+
 const postWord = (req, res) => {
 
     let category = req.params.category;
@@ -26,4 +34,4 @@ const postWord = (req, res) => {
     });
 };
 
-module.exports = {getWords,postWord}
+module.exports = {getWords,postWord,getCategories}
