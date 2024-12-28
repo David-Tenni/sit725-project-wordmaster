@@ -8,11 +8,13 @@ app.use(express.urlencoded({ extended: false }));
 var wordsApiRoutes = require('./routers/wordsRouter');
 var usersApiRoutes = require('./routers/usersRouter');
 
-var port = process.env.port || 3000;
+var port = process.env.PORT || 3000;
 
 app.use('/api/word', wordsApiRoutes);
 app.use('/api/user', usersApiRoutes);
 
-app.listen(port,()=>{
-console.log("App listening to: "+port)
-})
+app.listen(port, () => {
+    console.log(`App is listening on port ${port}`);
+}).on('error',(err) => {
+    console.error("Failed to start server:", err);
+});
