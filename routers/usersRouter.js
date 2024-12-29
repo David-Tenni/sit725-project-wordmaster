@@ -11,6 +11,10 @@ routes.post('/login', (req, res) => {
     controller.login(req, res);
 });
 
+routes.post('/refresh', (req, res) => {
+    controller.refresh(req, res);
+});
+
 routes.get('/', authenticator, (req, res) => {
     controller.getUser(req, res);
 });

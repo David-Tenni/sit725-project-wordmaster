@@ -15,6 +15,25 @@ async function postUser(user, callback) {
     callback(null, result);
 }
 
+async function addRefreshToken(username, token) {
+    const user = await collection.findOne({ username: username });
+
+    await collection.updateOne(
+        { username },
+        { $set: { 'token': token } }
+    );
+}
+
+async function findRefreshToken(token, callback) {
+    const user = await collection.findOne({ token: token });
+
+    if (user) {
+        callback(null, user);
+    }else{
+        callback({ message: "User not found" }, null);
+    }
+}
+
 async function updateUserWord(username, category, word, callback){
 
     const user = await collection.findOne({ username: username });
@@ -41,8 +60,8 @@ async function updateUserPassword(username, password, callback){
     if (!user) return callback({ message: "User does not exist" }, null);
   
     await collection.updateOne(
-      { username: username },
-      { $set: { password: password } }
+        { username: username },
+        { $set: { password: password } }
     );
 
     callback(null);
@@ -53,4 +72,4 @@ async function deleteUser(username, callback){
     callback(null);
 }
 
-module.exports = {getUser,postUser,updateUserWord,updateUserPassword,deleteUser}
+module.exports = {getUser,postUser,updateUserWord,updateUserPassword,deleteUser,addRefreshToken,findRefreshToken}
