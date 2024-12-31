@@ -1,6 +1,7 @@
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const db = require('../models/user');
+const categories = require('../models/word')
 
 const postUser = async (req, res) => {
     const { username, password } = req.body;
@@ -66,13 +67,18 @@ const getUser = async (req, res) => {
     });
 };
 
-async function updateUserWord(req, res) {
+async function updateUserAnswer(req, res) {
     let username = req.user.username;
+    let { category, word, time } = req.body;
 
-    var category = Object.keys(req.body)[0];
-    var word = req.body[category];
+    if(!category || !word || !time) return res.status(400).json({statusCode:400,message:"Answer must contain category, word and time"});
 
-    db.updateUserWord(username, category, word, (error) => {
+    let isCategory = await categories.isCategory(category);
+    if(!isCategory) return res.status(404).json({statusCode:404,message:"Category not found"});
+
+    const answer = { word, time };
+
+    db.updateUserAnswer(username, category, answer, (error) => {
         if (!error){
             res.status(201).json({statusCode:201,message:'Word updated'});
         }
@@ -106,4 +112,4 @@ async function deleteUser(req, res) {
     })
 }
 
-module.exports = {postUser, login, refresh, getUser, updateUserWord, updateUserPassword, deleteUser}
+module.exports = {postUser, login, refresh, getUser, updateUserAnswer, updateUserPassword, deleteUser}

@@ -20,4 +20,10 @@ async function getCategories(callback){
     callback(null, result);
 }
 
-module.exports = {getWords,postWord,getCategories}
+async function isCategory(category){
+    const categories = await db.listCollections().toArray();
+    const result =  categories.map(category => category.name);
+    return result.includes(category);
+}
+
+module.exports = {getWords,postWord,getCategories,isCategory}

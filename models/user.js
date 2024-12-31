@@ -34,22 +34,22 @@ async function findRefreshToken(token, callback) {
     }
 }
 
-async function updateUserWord(username, category, word, callback){
+async function updateUserAnswer(username, category, answer, callback){
 
     const user = await collection.findOne({ username: username });
     if (!user) return callback({ message: "User does not exist" });
 
-    if (!user.words) {
+    if (!user.answers) {
         await collection.updateOne(
             { username: username },
-            { $set: { words: { [category]: word } } }
+            { $set: { answers: { [category]: answer } } }
         );
     } else {
-        user.words[category] = word;
+        user.answers[category] = answer;
 
         await collection.updateOne(
             { username },
-            { $set: { words: user.words } }
+            { $set: { answers: user.answers } }
         );
     }
     callback(null);
@@ -72,4 +72,4 @@ async function deleteUser(username, callback){
     callback(null);
 }
 
-module.exports = {getUser,postUser,updateUserWord,updateUserPassword,deleteUser,addRefreshToken,findRefreshToken}
+module.exports = {getUser,postUser,updateUserAnswer,updateUserPassword,deleteUser,addRefreshToken,findRefreshToken}

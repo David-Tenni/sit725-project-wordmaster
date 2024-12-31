@@ -19,8 +19,8 @@ routes.get('/', authenticator, (req, res) => {
     controller.getUser(req, res);
 });
 
-routes.patch('/word', authenticator, (req, res) => {
-    controller.updateUserWord(req, res);
+routes.patch('/answer', authenticator, (req, res) => {
+    controller.updateUserAnswer(req, res);
 });
 
 routes.patch('/password', authenticator, (req, res) => {
