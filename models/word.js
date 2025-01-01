@@ -16,7 +16,7 @@ async function getWords(category, callback) {
 
 async function getCategories(callback){
     const categories = await db.listCollections().toArray();
-    const result =  categories.map(category => category.name.replace('_', ' '));
+    const result =  categories.map(category => category.name.replaceAll('_', ' '));
     callback(null, result);
 }
 
