@@ -1,250 +1,204 @@
 (function(window) {
-  class ScoreBoardController {
-    constructor(model, containerId) {
-      this.model = model;
-      this.containerId = containerId;
-      this.timerInterval = null;
-      this.timeLimit = 7000; // 7 seconds in milliseconds
-      this.startTime = null;
-      this.numberOfRounds =  3;
-      this.createScoreBoardHTML();
-      this.initializeEventListeners();
-      this.updateView();
+    class ScoreBoardController {
+    constructor(containerId) {
+        this.containerId = containerId;
+        this.timerInterval = null;
+        this.timeLimit = 7000;
+        this.createScoreBoardHTML();
+        this.setupMaterializeComponents();
+        this.initializeEventListeners();
     }
+    
 
     createScoreBoardHTML() {
-      const container = document.getElementById(this.containerId);
-      container.innerHTML = `
-        <div class="chart-container">
-          <h2 class="title">Word Master Challenge</h2>
-          <div class="round-display">
-            <h5>Round: <span id="current-round">${this.model.getCurrentRound()}</span>/${this.numberOfRounds+1}</h5>
-          </div>
-          <div class="category-display">
-            <h5>Category: <span id="current-category">${this.model.getCurrentCategory()}</span></h5>
-          </div>
-          <div class="chart">
-            ${this.createBarContainers()}
-          </div>
-          <div class="timer-container">
-            <div class="timer-bar"></div>
-          </div>
-        </div>
-      `;
+        const container = document.getElementById(this.containerId);
+        container.innerHTML = `
+            <div class="chart-container">
+                <h2 class="title">Word Master Challenge</h2>
+                <div class="round-display">
+                    <h5>Round: <span id="current-round">1</span>/10</h5>
+                </div>
+                <div class="category-display">
+                    <h5>Category: <span id="current-category"></span></h5>
+                </div>
+                <div class="chart">
+                    ${this.createBarContainers()}
+                </div>
+                <div class="timer-container">
+                    <div class="timer-bar"></div>
+                </div>
+                <div class="input-section">
+                    <form id="wordForm">
+                        <div class="input-field">
+                            <input type="text" id="playerPoints" class="browser-default" placeholder="Enter a word">
+                            <button type="submit" class="waves-effect waves-light btn" id="submitPoints">Submit</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        `;
     }
 
     createBarContainers() {
-      const players = ['player', 'james', 'sofia', 'lucas', 'ante'];
-      return players.map(player => `
-        <div class="bar-container">
-          <div class="bar" id="${player}" data-value="0"></div>
-          <div class="player-name">${player.charAt(0).toUpperCase() + player.slice(1)}</div>
-        </div>
-      `).join('');
+        const players = ['player', 'james', 'sofia', 'lucas', 'ante'];
+        return players.map(player => `
+            <div class="bar-container">
+                <div class="bar" id="${player}" data-value="0">
+                    <div class="bar-value">0</div>
+                </div>
+                <div class="player-name">${player.charAt(0).toUpperCase() + player.slice(1)}</div>
+            </div>
+        `).join('');
+    }
+
+    setupMaterializeComponents() {
+        // Initialize Materialize components
+        const elems = document.querySelectorAll('.modal');
+        M.Modal.init(elems, {
+            dismissible: false,
+            onCloseEnd: () => {
+                location.reload();
+            }
+        });
     }
 
     initializeEventListeners() {
-      console.log("Initializing event listeners");
-      const wordForm = document.getElementById("wordForm");
-      console.log("Word form found:", wordForm);
+        document.addEventListener('gameStateUpdate', (e) => this.handleGameStateUpdate(e.detail));
+        document.addEventListener('gameOver', (e) => this.handleGameOver(e.detail));
+        document.addEventListener('timerTick', (e) => this.updateTimer(e.detail.elapsed));
 
-      if (wordForm) {
-        wordForm.addEventListener("submit", (e) => {
-          e.preventDefault();
-          console.log("Form submitted");
-          const wordInput = document.getElementById("playerPoints");
-          const word = wordInput.value.trim();
-          console.log("Word entered:", word);
-
-          if (word && !this.model.hasPlayerResponded()) {
-            const responseTime = Date.now() - this.startTime;
-            this.model.recordAnswer("player", word, responseTime);
-            this.updateView();
-            wordInput.value = "";
-            const submitButton = document.getElementById('submitPoints');
-            if (submitButton) {
-                submitButton.disabled = true;
-                submitButton.classList.add('disabled');
-                submitButton.classList.add('grey');
-                submitButton.classList.remove('waves-effect');
-            }
-          }
-        });
-      } else {
-        console.error("Word form not found!");
-      }
-
-      // Start initial timer
-      this.startTimer();
+        const wordForm = document.getElementById('wordForm');
+        if (wordForm) {
+            wordForm.addEventListener('submit', (e) => {
+                e.preventDefault();
+                this.handleWordSubmission();
+            });
+        }
     }
 
-    startTimer() {
-      // Don't start timer if game is over
-      if (this.model.getCurrentRound() > 10) {
-        this.handleGameOver();
-        return;
-      }
+    handleGameStateUpdate(gameState) {
+        this.updateRoundDisplay(gameState.currentRound);
+        this.updateCategoryDisplay(gameState.currentCategory);
+        this.updateScoreBars(gameState.players);
+    }
 
-      const timerBar = document.querySelector('.timer-bar');
-      const wordInput = document.getElementById('playerPoints');
-      const submitButton = document.getElementById('submitPoints');
-      
-      // Enable submit button at start of round
-      if (submitButton) {
-        submitButton.disabled = false;
-        submitButton.classList.remove('disabled');
-        submitButton.classList.remove('grey');
-        submitButton.classList.add('waves-effect');
-      }
-      
-      // Reset timer state
-      clearInterval(this.timerInterval);
-      this.startTime = Date.now();
-      timerBar.style.width = '0%';
-      timerBar.classList.remove('warning', 'danger');
-      
-      // Prepare AI responses for this round
-      this.model.prepareAIResponses();
-      
-      this.timerInterval = setInterval(() => {
-        const elapsed = Date.now() - this.startTime;
+    updateTimer(elapsed) {
+        const timerBar = document.querySelector('.timer-bar');
         const percentage = (elapsed / this.timeLimit) * 100;
         
-        // Update timer bar
         timerBar.style.width = `${Math.min(percentage, 100)}%`;
         
-        // Add warning classes
         if (percentage >= 60 && percentage < 80) {
-          timerBar.classList.add('warning');
-          timerBar.classList.remove('danger');
+            timerBar.classList.add('warning');
+            timerBar.classList.remove('danger');
         } else if (percentage >= 80) {
-          timerBar.classList.remove('warning');
-          timerBar.classList.add('danger');
+            timerBar.classList.remove('warning');
+            timerBar.classList.add('danger');
         }
+    }
+
+    updateRoundDisplay(round) {
+        document.getElementById('current-round').textContent = round;
+    }
+
+    updateCategoryDisplay(category) {
+        document.getElementById('current-category').textContent = category;
+    }
+
+    updateScoreBars(players) {
+        players.forEach(player => {
+            const bar = document.getElementById(player.playerName.toLowerCase());
+            if (bar && player.scores.length > 0) {
+                const latestScore = player.getLatestScore();
+                const height = latestScore.answer.length * 10;
+                
+                // Animate height change
+                bar.style.transition = 'height 0.5s ease-out';
+                bar.style.height = `${height}px`;
+                
+                this.updateValueLabel(bar, latestScore.answer);
+
+                // Add eliminated styling if applicable
+                if (player.eliminated) {
+                    bar.classList.add('eliminated');
+                    if (!bar.querySelector('.eliminated-label')) {
+                        const label = document.createElement('div');
+                        label.className = 'eliminated-label';
+                        label.textContent = 'ELIMINATED';
+                        bar.appendChild(label);
+                    }
+                }
+            }
+        });
+    }
+
+    updateValueLabel(bar, value) {
+        const existingLabel = bar.querySelector('.bar-value');
+        if (existingLabel) {
+            existingLabel.textContent = value;
+        } else {
+            const valueLabel = document.createElement('div');
+            valueLabel.className = 'bar-value';
+            valueLabel.textContent = value;
+            bar.appendChild(valueLabel);
+        }
+    }
+
+    handleWordSubmission() {
+        const wordInput = document.getElementById('playerPoints');
+        const word = wordInput.value.trim();
         
-        // Check for AI responses based on their individual times
-        if (!this.model.isRoundComplete()) {
-          this.model.checkAIResponses(elapsed);
-          this.updateView();
+        if (word) {
+            document.dispatchEvent(new CustomEvent('wordSubmitted', {
+                detail: { word }
+            }));
+            wordInput.value = '';
+            wordInput.focus();
         }
-        
-        // Time's up or round complete!
-        if (elapsed >= this.timeLimit || this.model.isRoundComplete() && this.model.hasPlayerResponded()) {
-          // If player hasn't submitted, submit default answer
-          if (!this.model.hasPlayerResponded() && wordInput && submitButton) {
-            wordInput.value = 'a';
-            submitButton.click();
-          }
-          
-          this.stopTimer();
-          //I have no damn idea why setting <= this.numberOfRounds works but setting it to == breaks this is why this.numberofrounds +1 is used in the html 
-          if (this.model.getCurrentRound() <= this.numberOfRounds) {
-            // Slight delay before starting next round
-            setTimeout(() => {
-              this.model.advanceRound();
-              this.startTimer();
-            }, 1000);
-          } else {
-            this.handleGameOver();
-          }
+    }
+
+    handleGameOver(gameState) {
+        // Create and display modal
+        const modalHtml = `
+            <div id="gameOverModal" class="modal">
+                <div class="modal-content">
+                    <h3>Game Over!</h3>
+                    <p>Final Scores:</p>
+                    <ul>
+                        ${this.generateFinalScores(gameState.finalScores)}
+                    </ul>
+                </div>
+                <div class="modal-footer">
+                    <a href="#!" class="modal-close waves-effect waves-green btn">Play Again</a>
+                </div>
+            </div>
+        `;
+
+        if (!document.getElementById('gameOverModal')) {
+            document.body.insertAdjacentHTML('beforeend', modalHtml);
+            const modal = document.getElementById('gameOverModal');
+            M.Modal.init(modal).open();
         }
-      }, 100);
+
+        // Disable inputs
+        const wordInput = document.getElementById('playerPoints');
+        const submitButton = document.getElementById('submitPoints');
+        if (wordInput) wordInput.disabled = true;
+        if (submitButton) submitButton.disabled = true;
     }
 
-    stopTimer() {
-      console.log("Stopping timer");
-      clearInterval(this.timerInterval);
-      this.timerInterval = null;
+    generateFinalScores(scores) {
+        return scores
+            .map(({name, score}) => `
+                <li class="final-score">
+                    <span class="player-name">${name}</span>
+                    <span class="score">${score}</span>
+                </li>
+            `)
+            .join('');
     }
+}
 
-    updateView() {
-      const bars = document.querySelectorAll(".bar");
-      bars.forEach((bar) => {
-        const playerId = bar.id;
-        const value = this.model.getPlayerScore(playerId);
-        // console.log(`Updating ${playerId} with value ${value}`);
 
-        bar.style.height = `${value * 10}px`;
-        bar.setAttribute("data-value", value);
-
-        this.updateValueLabel(bar);
-      });
-
-      // Update the current category and round
-      document.getElementById("current-category").textContent = this.model.getCurrentCategory();
-      document.getElementById("current-round").textContent = this.model.getCurrentRound();
-    }
-
-    updateValueLabel(bar) {
-      const existingLabel = bar.querySelector(".bar-value");
-      if (existingLabel) {
-        existingLabel.remove();
-      }
-
-      const valueLabel = document.createElement("div");
-      valueLabel.className = "bar-value";
-      
-      // Show the latest answer instead of just the score
-      const playerId = bar.id;
-      const answer = this.model.getLatestAnswer(playerId);
-      valueLabel.textContent = answer || '0';
-      
-      bar.appendChild(valueLabel);
-    }
-
-    handleGameOver() {
-      this.stopTimer();
-      let timerBar = document.querySelector('.timer-bar');
- 
-      timerBar.classList.add('hide');
-      // Create and show modal
-      const modalHtml = `
-        <div id="gameOverModal" class="modal">
-          <div class="modal-content">
-            <h3>Game Over!</h3>
-            <p>Final Scores:</p>
-            <ul>
-              ${this.generateFinalScores()}
-            </ul>
-            <p>Thanks for playing!</p>
-          </div>
-          <div class="modal-footer">
-            <a href="#!" class="modal-close waves-effect waves-green btn-flat">Close</a>
-          </div>
-        </div>
-      `;
-
-      // Add modal to document if it doesn't exist
-      if (!document.getElementById('gameOverModal')) {
-        document.body.insertAdjacentHTML('beforeend', modalHtml);
-      }
-
-      // Initialize and open modal
-      const modalElement = document.getElementById('gameOverModal');
-      const modalInstance = M.Modal.init(modalElement, {
-        dismissible: true,
-        onCloseEnd: () => {
-          console.log('Game over modal closed');
-        }
-      });
-      
-      modalInstance.open();
-
-      // Disable input
-      const wordInput = document.getElementById('playerPoints');
-      const submitButton = document.getElementById('submitPoints');
-      if (wordInput) wordInput.disabled = true;
-      if (submitButton) submitButton.disabled = true;
-    }
-
-    generateFinalScores() {
-      const players = ['Player', 'James', 'Sofia', 'Lucas', 'ANTE'];
-      return players.map(playerName => {
-        const score = this.model.getPlayerScore(playerName);
-        return `<li>${playerName}: ${score}</li>`;
-      }).join('');
-    }
-  }
-
-  window.ScoreBoardController = ScoreBoardController;
+window.ScoreBoardController = ScoreBoardController;
 })(window);

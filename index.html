@@ -18,20 +18,19 @@
     </div>
     
     <div id="scoreBoard"></div>
-    
-    <div class="input-section">
-      <form id="wordForm" onsubmit="return false;">
-        <div class="input-field">
-          <input type="text" id="playerPoints" class="browser-default" placeholder="Enter a word">
-          <button type="submit" class="waves-effect waves-light btn" id="submitPoints">Submit</button>
-        </div>
-      </form>
-    </div>
-
-    <!-- Load scripts in correct order -->
     <script src="/test/gameTestData.js"></script>
+    <script src="/models/PlayerScore.js"></script>
+    <script src="/models/Player.js"></script>
+    <script src="/models/GameSession.js"></script>
     <script src="/models/ScoreBoard.js"></script>
+    <script src="/controllers/GameController.js"></script>
     <script src="/controllers/ScoreBoardController.js"></script>
-    <script src="/views/js/script.js"></script>
+    <script>
+      // Initialize after DOM loads
+      document.addEventListener('DOMContentLoaded', () => {
+        const gameController = new GameController();
+        const scoreBoardController = new ScoreBoardController('scoreBoard');
+      });
+    </script>
   </body>
 </html>
