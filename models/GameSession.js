@@ -1,6 +1,7 @@
 (function(window) {
     class GameSession {
         constructor(aiPlayers, humanPlayer, antePlayer) {
+            
             if (!Array.isArray(aiPlayers) || aiPlayers.length !== 3) {
                 throw new Error('Must provide exactly 3 AI players');
             }
@@ -10,7 +11,6 @@
             if (!(antePlayer instanceof window.Player)) {
                 throw new Error('Ante player must be a Player instance');
             }
- 
             this.currentRound = 1;
             this.categories = ['animals', 'periodic elements', 'countries', 'best picture winning movies'];
             this.currentCategory = this.getRandomCategory();
