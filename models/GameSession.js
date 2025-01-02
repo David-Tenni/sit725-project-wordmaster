@@ -1,7 +1,6 @@
 (function(window) {
     class GameSession {
         constructor(aiPlayers, humanPlayer, antePlayer) {
-            
             if (!Array.isArray(aiPlayers) || aiPlayers.length !== 3) {
                 throw new Error('Must provide exactly 3 AI players');
             }
@@ -17,6 +16,7 @@
             this.ai_players = aiPlayers;
             this.human_player = humanPlayer;
             this.ante_player = antePlayer;
+            this.gameOver = false;
         }
  
         getRandomCategory() {
@@ -45,7 +45,8 @@
  
         advanceRound() {
             if (this.currentRound >= 10) {
-                throw new Error('Game has ended');
+                this.gameOver = true;
+                return false;
             }
             this.currentRound++;
             this.currentCategory = this.getRandomCategory();
@@ -56,12 +57,14 @@
                 'A'.repeat(anteScore),
                 0
             ));
+            
+            return true;
         }
  
         isGameOver() {
-            return this.currentRound > 10;
+            return this.currentRound >= 10 || this.gameOver;
         }
     }
  
     window.GameSession = GameSession;
- })(window);
+})(window);

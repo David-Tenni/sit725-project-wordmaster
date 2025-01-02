@@ -41,6 +41,19 @@
                         </form>
                     </div>
                 </div>
+
+                <!-- Game Over Modal -->
+                <div id="gameOverModal" class="modal">
+                    <div class="modal-content">
+                        <h3>Game Over!</h3>
+                        <p>Final Scores:</p>
+                        <ul class="final-scores-list">
+                        </ul>
+                    </div>
+                    <div class="modal-footer">
+                        <a href="#!" class="modal-close waves-effect waves-green btn">Play Again</a>
+                    </div>
+                </div>
             `;
         }
 
@@ -60,13 +73,15 @@
         }
 
         setupMaterializeComponents() {
-            const elems = document.querySelectorAll('.modal');
-            M.Modal.init(elems, {
-                dismissible: false,
-                onCloseEnd: () => {
-                    location.reload();
-                }
-            });
+            const modal = document.getElementById('gameOverModal');
+            if (modal) {
+                M.Modal.init(modal, {
+                    dismissible: false,
+                    onCloseEnd: () => {
+                        location.reload();
+                    }
+                });
+            }
         }
 
         initializeEventListeners() {
@@ -122,8 +137,8 @@
 
                 // Calculate total height based on cumulative score
                 const totalScore = player.scores.reduce((sum, score) => sum + score.answer.length, 0);
-                const height = totalScore * 10; 
-                
+                const height = totalScore * 10; // Adjust multiplier as needed
+
                 // Animate height change
                 bar.style.transition = 'height 0.5s ease-out';
                 bar.style.height = `${height}px`;
@@ -173,46 +188,55 @@
         }
 
         handleGameOver(gameState) {
-            const modalHtml = `
-                <div id="gameOverModal" class="modal">
-                    <div class="modal-content">
-                        <h3>Game Over!</h3>
-                        <p>Final Scores:</p>
-                        <ul>
-                            ${this.generateFinalScores(gameState.finalScores)}
-                        </ul>
-                    </div>
-                    <div class="modal-footer">
-                        <a href="#!" class="modal-close waves-effect waves-green btn">Play Again</a>
-                    </div>
-                </div>
-            `;
-
-            if (!document.getElementById('gameOverModal')) {
-                document.body.insertAdjacentHTML('beforeend', modalHtml);
-                const modal = document.getElementById('gameOverModal');
-                M.Modal.init(modal).open();
+            console.log('Game Over triggered with state:', gameState);
+            
+            // Get the existing modal
+            const modal = document.getElementById('gameOverModal');
+            if (!modal) {
+                console.error('Game over modal not found');
+                return;
             }
 
-        // Disable inputs
-        const wordInput = document.getElementById('playerPoints');
-        const submitButton = document.getElementById('submitPoints');
-        if (wordInput) wordInput.disabled = true;
-        if (submitButton) submitButton.disabled = true;
+            // Update the scores list
+            const scoresList = modal.querySelector('.final-scores-list');
+            if (scoresList) {
+                scoresList.innerHTML = this.generateFinalScores(gameState.finalScores);
+            }
+
+            // Get the modal instance and open it
+            const modalInstance = M.Modal.getInstance(modal);
+            if (modalInstance) {
+                modalInstance.open();
+            } else {
+                // If instance not found, reinitialize and open
+                const newInstance = M.Modal.init(modal, {
+                    dismissible: false,
+                    onCloseEnd: () => {
+                        location.reload();
+                    }
+                });
+                newInstance.open();
+            }
+
+            // Disable the input form
+            const wordInput = document.getElementById('playerPoints');
+            const submitButton = document.getElementById('submitPoints');
+            if (wordInput) wordInput.disabled = true;
+            if (submitButton) submitButton.disabled = true;
+        }
+
+        generateFinalScores(scores) {
+            console.log('Generating final scores:', scores);
+            return scores
+                .map(({name, score}) => `
+                    <li class="final-score">
+                        <span class="player-name">${name}</span>
+                        <span class="score">${score} points</span>
+                    </li>
+                `)
+                .join('');
+        }
     }
 
-    generateFinalScores(scores) {
-        return scores
-            .map(({name, score}) => `
-                <li class="final-score">
-                    <span class="player-name">${name}</span>
-                    <span class="score">${score}</span>
-                </li>
-            `)
-            .join('');
-    }
-}
-
-
-window.ScoreBoardController = ScoreBoardController;
+    window.ScoreBoardController = ScoreBoardController;
 })(window);
