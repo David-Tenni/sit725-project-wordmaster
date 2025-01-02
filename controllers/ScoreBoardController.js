@@ -1,10 +1,11 @@
 (function(window) {
     class ScoreBoardController {
-        constructor(containerId) {
+        constructor(containerId, totalRounds = 5) {
             console.log('ScoreBoardController initializing...');
             this.containerId = containerId;
             this.timerInterval = null;
             this.timeLimit = 7000;
+            this.totalRounds = totalRounds; 
             this.createScoreBoardHTML();
             this.setupMaterializeComponents();
             this.initializeEventListeners();
@@ -21,7 +22,7 @@
                 <div class="chart-container">
                     <h2 class="title">Word Master Challenge</h2>
                     <div class="round-display">
-                        <h5>Round: <span id="current-round">1</span>/10</h5>
+                        <h5>Round: <span id="current-round">1</span>/${this.totalRounds}</h5>
                     </div>
                     <div class="category-display">
                         <h5>Category: <span id="current-category"></span></h5>
@@ -56,6 +57,7 @@
                 </div>
             `;
         }
+
 
         createBarContainers() {
             const players = ['player', 'james', 'sofia', 'lucas', 'ante'];

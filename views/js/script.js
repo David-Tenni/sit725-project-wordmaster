@@ -1,18 +1,24 @@
 document.addEventListener('DOMContentLoaded', function() {
+  // Set number of rounds for testing
+  const totalRounds = 5;
+  
   // Initialize modal
   var elems = document.querySelectorAll('.modal');
   var instances = M.Modal.init(elems);
   
-  // Initialize ScoreBoard
+  // Initialize ScoreBoard and Controllers
   try {
-    console.log('Initializing ScoreBoard...');
-    const scoreBoard = new window.ScoreBoard();
-    console.log('ScoreBoard initialized:', scoreBoard);
-    
-    console.log('Initializing ScoreBoardController...');
-    const scoreBoardController = new window.ScoreBoardController(scoreBoard, 'scoreBoard');
-    console.log('ScoreBoardController initialized');
+      console.log('Initializing game components...');
+      
+      // Initialize game controller with totalRounds
+      const gameController = new window.GameController(totalRounds);
+      console.log('GameController initialized with', totalRounds, 'rounds');
+      
+      // Initialize ScoreBoardController with totalRounds
+      const scoreBoardController = new window.ScoreBoardController('scoreBoard', totalRounds);
+      console.log('ScoreBoardController initialized');
+      
   } catch (error) {
-    console.error('Error initializing scoreboard:', error);
+      console.error('Error initializing game components:', error);
   }
 });

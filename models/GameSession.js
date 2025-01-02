@@ -1,6 +1,6 @@
 (function(window) {
     class GameSession {
-        constructor(aiPlayers, humanPlayer, antePlayer) {
+        constructor(aiPlayers, humanPlayer, antePlayer, totalRounds = 10) {
             if (!Array.isArray(aiPlayers) || aiPlayers.length !== 3) {
                 throw new Error('Must provide exactly 3 AI players');
             }
@@ -10,6 +10,7 @@
             if (!(antePlayer instanceof window.Player)) {
                 throw new Error('Ante player must be a Player instance');
             }
+            this.totalRounds = totalRounds;
             this.currentRound = 1;
             this.categories = ['animals', 'periodic elements', 'countries', 'best picture winning movies'];
             this.currentCategory = this.getRandomCategory();
@@ -17,6 +18,8 @@
             this.human_player = humanPlayer;
             this.ante_player = antePlayer;
             this.gameOver = false;
+
+            console.log(`Game initialized with ${this.totalRounds} rounds`);
         }
  
         getRandomCategory() {
@@ -44,25 +47,23 @@
         }
  
         advanceRound() {
-            if (this.currentRound >= 10) {
+            // Check if current round is the last round
+            if (this.currentRound >= this.totalRounds) {
                 this.gameOver = true;
                 return false;
             }
+            
             this.currentRound++;
             this.currentCategory = this.getRandomCategory();
- 
-            const anteScore = this.calculateAnteScore();
-            this.ante_player.addScore(new window.PlayerScore(
-                this.currentCategory,
-                'A'.repeat(anteScore),
-                0
-            ));
-            
             return true;
         }
  
         isGameOver() {
-            return this.currentRound >= 10 || this.gameOver;
+            return this.currentRound >= this.totalRounds || this.gameOver;
+        }
+
+        getRemainingRounds() {
+            return this.totalRounds - this.currentRound + 1;
         }
     }
  

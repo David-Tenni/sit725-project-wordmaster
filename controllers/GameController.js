@@ -1,11 +1,12 @@
 (function(window) {
     class GameController {
-        constructor() {
+        constructor(totalRounds = 5) {
             console.log('GameController initializing...');
             this.timeLimit = 7000;
             this.startTime = null;
             this.timerInterval = null;
             this.initialCategoryDisplayed = false;
+            this.totalRounds = totalRounds; 
             this.initializeGame();
             this.dispatchGameStateUpdate();
             this.initializeEventListeners();
@@ -23,7 +24,8 @@
             const humanPlayer = new window.Player(4, 'Player');
             const antePlayer = new window.Player(5, 'ANTE');
 
-            this.gameSession = new window.GameSession(aiPlayers, humanPlayer, antePlayer);
+            // Pass totalRounds to GameSession
+            this.gameSession = new window.GameSession(aiPlayers, humanPlayer, antePlayer, this.totalRounds);
             
             // Reset for first round
             this.initialCategoryDisplayed = false;
@@ -53,6 +55,7 @@
 
             const responseTime = Date.now() - this.startTime;
             
+            // Add human player's score
             const playerScore = new window.PlayerScore(
                 this.gameSession.currentCategory,
                 word,
@@ -60,7 +63,10 @@
             );
             this.gameSession.human_player.addScore(playerScore);
 
-            // Calculate and add ANTE score before advancing round
+            // Force AI responses for current round
+            this.forceAIResponses();
+
+            // Calculate and add ANTE score
             const anteScore = this.gameSession.calculateAnteScore();
             this.gameSession.ante_player.addScore(new window.PlayerScore(
                 this.gameSession.currentCategory,
@@ -68,20 +74,53 @@
                 0
             ));
 
-            // Dispatch event for UI update
             this.dispatchGameStateUpdate();
             
-            if (this.gameSession.advanceRound()) {
-                this.startNewRound();
-            } else {
+            // Check if we've reached the total rounds
+            if (this.gameSession.currentRound >= this.totalRounds) {
                 this.handleGameOver();
+            } else if (this.gameSession.advanceRound()) {
+                this.startNewRound();
             }
+        }
+
+        forceAIResponses() {
+            const currentRound = this.gameSession.currentRound;
+            const roundData = window.gameTestData.rounds[currentRound - 1];
+            
+            if (!roundData) {
+                console.error('No round data found for round:', currentRound);
+                return;
+            }
+
+            // Force all AI players to respond if they haven't yet
+            this.gameSession.ai_players.forEach(player => {
+                if (!player.scores[currentRound - 1]) {
+                    const aiResponse = roundData.answers[player.playerName.toLowerCase()];
+                    if (!aiResponse) {
+                        console.error('No AI response found for player:', player.playerName);
+                        return;
+                    }
+
+                    const aiScore = new window.PlayerScore(
+                        this.gameSession.currentCategory,
+                        aiResponse.word,
+                        aiResponse.time
+                    );
+                    player.addScore(aiScore);
+                }
+            });
         }
 
         checkAIResponses(elapsed) {
             if (this.gameSession.isGameOver()) return;
 
             const currentRound = this.gameSession.currentRound;
+            if (currentRound > this.totalRounds) {
+                this.handleGameOver();
+                return;
+            }
+
             const roundData = window.gameTestData.rounds[currentRound - 1];
             
             if (!roundData) {
