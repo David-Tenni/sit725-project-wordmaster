@@ -182,7 +182,7 @@
 
         handleTimeout() {
             clearInterval(this.timerInterval);
-            this.handleWordSubmission('');
+            this.handleWordSubmission('a');
         }
 
         startNewRound() {
