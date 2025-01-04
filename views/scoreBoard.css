@@ -125,3 +125,68 @@
 #scoreBoard .timer-bar.danger {
   background-color: #f44336;
 }
+
+
+
+/* Scorebnoard Modal */
+#scoreBoard .modal {
+  background-color: white;
+  border-radius: 8px;
+  max-width: 500px;
+  padding: 20px;
+}
+
+#scoreBoard .modal .modal-content {
+  padding: 24px;
+}
+
+#scoreBoard .modal h3 {
+  color: #A388EE;
+  margin-top: 0;
+  font-size: 1.5em;
+}
+
+#scoreBoard .final-scores-list {
+  list-style: none;
+  padding: 0;
+  margin: 20px 0;
+}
+
+#scoreBoard .final-scores-list li {
+  display: flex;
+  justify-content: space-between;
+  padding: 12px 0;
+  border-bottom: 1px solid #eee;
+  font-size: 1.1em;
+}
+
+#scoreBoard .final-scores-list li .player-name {
+  color: #333;
+  font-weight: bold;
+}
+
+#scoreBoard .final-scores-list li .score {
+  color: #4CAF50;
+  font-weight: bold;
+}
+
+/* Color code player scores in the final list */
+#scoreBoard .final-scores-list li[data-player="player"] .score { color: #4CAF50; }
+#scoreBoard .final-scores-list li[data-player="james"] .score { color: #4ECDC4; }
+#scoreBoard .final-scores-list li[data-player="sofia"] .score { color: #9B59B6; }
+#scoreBoard .final-scores-list li[data-player="lucas"] .score { color: #F7D794; }
+#scoreBoard .final-scores-list li[data-player="ante"] .score { color: #000000; }
+
+#scoreBoard .modal .modal-footer {
+  padding: 15px;
+  text-align: right;
+  border-top: 1px solid #eee;
+}
+
+#scoreBoard .modal .modal-footer .btn {
+  background-color: #4CAF50;
+  color: white;
+  margin-left: 10px;
+  text-transform: uppercase;
+  font-weight: bold;
+}

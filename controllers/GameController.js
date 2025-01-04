@@ -77,7 +77,7 @@
             this.dispatchGameStateUpdate();
             
             // Check if we've reached the total rounds
-            if (this.gameSession.currentRound >= this.totalRounds) {
+            if (this.gameSession.currentRound >= this.totalRounds-1) {
                 this.handleGameOver();
             } else if (this.gameSession.advanceRound()) {
                 this.startNewRound();
@@ -193,6 +193,7 @@
         }
 
         handleGameOver() {
+            console.log('Game over!');
             clearInterval(this.timerInterval);
             const gameOverEvent = new CustomEvent('gameOver', {
                 detail: {
