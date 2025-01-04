@@ -36,7 +36,7 @@
                     <div class="input-section">
                         <form id="wordForm">
                             <div class="input-field">
-                                <input type="text" id="playerPoints" class="browser-default" placeholder="Enter a word">
+                              <input type="text" id="playerPoints" autofocus class="browser-default" placeholder="Enter a word">
                                 <button type="submit" class="waves-effect waves-light btn" id="submitPoints">Submit</button>
                             </div>
                         </form>
