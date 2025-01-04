@@ -1,5 +1,8 @@
 var express = require("express")
 var app = express()
+app.get('/', (req, res) => {
+    res.redirect('/mainMenu.html');
+});
 
 app.use(express.static(__dirname)) 
 app.use(express.static(__dirname+'/views'))
@@ -18,3 +21,4 @@ app.listen(port, () => {
 }).on('error',(err) => {
     console.error("Failed to start server:", err);
 });
+

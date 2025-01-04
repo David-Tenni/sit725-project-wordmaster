@@ -5,19 +5,38 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
     <link rel="stylesheet" href="/views/scoreboard.css">
+    <link rel="stylesheet" href="wordmaster.css">
   </head>
   <body>
-    <div id="modal1" class="modal">
-        <div class="modal-content">
-        <h4>Welcome to Word Master Challenge</h4>
-        <p>Test your vocabulary against AI opponents!</p>
+    <div class="purple-blob"></div>
+
+    <div class="game-container">
+      <div class="header-section">
+        <div class="logo-section">
+          <div class="logo">WM</div>
+          <h4>WordMaster</h4>
         </div>
-        <div class="modal-footer">
-        <a href="#!" class="modal-close waves-effect waves-green btn-flat">Let's Play!</a>
-        </div>
+      </div>
+      
+      <div class="game-content">
+        <div id="scoreBoard"></div>
+      </div>
     </div>
     
-    <div id="scoreBoard"></div>
+    <div id="modal1" class="modal">
+      <div class="modal-content">
+        <h4>Welcome to Word Master Challenge</h4>
+        <p>Test your vocabulary against AI opponents!</p>
+      </div>
+      <div class="modal-footer">
+        <a href="#!" class="modal-close waves-effect waves-light btn-flat">Let's Play!</a>
+      </div>
+    </div>
+    
+    <a href="/mainMenu.html" class="waves-effect waves-light btn btn-custom login-btn">
+      Exit Game
+    </a>
+    <!-- Scripts -->
     <script src="/test/gameTestData.js"></script>
     <script src="/models/PlayerScore.js"></script>
     <script src="/models/Player.js"></script>
@@ -26,11 +45,19 @@
     <script src="/controllers/GameController.js"></script>
     <script src="/controllers/ScoreBoardController.js"></script>
     <script>
-      // Initialize after DOM loads
       document.addEventListener('DOMContentLoaded', () => {
         const gameController = new GameController();
         const scoreBoardController = new ScoreBoardController('scoreBoard');
+        
+        $('.modal').modal({
+          dismissible: false,
+          onCloseEnd: function() {
+            // Any additional initialization after modal closes
+          }
+        });
+        
+        $('#modal1').modal('open');
       });
-    </script>
+      </script>
   </body>
-</html>
+  </html>

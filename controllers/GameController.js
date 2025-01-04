@@ -187,7 +187,7 @@
 
         startNewRound() {
             clearInterval(this.timerInterval);
-            this.initialCategoryDisplayed = false; // Reset for new round
+            this.initialCategoryDisplayed = false; 
             this.startTimer();
             this.dispatchGameStateUpdate();
         }

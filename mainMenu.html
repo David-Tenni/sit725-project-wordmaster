@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+    <link rel="stylesheet" href="wordmaster.css">
+  </head>
+  <body>
+    <div class="purple-blob"></div>
+    
+    <div class="container">
+      <div class="brand-title">
+        <div class="logo">WM</div>
+        <h4>WordMaster</h4>
+      </div>
+
+      <div class="tagline">
+        Challenge your trivia knowledge with this daily word game
+      </div>
+
+      <div class="welcome-card">
+        <h5 class="wave-text">Welcome back 👋</h5>
+        <div class="buttons-container">
+          <a href="/index.html" class="waves-effect waves-light btn btn-custom play-btn">
+            Play
+          </a>
+          <a class="waves-effect waves-light btn btn-custom login-btn">
+            Log in
+          </a>
+          <a class="waves-effect waves-light btn btn-custom signup-btn">
+            Sign up
+          </a>
+          <a href="/leaderboard.html" class="waves-effect waves-light btn btn-custom signup-btn">
+            LeaderBoard
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      $(document).ready(function(){
+        $('.modal').modal();
+      });
+    </script>
+  </body>
+</html>
