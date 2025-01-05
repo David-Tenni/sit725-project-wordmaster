@@ -16,7 +16,7 @@ var port = process.env.PORT || 3000;
 app.use('/api/word', wordsApiRoutes);
 app.use('/api/user', usersApiRoutes);
 
-app.listen(port, () => {
+module.exports = app.listen(port, () => {
     console.log(`App is listening on port ${port}`);
 }).on('error',(err) => {
     console.error("Failed to start server:", err);
