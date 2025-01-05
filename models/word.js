@@ -2,28 +2,34 @@ let client = require('./connection');
 
 let db = client.db('words')
 
-async function postWord(category, word, callback) {
-    collection = db.collection(category);
-    const result = await collection.insertOne(word);
-    callback(null, result);
-}
-
 async function getWords(category, callback) {
-    collection = db.collection(category);
-    const result = await collection.find({}).toArray();
-    callback(null, result);
+    try{
+        collection = db.collection(category);
+        const result = await collection.find({}).toArray();
+        callback(null, result);
+    }catch(error){
+        callback({message: "Error getting word list"}, null);
+    }
 }
 
 async function getCategories(callback){
-    const categories = await db.listCollections().toArray();
-    const result =  categories.map(category => category.name.replaceAll('_', ' '));
-    callback(null, result);
+    try{
+        const categories = await db.listCollections().toArray();
+        const result =  categories.map(category => category.name.replaceAll('_', ' '));
+        callback(null, result);
+    }catch(error){
+        callback({message: "Error getting categories list"}, null);
+    }
 }
 
 async function isCategory(category){
-    const categories = await db.listCollections().toArray();
-    const result =  categories.map(category => category.name);
-    return result.includes(category);
+    try{
+        const categories = await db.listCollections().toArray();
+        const result =  categories.map(category => category.name);
+        return result.includes(category);
+    }catch(error){
+        callback({message: "Error getting categories list"}, null);
+    }
 }
 
-module.exports = {getWords,postWord,getCategories,isCategory}
+module.exports = {getWords,getCategories,isCategory}
