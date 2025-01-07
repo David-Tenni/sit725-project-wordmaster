@@ -127,7 +127,7 @@
     margin: 10px 0;
     border-radius: 5px;
   }
-  
+
   .play-btn {
     background-color: var(--primary-purple) !important;
   }
@@ -253,3 +253,36 @@
     width: 100%;
     margin-bottom: 30px;
   }
+  
+  /*signup and login forms */
+  .input-field input {
+    border: 1px solid #e0e0e0;
+    border-radius: 4px;
+    padding: 10px;
+  }
+  
+  .error-message {
+    color: red;
+    font-size: 14px;
+    margin-top: 10px;
+  }
+  /* Image 265 */
+.logo-svg {
+  width: 150px; 
+  height: 150px;
+  position:absolute;
+  top: -13px;
+  display: block; 
+  margin: 0 auto;
+}
+  
+ 
+
+
+
+
+
+  
+  
+
+  
