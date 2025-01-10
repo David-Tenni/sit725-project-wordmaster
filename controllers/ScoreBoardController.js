@@ -1,29 +1,71 @@
 (function (window) {
-    class ScoreBoardController {
-        constructor(containerId, totalRounds = 5) {
-            console.log("ScoreBoardController initializing...");
-            this.containerId = containerId;
-            this.timerInterval = null;
-            this.timeLimit = 7000;
-            this.totalRounds = totalRounds;
-            this.createScoreBoardHTML();
-            this.setupMaterializeComponents();
-            this.initializeEventListeners();
-        }
+  class ScoreBoardController {
+    constructor(containerId, totalRounds = 5) {
+      console.log("ScoreBoardController initializing...");
+      this.containerId = containerId;
+      this.timerInterval = null;
+      this.timeLimit = 7000;
+      this.totalRounds = totalRounds;
+      this.players = new Map();
 
-        createScoreBoardHTML() {
-            console.log("Creating ScoreBoard HTML...");
-            const container = document.getElementById(this.containerId);
-            if (!container) {
-                console.error("Container not found:", this.containerId);
-                return;
-            }
-            container.innerHTML = `
+      // Initialize components
+      try {
+        this.initializeBasePlayers();
+        this.createScoreBoardHTML();
+        // Wait for DOM to be ready before initializing Materialize
+        document.addEventListener("DOMContentLoaded", () => {
+          this.setupMaterializeComponents();
+        });
+        this.initializeEventListeners();
+        console.log("ScoreBoardController initialization complete");
+      } catch (error) {
+        console.error(
+          "Error during ScoreBoardController initialization:",
+          error
+        );
+      }
+    }
+
+    initializeBasePlayers() {
+      this.addPlayer("player");
+      this.addPlayer("ante");
+    }
+
+    addPlayer(playerName) {
+      const playerId = playerName.toLowerCase().trim();
+      if (!this.players.has(playerId)) {
+        this.players.set(playerId, {
+          name: playerName, // Keep original name for display
+          totalScore: 0,
+          scores: [],
+          eliminated: false,
+        });
+        console.log(`Added player: ${playerName}`);
+        this.updateBars();
+      }
+    }
+    updateCategoryDisplay(category) {
+      const categoryDisplay = document.getElementById("current-category");
+      if (categoryDisplay) {
+        categoryDisplay.textContent = category;
+      } else {
+        console.error("Category display element not found.");
+      }
+    }
+    createScoreBoardHTML() {
+      console.log("Creating ScoreBoard HTML...");
+      const container = document.getElementById(this.containerId);
+      if (!container) {
+        console.error("Container not found:", this.containerId);
+        return;
+      }
+      container.innerHTML = `
                 <div class="chart-container">
                     <h2 class="title">Word Master Challenge</h2>
                     <div class="round-display">
-                        <h5>Round: <span id="current-round">1</span>/${this.totalRounds
-                }</h5>
+                        <h5>Round: <span id="current-round">1</span>/${
+                          this.totalRounds
+                        }</h5>
                     </div>
                     <div class="category-display">
                         <h5>Category: <span id="current-category"></span></h5>
@@ -37,14 +79,13 @@
                     <div class="input-section">
                         <form id="wordForm">
                             <div class="input-field">
-                              <input type="text" id="playerPoints" autofocus class="browser-default" placeholder="Enter a word">
+                                <input type="text" id="playerPoints" autofocus class="browser-default" placeholder="Enter a word">
                                 <button type="submit" class="waves-effect waves-light btn" id="submitPoints">Submit</button>
                             </div>
                         </form>
                     </div>
                 </div>
 
-                <!-- Game Over Modal -->
                 <div id="gameOverModal" class="modal">
                     <div class="modal-content">
                         <h3>Game Over!</h3>
@@ -53,212 +94,217 @@
                         </ul>
                     </div>
                     <div class="modal-footer">
-                              <a href="/index.html" class="waves-effect waves-light btn btn-custom play-btn">Play Again</a>        
-          <a href="/leaderboard.html" class="waves-effect waves-light btn btn-custom signup-btn"> LeaderBoard          </a>
-          <a href="/mainmenu.html" class="waves-effect waves-light btn btn-custom signup-btn"> Main Menu          </a>
+                        <a href="/index.html" class="waves-effect waves-light btn btn-custom play-btn">Play Again</a>
+                        <a href="/leaderboard.html" class="waves-effect waves-light btn btn-custom signup-btn">LeaderBoard</a>
+                        <a href="/mainmenu.html" class="waves-effect waves-light btn btn-custom signup-btn">Main Menu</a>
                     </div>
-                </div>
-            `;
-        }
+                </div>`;
+    }
 
-        createBarContainers() {
-            const players = ["player", "james", "sofia", "lucas", "ante"];
-            return players
-                .map(
-                    (player) => `
-                <div class="bar-container">
-                    <div class="bar" id="${player}" data-value="0">
-                        <div class="bar-value">
-                            <div class="current-word"></div>
-                            <div class="total-score">Total: 0</div>
+    createBarContainers() {
+      return Array.from(this.players.entries())
+        .map(
+          ([playerId, playerData]) => `
+                    <div class="bar-container">
+                        <div class="bar" id="${playerId}" data-value="0">
+                            <div class="bar-value">
+                                <div class="current-word"></div>
+                                <div class="total-score">Total: 0</div>
+                            </div>
                         </div>
+                        <div class="player-name">${playerData.name}</div>
                     </div>
-                    <div class="player-name">${player.charAt(0).toUpperCase() + player.slice(1)
-                        }</div>
-                </div>
-            `
-                )
-                .join("");
+                `
+        )
+        .join("");
+    }
+
+    updateBars() {
+      const chart = document.querySelector(".chart");
+      if (chart) {
+        chart.innerHTML = this.createBarContainers();
+      }
+    }
+    updateBars() {
+      const chart = document.querySelector(".chart");
+      if (chart) {
+        chart.innerHTML = this.createBarContainers();
+      }
+    }
+    updateRoundDisplay(round) {
+      const roundDisplay = document.getElementById("current-round");
+      if (roundDisplay) {
+        roundDisplay.textContent = round;
+      } else {
+        console.error("Round display element not found.");
+      }
+    }
+    updateRoundDisplay(round) {
+      const roundDisplay = document.getElementById("current-round");
+      if (roundDisplay) {
+        roundDisplay.textContent = round;
+      } else {
+        console.error("Round display element not found.");
+      }
+    }
+    handleGameStateUpdate(gameState) {
+      console.log("Received game state update:", gameState);
+
+      // Update category and round
+      if (gameState.currentCategory) {
+        this.updateCategoryDisplay(gameState.currentCategory);
+      }
+      this.updateRoundDisplay(gameState.currentRound);
+
+      // Add any new players from the state
+      gameState.players.forEach((player) => {
+        this.addPlayer(player.playerName);
+      });
+
+      // Update scores
+      this.updateScoreBars(gameState.players);
+    }
+
+    updateScoreBars(players) {
+      players.forEach((player) => {
+        const playerId = player.playerName.toLowerCase().trim();
+        const bar = document.getElementById(playerId);
+
+        if (!bar) {
+          console.warn(`Bar not found for player: ${player.playerName}`);
+          this.addPlayer(player.playerName);
+          return;
         }
 
-        setupMaterializeComponents() {
-            const modal = document.getElementById("gameOverModal");
-            if (modal) {
-                M.Modal.init(modal, {
-                    dismissible: false,
-                    onCloseEnd: () => {
-                        location.reload();
-                    },
-                });
-            }
-        }
+        const totalScore = player.scores.reduce(
+          (sum, score) => sum + score.answer.length,
+          0
+        );
+        const height = totalScore * 10;
 
-        initializeEventListeners() {
-            document.addEventListener("gameStateUpdate", (e) =>
-                this.handleGameStateUpdate(e.detail)
-            );
-            document.addEventListener("gameOver", (e) =>
-                this.handleGameOver(e.detail)
-            );
-            document.addEventListener("timerTick", (e) =>
-                this.updateTimer(e.detail.elapsed)
-            );
+        bar.style.transition = "height 0.5s ease-out";
+        bar.style.height = `${height}px`;
 
-            const wordForm = document.getElementById("wordForm");
-            if (wordForm) {
-                wordForm.addEventListener("submit", (e) => {
-                    e.preventDefault();
-                    this.handleWordSubmission();
-                });
-            }
-        }
+        const latestScore = player.scores[player.scores.length - 1];
+        this.updateValueLabel(bar, {
+          latest: latestScore ? latestScore.answer : "",
+          total: totalScore,
+        });
+      });
+    }
 
-        handleGameStateUpdate(gameState) {
-            console.log("Received game state update:", gameState);
-            if (gameState.currentCategory) {
-                this.updateCategoryDisplay(gameState.currentCategory);
-            }
-            this.updateRoundDisplay(gameState.currentRound);
-            this.updateScoreBars(gameState.players);
-        }
+    updateValueLabel(bar, values) {
+      const valueLabel = bar.querySelector(".bar-value");
+      if (valueLabel) {
+        const currentWord = valueLabel.querySelector(".current-word");
+        const totalScore = valueLabel.querySelector(".total-score");
 
-        updateTimer(elapsed) {
-            const timerBar = document.querySelector(".timer-bar");
-            const percentage = (elapsed / this.timeLimit) * 100;
+        if (currentWord) currentWord.textContent = values.latest;
+        if (totalScore) totalScore.textContent = `Total: ${values.total}`;
+      }
+    }
 
-            timerBar.style.width = `${Math.min(percentage, 100)}%`;
+    handleWordSubmission() {
+      const wordInput = document.getElementById("playerPoints");
+      const word = wordInput.value.trim();
 
-            if (percentage >= 60 && percentage < 80) {
-                timerBar.classList.add("warning");
-                timerBar.classList.remove("danger");
-            } else if (percentage >= 80) {
-                timerBar.classList.remove("warning");
-                timerBar.classList.add("danger");
-            }
-        }
+      if (word) {
+        document.dispatchEvent(
+          new CustomEvent("wordSubmitted", {
+            detail: { word },
+          })
+        );
+        wordInput.value = "";
+        wordInput.focus();
+      }
+    }
 
-        updateRoundDisplay(round) {
-            document.getElementById("current-round").textContent = round;
-        }
+    handleGameOver(gameState) {
+      console.log("Game Over triggered with state:", gameState);
 
-        updateCategoryDisplay(category) {
-            document.getElementById("current-category").textContent = category;
-        }
+      const modal = document.getElementById("gameOverModal");
+      if (!modal) {
+        console.error("Game over modal not found");
+        return;
+      }
 
-        updateScoreBars(players) {
-            players.forEach((player) => {
-                const bar = document.getElementById(player.playerName.toLowerCase());
-                if (!bar) return;
+      const scoresList = modal.querySelector(".final-scores-list");
+      if (scoresList) {
+        scoresList.innerHTML = this.generateFinalScores(gameState.finalScores);
+      }
 
-                // Calculate total height based on cumulative score
-                const totalScore = player.scores.reduce(
-                    (sum, score) => sum + score.answer.length,
-                    0
-                );
-                const height = totalScore * 10; // Adjust multiplier as needed
+      const modalInstance = M.Modal.getInstance(modal);
+      if (modalInstance) {
+        modalInstance.open();
+      } else {
+        const newInstance = M.Modal.init(modal, {
+          dismissible: false,
+          onCloseEnd: () => {
+            location.reload();
+          },
+        });
+        newInstance.open();
+      }
 
-                // Animate height change
-                bar.style.transition = "height 0.5s ease-out";
-                bar.style.height = `${height}px`;
+      const wordInput = document.getElementById("playerPoints");
+      const submitButton = document.getElementById("submitPoints");
+      if (wordInput) wordInput.disabled = true;
+      if (submitButton) submitButton.disabled = true;
+    }
 
-                // Get the latest score
-                const latestScore = player.scores[player.scores.length - 1];
-                this.updateValueLabel(bar, {
-                    latest: latestScore ? latestScore.answer : "",
-                    total: totalScore,
-                });
-
-                // Handle eliminated status
-                if (player.eliminated) {
-                    bar.classList.add("eliminated");
-                    if (!bar.querySelector(".eliminated-label")) {
-                        const label = document.createElement("div");
-                        label.className = "eliminated-label";
-                        label.textContent = "ELIMINATED";
-                        bar.appendChild(label);
-                    }
-                }
-            });
-        }
-
-        updateValueLabel(bar, values) {
-            const valueLabel = bar.querySelector(".bar-value");
-            if (valueLabel) {
-                const currentWord = valueLabel.querySelector(".current-word");
-                const totalScore = valueLabel.querySelector(".total-score");
-
-                if (currentWord) currentWord.textContent = values.latest;
-                if (totalScore) totalScore.textContent = `Total: ${values.total}`;
-            }
-        }
-
-        handleWordSubmission() {
-            const wordInput = document.getElementById("playerPoints");
-            const word = wordInput.value.trim();
-
-            if (word) {
-                document.dispatchEvent(
-                    new CustomEvent("wordSubmitted", {
-                        detail: { word },
-                    })
-                );
-                wordInput.value = "";
-                wordInput.focus();
-            }
-        }
-
-        handleGameOver(gameState) {
-            console.log("Game Over triggered with state:", gameState);
-
-            // Get the existing modal
-            const modal = document.getElementById("gameOverModal");
-            if (!modal) {
-                console.error("Game over modal not found");
-                return;
-            }
-
-            // Update the scores list
-            const scoresList = modal.querySelector(".final-scores-list");
-            if (scoresList) {
-                scoresList.innerHTML = this.generateFinalScores(gameState.finalScores);
-            }
-
-            // Get the modal instance and open it
-            const modalInstance = M.Modal.getInstance(modal);
-            if (modalInstance) {
-                modalInstance.open();
-            } else {
-                // If instance not found, reinitialize and open
-                const newInstance = M.Modal.init(modal, {
-                    dismissible: false,
-                    onCloseEnd: () => {
-                        location.reload();
-                    },
-                });
-                newInstance.open();
-            }
-
-            // Disable the input form
-            const wordInput = document.getElementById("playerPoints");
-            const submitButton = document.getElementById("submitPoints");
-            if (wordInput) wordInput.disabled = true;
-            if (submitButton) submitButton.disabled = true;
-        }
-
-        generateFinalScores(scores) {
-            console.log("Generating final scores:", scores);
-            return scores
-                .map(
-                    ({ name, score }) => `
+    generateFinalScores(scores) {
+      console.log("Generating final scores:", scores);
+      return scores
+        .map(
+          ({ name, score }) => `
                     <li class="final-score">
                         <span class="player-name">${name}</span>
                         <span class="score">${score} points</span>
                     </li>
                 `
-                )
-                .join("");
-        }
+        )
+        .join("");
     }
 
-    window.ScoreBoardController = ScoreBoardController;
+    setupMaterializeComponents() {
+      try {
+        if (typeof M === "undefined") {
+          console.error("Materialize is not loaded");
+          return;
+        }
+
+        const modal = document.getElementById("gameOverModal");
+        if (modal) {
+          M.Modal.init(modal, {
+            dismissible: false,
+            onCloseEnd: () => location.reload(),
+          });
+          console.log("Modal initialized successfully");
+        }
+
+        M.AutoInit();
+      } catch (error) {
+        console.error("Error initializing Materialize components:", error);
+      }
+    }
+
+    initializeEventListeners() {
+      document.addEventListener("gameStateUpdate", (e) =>
+        this.handleGameStateUpdate(e.detail)
+      );
+      document.addEventListener("gameOver", (e) =>
+        this.handleGameOver(e.detail)
+      );
+
+      const wordForm = document.getElementById("wordForm");
+      if (wordForm) {
+        wordForm.addEventListener("submit", (e) => {
+          e.preventDefault();
+          this.handleWordSubmission();
+        });
+      }
+    }
+  }
+
+  window.ScoreBoardController = ScoreBoardController;
 })(window);
