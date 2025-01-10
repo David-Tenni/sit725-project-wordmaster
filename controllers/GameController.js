@@ -12,124 +12,118 @@
             this.initializeEventListeners();
         }
 
-        // Debug helper
-async checkEndpoint(url) {
-    try {
-        const response = await fetch(url);
-        console.log(`Endpoint check (${url}):`, {
-            status: response.status,
-            statusText: response.statusText,
-            headers: Object.fromEntries(response.headers),
-            ok: response.ok
-        });
-    } catch (error) {
-        console.error(`Endpoint check failed (${url}):`, error);
-    }
-}
-
-async fetchGameData() {
-    try {
-        console.log('Starting data fetch...');
-        
-        // Categories request
-        console.log('Making categories request...');
-        const categoriesResponse = await fetch('/api/game/categories/5', {
-            headers: {
-                'Accept': 'application/json',
-                'Content-Type': 'application/json'
+        async checkEndpoint(url) {
+            try {
+                const response = await fetch(url);
+                console.log(`Endpoint check (${url}):`, {
+                    status: response.status,
+                    statusText: response.statusText,
+                    headers: Object.fromEntries(response.headers),
+                    ok: response.ok
+                });
+            } catch (error) {
+                console.error(`Endpoint check failed (${url}):`, error);
             }
-        });
-        
-        const categoriesData = await categoriesResponse.json();
-        console.log('Categories data:', categoriesData);
-
-        // Players request with full details logged
-        const playersUrl = '/api/game/players/3';
-        console.log('Making players request to:', playersUrl);
-        console.log('Request headers:', {
-            'Accept': 'application/json',
-            'Content-Type': 'application/json'
-        });
-
-        const playersResponse = await fetch(playersUrl, {
-            method: 'GET',
-            headers: {
-                'Accept': 'application/json',
-                'Content-Type': 'application/json'
-            }
-        });
-
-        // Log full response details
-        console.log('Players response:', {
-            status: playersResponse.status,
-            statusText: playersResponse.statusText,
-            headers: Object.fromEntries(playersResponse.headers),
-            url: playersResponse.url
-        });
-
-        if (!playersResponse.ok) {
-            const errorText = await playersResponse.text();
-            console.error('Players request failed:', {
-                status: playersResponse.status,
-                statusText: playersResponse.statusText,
-                errorText: errorText
-            });
-            throw new Error(`Players request failed: ${playersResponse.status}`);
         }
 
-        const playersData = await playersResponse.json();
-        
-        // Transform into game format
-        this.gameData = {
-            rounds: playersData.data
-        };
-        
-        return true;
-    } catch (error) {
-        console.error('Fetch error:', error);
-        if (window.M && window.M.toast) {
-            window.M.toast({
-                html: `Failed to load game data: ${error.message}`,
-                classes: 'red'
-            });
+        async fetchGameData() {
+            try {
+                console.log('Starting data fetch...');
+                
+                const categoriesResponse = await fetch('/api/game/categories/5', {
+                    headers: {
+                        'Accept': 'application/json',
+                        'Content-Type': 'application/json'
+                    }
+                });
+                
+                const categoriesData = await categoriesResponse.json();
+                console.log('Categories data:', categoriesData);
+
+                const playersUrl = '/api/game/players/3';
+                const playersResponse = await fetch(playersUrl, {
+                    method: 'GET',
+                    headers: {
+                        'Accept': 'application/json',
+                        'Content-Type': 'application/json'
+                    }
+                });
+
+                if (!playersResponse.ok) {
+                    throw new Error(`Players request failed: ${playersResponse.status}`);
+                }
+
+                const playersData = await playersResponse.json();
+                this.gameData = {
+                    rounds: playersData.data
+                };
+                
+                return true;
+            } catch (error) {
+                console.error('Fetch error:', error);
+                if (window.M && window.M.toast) {
+                    window.M.toast({
+                        html: `Failed to load game data: ${error.message}`,
+                        classes: 'red'
+                    });
+                }
+                return false;
+            }
         }
-        return false;
-    }
-}
-async initializeGame() {
-    console.log('Initializing game...');
-    
-    const dataFetched = await this.fetchGameData();
-    if (!dataFetched) {
-        console.error('Failed to initialize game');
-        return;
-    }
 
-    // Get player names from the first round of data
-    const firstRound = this.gameData.rounds[0];
-    const playerNames = Object.keys(firstRound.answers);
-    console.log('Creating AI players with names:', playerNames);
+        async initializeGame() {
+            console.log('Initializing game...');
+            
+            const dataFetched = await this.fetchGameData();
+            if (!dataFetched) {
+                console.error('Failed to initialize game');
+                return;
+            }
+        
+            // Create ScoreBoard and initialize with game data
+            this.scoreBoard = new window.ScoreBoard();
+        
+            // Get player names from the first round
+            const firstRound = this.gameData.rounds[0];
+            const allAiPlayerNames = Object.keys(firstRound.answers);
+            
+            // Take only the first 3 AI players
+            const aiPlayerNames = allAiPlayerNames.slice(0, 3);
+            console.log('Selected AI Player Names:', aiPlayerNames);
+        
+            // Create AI player instances (only 3)
+            const aiPlayers = aiPlayerNames.map((name, index) => 
+                new window.Player(index + 1, name)
+            );
+        
+            // Filter game data to only include selected players
+            this.gameData.rounds = this.gameData.rounds.map(round => ({
+                ...round,
+                answers: Object.fromEntries(
+                    Object.entries(round.answers)
+                        .filter(([name]) => aiPlayerNames.includes(name))
+                ),
+                category: round.category
+            }));
+        
+            const humanPlayer = new window.Player(4, 'Player');
+            const antePlayer = new window.Player(5, 'ANTE');
+        
+            // Initialize game session with exactly 3 AI players
+            this.gameSession = new window.GameSession(aiPlayers, humanPlayer, antePlayer, this.totalRounds);
+            
+            // Initialize ScoreBoard with filtered game data
+            this.scoreBoard.initializeAIPlayers(this.gameData);
+            
+            if (firstRound) {
+                this.gameSession.currentCategory = firstRound.category;
+                this.scoreBoard.currentCategory = firstRound.category;
+                this.dispatchGameStateUpdate();
+            }
+            
+            this.startTimer();
+        }
 
-    // Create AI players with names from mongo
-    const aiPlayers = playerNames.map((name, index) => 
-        new window.Player(index + 1, name)
-    );
-
-    const humanPlayer = new window.Player(playerNames.length + 1, 'Player');
-    const antePlayer = new window.Player(playerNames.length + 2, 'ANTE');
-
-    // Initialize game session with the new AI players
-    this.gameSession = new window.GameSession(aiPlayers, humanPlayer, antePlayer, this.totalRounds);
-    
-    this.initialCategoryDisplayed = false;
-    
-    if (firstRound) {
-        this.gameSession.currentCategory = firstRound.category;
-        this.dispatchGameStateUpdate();
-    }
-    
-    this.startTimer();
-}
         initializeEventListeners() {
             document.addEventListener('wordSubmitted', (e) => {
                 this.handleWordSubmission(e.detail.word);
@@ -151,18 +145,10 @@ async initializeGame() {
                 responseTime
             );
             this.gameSession.human_player.addScore(playerScore);
+            this.scoreBoard.recordAnswer('player', word, responseTime);
 
             this.forceAIResponses();
 
-            const anteScore = this.gameSession.calculateAnteScore();
-            this.gameSession.ante_player.addScore(new window.PlayerScore(
-                this.gameSession.currentCategory,
-                'A'.repeat(anteScore),
-                0
-            ));
-
-            this.dispatchGameStateUpdate();
-            
             if (this.gameSession.currentRound >= this.totalRounds-1) {
                 this.handleGameOver();
             } else if (this.gameSession.advanceRound()) {
@@ -196,8 +182,11 @@ async initializeGame() {
                         aiResponse.time
                     );
                     player.addScore(aiScore);
+                    this.scoreBoard.recordAIResponse(player.playerName, aiResponse.word, aiResponse.time);
                 }
             });
+            
+            this.dispatchGameStateUpdate();
         }
     
         checkAIResponses(elapsed) {
@@ -218,6 +207,7 @@ async initializeGame() {
     
             if (!this.initialCategoryDisplayed) {
                 this.gameSession.currentCategory = roundData.category;
+                this.scoreBoard.currentCategory = roundData.category;
                 this.dispatchGameStateUpdate();
                 this.initialCategoryDisplayed = true;
             }
@@ -243,6 +233,7 @@ async initializeGame() {
                         aiResponse.time
                     );
                     player.addScore(aiScore);
+                    this.scoreBoard.recordAIResponse(player.playerName, aiResponse.word, aiResponse.time);
                     stateUpdated = true;
                 }
             });
@@ -276,6 +267,7 @@ async initializeGame() {
         startNewRound() {
             clearInterval(this.timerInterval);
             this.initialCategoryDisplayed = false;
+            this.scoreBoard.advanceRound();
             this.startTimer();
             this.dispatchGameStateUpdate();
         }
@@ -318,7 +310,8 @@ async initializeGame() {
             ];
 
             const playersWithScores = allPlayers.map(player => ({
-                ...player,
+                playerName: player.playerName,
+                scores: player.scores,
                 totalScore: player.scores.reduce((sum, score) => sum + score.answer.length, 0)
             }));
 
