@@ -1,49 +1,71 @@
-let client = require('./connection');
+const client = require('./connection');
+const db = client.db('words');
+const collection = client.db('authentication').collection("users");
 
-let db = client.db('words')
-
-async function getRandomCategories(number, callback){
-    try{
+// Get random categories from the words database
+async function getRandomCategories(number, callback) {
+    try {
+        console.log('Getting random categories, number:', number);
         const categories = await db.listCollections().toArray();
-        const names =  categories.map(category => category.name);
+        const names = categories.map(category => category.name);
         const randomCategories = names
-            .sort(() => Math.random()-0.5)
+            .sort(() => Math.random() - 0.5)
             .slice(0, number);
+        
+        console.log('Selected categories:', randomCategories);
         callback(null, randomCategories);
-    }catch(error){
-        callback({message: "Error getting categories list"}, null);
+    } catch (error) {
+        console.error('Error getting categories:', error);
+        callback({ message: "Error getting categories list" }, null);
     }
 }
 
+// Get random users with answers for given categories
+async function getRandomUsers(categories, number, callback) {
+    try {
+        if (!categories || !Array.isArray(categories)) {
+            console.error('Invalid categories:', categories);
+            throw new Error('Categories must be an array');
+        }
 
-let collection = client.db('authentication').collection("users");
+        console.log('Getting random users:', { categories, number });
 
-async function getRandomUsers(categories, number, callback){
-    try{
         const match = {
-            $and: categories.map(category => ({ [`answers.${category}`]: { $exists: true } }))
+            $or: categories.map(category => ({ [`answers.${category}`]: { $exists: true } }))
         };
-        
+
+        console.log('MongoDB query:', JSON.stringify(match, null, 2));
+
         const players = await collection.aggregate([
             { $match: match },
-            { $sample: { size: number } }
+            { $sample: { size: parseInt(number) } }
         ]).toArray();
+
+        console.log('Found players:', players.length);
 
         let rounds = categories.map(category => ({
             category: category,
             answers: players.reduce((answers, player) => {
-                answers[player.username] = {
-                    word: player.answers[category].word,
-                    time: player.answers[category].time
-                };
+                if (player.answers && player.answers[category]) {
+                    answers[player.username] = {
+                        word: player.answers[category].word,
+                        time: player.answers[category].time
+                    };
+                }
                 return answers;
             }, {})
         }));
 
+        console.log('Generated rounds:', JSON.stringify(rounds, null, 2));
         callback(null, rounds);
-    }catch(error){
-        callback({message: "Error getting players"}, null);
+    } catch (error) {
+        console.error('Error getting users:', error);
+        callback({ message: "Error getting players" }, null);
     }
 }
 
-module.exports = {getRandomCategories, getRandomUsers}
+// Export as an object with named functions
+module.exports = {
+    getRandomCategories,
+    getRandomUsers
+};

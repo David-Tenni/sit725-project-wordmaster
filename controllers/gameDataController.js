@@ -1,30 +1,62 @@
-let db = require('../models/gameData');
+const gameData = require('../models/gameData');
 
-const getRandomCategories = (req,res) => {
-    const number = req.params.number;
+const getRandomCategories = async (req, res) => {
+    try {
+        console.log('getRandomCategories called with params:', req.params);
+        const number = parseInt(req.params.number);
 
-    db.getRandomCategories(+number, (error,result)=>{
-        if (!error) {
-            res.status(200).json({data:result,message:'Category list successfully retrieved'});
-        }
-        else{
-            res.status(500).json({message:error.message});
-        }
-    });
-}
+        gameData.getRandomCategories(number, (error, result) => {
+            if (error) {
+                console.error('Categories error:', error);
+                return res.status(500).json({ message: error.message });
+            }
+            
+            res.status(200).json({
+                data: result,
+                message: 'Category list successfully retrieved'
+            });
+        });
+    } catch (error) {
+        console.error('Unexpected error in getRandomCategories:', error);
+        res.status(500).json({ message: 'Internal server error' });
+    }
+};
 
-const getRandomUsers = (req,res) => {
-    const categories = req.body.categories;
-    const number = req.params.number;
+const getRandomUsers = async (req, res) => {
+    try {
+        console.log('getRandomUsers called with params:', req.params);
+        const number = parseInt(req.params.number);
 
-    db.getRandomUsers(categories, +number, (error,result)=>{
-        if (!error) {
-            res.status(200).json({data:result,message:'Rounds successfully retrieved'});
-        }
-        else{
-            res.status(500).json({message:error.message});
-        }
-    });
-}
+        // First get random categories
+        gameData.getRandomCategories(5, (categoryError, categories) => {
+            if (categoryError) {
+                console.error('Category error:', categoryError);
+                return res.status(500).json({ message: categoryError.message });
+            }
 
-module.exports = {getRandomCategories, getRandomUsers}
+            console.log('Got categories for users:', categories);
+
+            // Then get random users for those categories
+            gameData.getRandomUsers(categories, number, (userError, rounds) => {
+                if (userError) {
+                    console.error('User error:', userError);
+                    return res.status(500).json({ message: userError.message });
+                }
+
+                console.log('Successfully got rounds:', rounds.length);
+                res.status(200).json({
+                    data: rounds,
+                    message: 'Players successfully retrieved'
+                });
+            });
+        });
+    } catch (error) {
+        console.error('Unexpected error in getRandomUsers:', error);
+        res.status(500).json({ message: 'Internal server error' });
+    }
+};
+
+module.exports = {
+    getRandomCategories,
+    getRandomUsers
+};
