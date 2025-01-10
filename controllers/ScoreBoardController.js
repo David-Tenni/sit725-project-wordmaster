@@ -125,20 +125,8 @@
         chart.innerHTML = this.createBarContainers();
       }
     }
-    updateBars() {
-      const chart = document.querySelector(".chart");
-      if (chart) {
-        chart.innerHTML = this.createBarContainers();
-      }
-    }
-    updateRoundDisplay(round) {
-      const roundDisplay = document.getElementById("current-round");
-      if (roundDisplay) {
-        roundDisplay.textContent = round;
-      } else {
-        console.error("Round display element not found.");
-      }
-    }
+
+
     updateRoundDisplay(round) {
       const roundDisplay = document.getElementById("current-round");
       if (roundDisplay) {
@@ -164,7 +152,16 @@
       // Update scores
       this.updateScoreBars(gameState.players);
     }
-
+    updateTimer(elapsed) {
+        const timerBar = document.querySelector(".timer-bar");
+        if (timerBar) {
+            const progress = Math.min(elapsed / this.timeLimit, 1); // Clamp progress this stops it exploding
+            timerBar.style.width = `${progress * 100}%`; 
+        } else {
+            console.error("Timer bar element not found.");
+        }
+    }
+    
     updateScoreBars(players) {
       players.forEach((player) => {
         const playerId = player.playerName.toLowerCase().trim();
@@ -295,6 +292,9 @@
       document.addEventListener("gameOver", (e) =>
         this.handleGameOver(e.detail)
       );
+      document.addEventListener("timerTick", (e) =>
+        this.updateTimer(e.detail.elapsed) 
+    );
 
       const wordForm = document.getElementById("wordForm");
       if (wordForm) {
