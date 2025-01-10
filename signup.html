@@ -46,7 +46,9 @@
         contentType: 'application/json',
         data: JSON.stringify({ username, password }),
         success: function() {
-          window.location.href = '/index.html';
+            //check for logged in status
+            localStorage.setItem('isLoggedIn','true');
+            window.location.href = '/mainMenu.html';
         },
         error: function(xhr) {
           if (xhr.status === 409) {

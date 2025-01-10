@@ -45,8 +45,10 @@
         method: 'POST',
         contentType: 'application/json',
         data: JSON.stringify({ username, password }),
-        success: function(response) {
-          window.location.href = '/index.html';
+        success: function(response) { 
+            //check logged in status
+            localStorage.setItem('isLoggedIn','true');
+            window.location.href = '/mainMenu.html';
         },
         error: function(xhr) {
           if (xhr.status === 401) {

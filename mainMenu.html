@@ -35,7 +35,7 @@
           <a href="signup.html" class="waves-effect waves-light btn btn-custom signup-btn">
             Sign up
           </a>
-          <a href="/leaderboard.html" class="waves-effect waves-light btn btn-custom signup-btn">
+          <a href="/leaderboard.html" class="waves-effect waves-light btn btn-custom leaderboard-btn">
             LeaderBoard
           </a>
         </div>
@@ -44,6 +44,14 @@
 
     <script>
       $(document).ready(function(){
+        const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
+        if(isLoggedIn){
+          $('.login-btn').hide();
+          $('.signup-btn').hide();
+        } else {
+          $('.login-btn').show();
+          $('.signup-btn').show();
+        }
         $('.modal').modal();
       });
     </script>
