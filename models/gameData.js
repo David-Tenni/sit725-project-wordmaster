@@ -31,7 +31,7 @@ async function getRandomUsers(categories, number, callback) {
         console.log('Getting random users:', { categories, number });
 
         const match = {
-            $or: categories.map(category => ({ [`answers.${category}`]: { $exists: true } }))
+            $and: categories.map(category => ({ [`answers.${category}`]: { $exists: true } }))
         };
 
         console.log('MongoDB query:', JSON.stringify(match, null, 2));
