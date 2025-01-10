@@ -163,32 +163,45 @@
     }
     
     updateScoreBars(players) {
-      players.forEach((player) => {
-        const playerId = player.playerName.toLowerCase().trim();
-        const bar = document.getElementById(playerId);
-
-        if (!bar) {
-          console.warn(`Bar not found for player: ${player.playerName}`);
-          this.addPlayer(player.playerName);
-          return;
-        }
-
-        const totalScore = player.scores.reduce(
-          (sum, score) => sum + score.answer.length,
-          0
-        );
-        const height = totalScore * 10;
-
-        bar.style.transition = "height 0.5s ease-out";
-        bar.style.height = `${height}px`;
-
-        const latestScore = player.scores[player.scores.length - 1];
-        this.updateValueLabel(bar, {
-          latest: latestScore ? latestScore.answer : "",
-          total: totalScore,
+        players.forEach((player) => {
+            const playerId = player.playerName.toLowerCase().trim();
+            const bar = document.getElementById(playerId);
+    
+            if (!bar) {
+                console.warn(`Bar not found for player: ${player.playerName}`);
+                this.addPlayer(player.playerName);
+                return;
+            }
+    
+            const totalScore = player.scores.reduce(
+                (sum, score) => sum + score.answer.length,
+                0
+            );
+            const height = totalScore * 10;
+    
+            bar.style.transition = "height 0.5s ease-out";
+            bar.style.height = `${height}px`;
+    
+            if (playerId === "player") {
+                bar.style.backgroundColor = "green"; // Player bar color
+            } else if (playerId === "ante") {
+                bar.style.backgroundColor = "red"; // Ante bar color
+            } else {
+                // Assign a random color for AI players
+                if (!bar.style.backgroundColor || bar.style.backgroundColor === "transparent") {
+                    const randomColor = `#${Math.floor(Math.random() * 16777215).toString(16)}`;
+                    bar.style.backgroundColor = randomColor;
+                }
+            }
+    
+            const latestScore = player.scores[player.scores.length - 1];
+            this.updateValueLabel(bar, {
+                latest: latestScore ? latestScore.answer : "",
+                total: totalScore,
+            });
         });
-      });
     }
+    
 
     updateValueLabel(bar, values) {
       const valueLabel = bar.querySelector(".bar-value");
