@@ -6,38 +6,122 @@
             this.startTime = null;
             this.timerInterval = null;
             this.initialCategoryDisplayed = false;
-            this.totalRounds = totalRounds; 
+            this.totalRounds = totalRounds;
+            this.gameData = null;
             this.initializeGame();
-            this.dispatchGameStateUpdate();
             this.initializeEventListeners();
-            this.startTimer();
         }
 
-        initializeGame() {
-            console.log('Initializing game...');
-            const aiPlayers = [
-                new window.Player(1, 'James'),
-                new window.Player(2, 'Sofia'), 
-                new window.Player(3, 'Lucas')
-            ];
+        async checkEndpoint(url) {
+            try {
+                const response = await fetch(url);
+                console.log(`Endpoint check (${url}):`, {
+                    status: response.status,
+                    statusText: response.statusText,
+                    headers: Object.fromEntries(response.headers),
+                    ok: response.ok
+                });
+            } catch (error) {
+                console.error(`Endpoint check failed (${url}):`, error);
+            }
+        }
 
+        async fetchGameData() {
+            try {
+                console.log('Starting data fetch...');
+                
+                const categoriesResponse = await fetch('/api/game/categories/5', {
+                    headers: {
+                        'Accept': 'application/json',
+                        'Content-Type': 'application/json'
+                    }
+                });
+                
+                const categoriesData = await categoriesResponse.json();
+                console.log('Categories data:', categoriesData);
+
+                const playersUrl = '/api/game/players/3';
+                const playersResponse = await fetch(playersUrl, {
+                    method: 'GET',
+                    headers: {
+                        'Accept': 'application/json',
+                        'Content-Type': 'application/json'
+                    }
+                });
+
+                if (!playersResponse.ok) {
+                    throw new Error(`Players request failed: ${playersResponse.status}`);
+                }
+
+                const playersData = await playersResponse.json();
+                this.gameData = {
+                    rounds: playersData.data
+                };
+                
+                return true;
+            } catch (error) {
+                console.error('Fetch error:', error);
+                if (window.M && window.M.toast) {
+                    window.M.toast({
+                        html: `Failed to load game data: ${error.message}`,
+                        classes: 'red'
+                    });
+                }
+                return false;
+            }
+        }
+
+        async initializeGame() {
+            console.log('Initializing game...');
+            
+            const dataFetched = await this.fetchGameData();
+            if (!dataFetched) {
+                console.error('Failed to initialize game');
+                return;
+            }
+        
+            // Create ScoreBoard and initialize with game data
+            this.scoreBoard = new window.ScoreBoard();
+        
+            // Get player names from the first round
+            const firstRound = this.gameData.rounds[0];
+            const allAiPlayerNames = Object.keys(firstRound.answers);
+            
+            // Take only the first 3 AI players
+            const aiPlayerNames = allAiPlayerNames.slice(0, 3);
+            console.log('Selected AI Player Names:', aiPlayerNames);
+        
+            // Create AI player instances (only 3)
+            const aiPlayers = aiPlayerNames.map((name, index) => 
+                new window.Player(index + 1, name)
+            );
+        
+            // Filter game data to only include selected players
+            this.gameData.rounds = this.gameData.rounds.map(round => ({
+                ...round,
+                answers: Object.fromEntries(
+                    Object.entries(round.answers)
+                        .filter(([name]) => aiPlayerNames.includes(name))
+                ),
+                category: round.category
+            }));
+        
             const humanPlayer = new window.Player(4, 'Player');
             const antePlayer = new window.Player(5, 'ANTE');
-
-            // Pass totalRounds to GameSession
+        
+            // Initialize game session with exactly 3 AI players
             this.gameSession = new window.GameSession(aiPlayers, humanPlayer, antePlayer, this.totalRounds);
             
-            // Reset for first round
-            this.initialCategoryDisplayed = false;
+            // Initialize ScoreBoard with filtered game data
+            this.scoreBoard.initializeAIPlayers(this.gameData);
             
-            // Force initial category from test data
-            const firstRoundData = window.gameTestData.rounds[0];
-            if (firstRoundData) {
-                this.gameSession.currentCategory = firstRoundData.category;
+            if (firstRound) {
+                this.gameSession.currentCategory = firstRound.category;
+                this.scoreBoard.currentCategory = firstRound.category;
                 this.dispatchGameStateUpdate();
             }
             
-            console.log('Game session initialized with category:', this.gameSession.currentCategory);
+            this.startTimer();
         }
 
         initializeEventListeners() {
@@ -55,28 +139,16 @@
 
             const responseTime = Date.now() - this.startTime;
             
-            // Add human player's score
             const playerScore = new window.PlayerScore(
                 this.gameSession.currentCategory,
                 word,
                 responseTime
             );
             this.gameSession.human_player.addScore(playerScore);
+            this.scoreBoard.recordAnswer('player', word, responseTime);
 
-            // Force AI responses for current round
             this.forceAIResponses();
 
-            // Calculate and add ANTE score
-            const anteScore = this.gameSession.calculateAnteScore();
-            this.gameSession.ante_player.addScore(new window.PlayerScore(
-                this.gameSession.currentCategory,
-                'A'.repeat(anteScore),
-                0
-            ));
-
-            this.dispatchGameStateUpdate();
-            
-            // Check if we've reached the total rounds
             if (this.gameSession.currentRound >= this.totalRounds-1) {
                 this.handleGameOver();
             } else if (this.gameSession.advanceRound()) {
@@ -86,67 +158,74 @@
 
         forceAIResponses() {
             const currentRound = this.gameSession.currentRound;
-            const roundData = window.gameTestData.rounds[currentRound - 1];
+            const roundData = this.gameData.rounds[currentRound - 1];
             
             if (!roundData) {
                 console.error('No round data found for round:', currentRound);
                 return;
             }
-
-            // Force all AI players to respond if they haven't yet
+    
             this.gameSession.ai_players.forEach(player => {
                 if (!player.scores[currentRound - 1]) {
-                    const aiResponse = roundData.answers[player.playerName.toLowerCase()];
+                    const aiResponse = roundData.answers[player.playerName];
+                    
                     if (!aiResponse) {
                         console.error('No AI response found for player:', player.playerName);
                         return;
                     }
-
+    
+                    console.log('Adding score for AI player:', player.playerName, aiResponse);
+    
                     const aiScore = new window.PlayerScore(
                         this.gameSession.currentCategory,
                         aiResponse.word,
                         aiResponse.time
                     );
                     player.addScore(aiScore);
+                    this.scoreBoard.recordAIResponse(player.playerName, aiResponse.word, aiResponse.time);
                 }
             });
+            
+            this.dispatchGameStateUpdate();
         }
-
+    
         checkAIResponses(elapsed) {
             if (this.gameSession.isGameOver()) return;
-
+    
             const currentRound = this.gameSession.currentRound;
             if (currentRound > this.totalRounds) {
                 this.handleGameOver();
                 return;
             }
-
-            const roundData = window.gameTestData.rounds[currentRound - 1];
+    
+            const roundData = this.gameData.rounds[currentRound - 1];
             
             if (!roundData) {
                 console.error('No round data found for round:', currentRound);
                 return;
             }
-
-            // Set initial category for new round
+    
             if (!this.initialCategoryDisplayed) {
                 this.gameSession.currentCategory = roundData.category;
+                this.scoreBoard.currentCategory = roundData.category;
                 this.dispatchGameStateUpdate();
                 this.initialCategoryDisplayed = true;
             }
-
+    
             let stateUpdated = false;
             this.gameSession.ai_players.forEach(player => {
-                const aiResponse = roundData.answers[player.playerName.toLowerCase()];
+                const aiResponse = roundData.answers[player.playerName];
+                
                 if (!aiResponse) {
                     console.error('No AI response found for player:', player.playerName);
                     return;
                 }
-
-                // Check if AI should respond based on elapsed time and hasn't responded yet
+    
                 if (aiResponse.time <= elapsed && 
                     (!player.scores[currentRound - 1] || 
                      player.scores[currentRound - 1].answer === '')) {
+                    
+                    console.log('AI player responding:', player.playerName, aiResponse);
                     
                     const aiScore = new window.PlayerScore(
                         this.gameSession.currentCategory,
@@ -154,10 +233,11 @@
                         aiResponse.time
                     );
                     player.addScore(aiScore);
+                    this.scoreBoard.recordAIResponse(player.playerName, aiResponse.word, aiResponse.time);
                     stateUpdated = true;
                 }
             });
-
+    
             if (stateUpdated) {
                 this.dispatchGameStateUpdate();
             }
@@ -169,7 +249,6 @@
             
             this.timerInterval = setInterval(() => {
                 const elapsed = Date.now() - this.startTime;
-                
                 document.dispatchEvent(new CustomEvent('timerTick', {
                     detail: { elapsed }
                 }));
@@ -182,12 +261,13 @@
 
         handleTimeout() {
             clearInterval(this.timerInterval);
-            this.handleWordSubmission('a');
+            this.handleWordSubmission('');
         }
 
         startNewRound() {
             clearInterval(this.timerInterval);
-            this.initialCategoryDisplayed = false; 
+            this.initialCategoryDisplayed = false;
+            this.scoreBoard.advanceRound();
             this.startTimer();
             this.dispatchGameStateUpdate();
         }
@@ -218,13 +298,11 @@
             return allPlayers.map(player => ({
                 name: player.playerName,
                 score: player.scores.reduce((sum, score) => sum + score.answer.length, 0),
-                scores: player.scores 
+                scores: player.scores
             }));
         }
 
         dispatchGameStateUpdate() {
-            console.log('Dispatching game state update...');
-            
             const allPlayers = [
                 this.gameSession.human_player,
                 ...this.gameSession.ai_players,
@@ -232,7 +310,8 @@
             ];
 
             const playersWithScores = allPlayers.map(player => ({
-                ...player,
+                playerName: player.playerName,
+                scores: player.scores,
                 totalScore: player.scores.reduce((sum, score) => sum + score.answer.length, 0)
             }));
 
@@ -245,7 +324,6 @@
                 }
             });
             
-            console.log('Dispatching event with details:', gameStateEvent.detail);
             document.dispatchEvent(gameStateEvent);
         }
     }
