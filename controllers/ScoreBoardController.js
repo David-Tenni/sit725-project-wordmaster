@@ -10,7 +10,6 @@
 
       // Initialize components
       try {
-        this.initializeBasePlayers();
         this.createScoreBoardHTML();
         // Wait for DOM to be ready before initializing Materialize
         document.addEventListener("DOMContentLoaded", () => {
@@ -26,10 +25,6 @@
       }
     }
 
-    initializeBasePlayers() {
-      this.addPlayer("player");
-      this.addPlayer("ante");
-    }
 
     addPlayer(playerName) {
       const playerId = playerName.toLowerCase().trim();

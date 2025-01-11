@@ -105,8 +105,13 @@
                 ),
                 category: round.category
             }));
-        
-            const humanPlayer = new window.Player(4, 'Player');
+            
+            let currentPlayerName = 'Player';
+            const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
+            if(isLoggedIn){
+              currentPlayerName = localStorage.getItem('user');
+            }
+            const humanPlayer = new window.Player(4, currentPlayerName);
             const antePlayer = new window.Player(5, 'ANTE');
         
             // Initialize game session with exactly 3 AI players
@@ -261,7 +266,7 @@
 
         handleTimeout() {
             clearInterval(this.timerInterval);
-            this.handleWordSubmission('');
+            this.handleWordSubmission('a');
         }
 
         startNewRound() {
