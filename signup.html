@@ -48,6 +48,8 @@
         success: function() {
             //check for logged in status
             localStorage.setItem('isLoggedIn','true');
+            localStorage.setItem('user',username);
+
             window.location.href = '/mainMenu.html';
         },
         error: function(xhr) {

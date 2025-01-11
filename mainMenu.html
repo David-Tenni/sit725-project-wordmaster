@@ -24,7 +24,7 @@
       </div>
 
       <div class="welcome-card">
-        <h5 class="wave-text">Welcome back 👋</h5>
+        <h5 id="welcome-user" class="wave-text"></h5>
         <div class="buttons-container">
           <a href="/index.html" class="waves-effect waves-light btn btn-custom play-btn">
             Play
@@ -46,8 +46,9 @@
       $(document).ready(function(){
         const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
         if(isLoggedIn){
-          $('.login-btn').hide();
+          $('.login-btn').hide();          
           $('.signup-btn').hide();
+          document.getElementById('welcome-user').innerText = `Welcome back ${localStorage.getItem('user')} 👋`;
         } else {
           $('.login-btn').show();
           $('.signup-btn').show();
