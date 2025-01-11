@@ -11,7 +11,11 @@
     
     <div class="container">
       <div class="brand-title">
-        <div class="logo">WM</div>
+        <div class="logo-section">
+          <div class="logo">
+              <img src="Public/img/Image_265.svg" alt="WordMaster Logo" class="logo-svg" />
+          </div>
+        </div>
         <h4>WordMaster</h4>
       </div>
 
@@ -25,13 +29,13 @@
           <a href="/index.html" class="waves-effect waves-light btn btn-custom play-btn">
             Play
           </a>
-          <a class="waves-effect waves-light btn btn-custom login-btn">
+          <a href="/login.html" class="waves-effect waves-light btn btn-custom login-btn">
             Log in
           </a>
-          <a class="waves-effect waves-light btn btn-custom signup-btn">
+          <a href="signup.html" class="waves-effect waves-light btn btn-custom signup-btn">
             Sign up
           </a>
-          <a href="/leaderboard.html" class="waves-effect waves-light btn btn-custom signup-btn">
+          <a href="/leaderboard.html" class="waves-effect waves-light btn btn-custom leaderboard-btn">
             LeaderBoard
           </a>
         </div>
@@ -40,6 +44,14 @@
 
     <script>
       $(document).ready(function(){
+        const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
+        if(isLoggedIn){
+          $('.login-btn').hide();
+          $('.signup-btn').hide();
+        } else {
+          $('.login-btn').show();
+          $('.signup-btn').show();
+        }
         $('.modal').modal();
       });
     </script>

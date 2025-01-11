@@ -33,7 +33,7 @@
       </div>
     </div> -->
     
-    <a href="/mainMenu.html" class="waves-effect waves-light btn btn-custom login-btn">
+    <a href="/mainMenu.html" class="waves-effect waves-light btn btn-custom login-btn" id="exit-game">
       Exit Game
     </a>
     <!-- Scripts -->
@@ -57,6 +57,10 @@
         });
         
         $('#modal1').modal('open');
+        //reset the logged in flag
+        $('#exit-game').on('click', function(){
+          localStorage.removeItem('isLoggedIn');
+        });
       });
       </script>
   </body>
