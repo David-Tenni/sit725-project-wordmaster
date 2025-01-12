@@ -36,10 +36,8 @@ async function getRandomUsers(categories, number, username, callback) {
             match.push({ username: { $ne: username } });
         }
 
-        //match = {$and: match}
-
         const players = await collection.aggregate([
-            { $match: {$and: match} },
+            { $match: { $and: match} },
             { $sample: { size: parseInt(number) } }
         ]).toArray();
 
