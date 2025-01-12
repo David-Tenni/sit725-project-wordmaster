@@ -15,20 +15,24 @@ routes.post('/refresh', (req, res) => {
     controller.refresh(req, res);
 });
 
-routes.get('/', authenticator, (req, res) => {
+routes.get('/', authenticator.protect, (req, res) => {
     controller.getUser(req, res);
 });
 
-routes.patch('/answer', authenticator, (req, res) => {
+routes.patch('/answer', authenticator.protect, (req, res) => {
     controller.updateUserAnswer(req, res);
 });
 
-routes.patch('/password', authenticator, (req, res) => {
+routes.patch('/password', authenticator.protect, (req, res) => {
     controller.updateUserPassword(req, res);
 });
 
-routes.delete('/', authenticator, (req, res) => {
+routes.delete('/', authenticator.protect, (req, res) => {
     controller.deleteUser(req, res);
 });
+
+routes.post('/game', authenticator.protect, (req, res) => {
+    controller.postUserGame(req, res);
+})
 
 module.exports = routes;

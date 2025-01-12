@@ -101,6 +101,29 @@ async function updateUserAnswer(req, res) {
     })
 }
 
+async function postUserGame(req, res) {
+    let username = req.user.username;
+    let { win, score } = req.body;
+
+    if(win == undefined || win == null || !score) return res.status(400).json({message:"Request must contain win and score"});
+
+    if(isNaN(Number(score))) return res.status(400).json({message:"Score must be a number"});
+
+    if(typeof win !== "boolean") return res.status(400).json({message:"Win must be true or false"});
+
+    db.postUserGame(win, Number(score), username, (error) => {
+        if (!error){
+            res.status(201).json({message:'Game data added to user'});
+        }
+        else if(error.message == "User does not exist"){
+            res.status(404).json({message:"User does not exist"});
+        }
+        else{
+            res.status(500).json({message:error.message})
+        }
+    })
+}
+
 async function updateUserPassword(req, res) {
     let username = req.user.username;
     let password = req.body.password;
@@ -136,4 +159,4 @@ async function deleteUser(req, res) {
     })
 }
 
-module.exports = {postUser, login, refresh, getUser, updateUserAnswer, updateUserPassword, deleteUser}
+module.exports = {postUser, login, refresh, getUser, updateUserAnswer, updateUserPassword, deleteUser, postUserGame}

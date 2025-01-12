@@ -21,7 +21,7 @@ async function getRandomCategories(number, callback) {
 }
 
 // Get random users with answers for given categories
-async function getRandomUsers(categories, number, callback) {
+async function getRandomUsers(categories, number, username, callback) {
     try {
         if (!categories || !Array.isArray(categories)) {
             console.error('Invalid categories:', categories);
@@ -30,14 +30,16 @@ async function getRandomUsers(categories, number, callback) {
 
         console.log('Getting random users:', { categories, number });
 
-        const match = {
-            $and: categories.map(category => ({ [`answers.${category}`]: { $exists: true } }))
-        };
+        let match = categories.map(category => ({ [`answers.${category}`]: { $exists: true } }));
 
-        console.log('MongoDB query:', JSON.stringify(match, null, 2));
+        if(username) {
+            match.push({ username: { $ne: username } });
+        }
+
+        //match = {$and: match}
 
         const players = await collection.aggregate([
-            { $match: match },
+            { $match: {$and: match} },
             { $sample: { size: parseInt(number) } }
         ]).toArray();
 

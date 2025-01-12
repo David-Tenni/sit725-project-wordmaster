@@ -55,17 +55,59 @@ async function updateUserAnswer(username, category, answer, callback){
         const user = await collection.findOne({ username: username });
         if (!user) return callback({ message: "User does not exist" });
 
+        if(!user.longest_word || answer.word.length >= user.longest_word?.length){
+            await collection.updateOne(
+                { username: username },
+                { $set: { longest_word:  answer.word  } }
+            );
+        }
+
         if (!user.answers) {
             await collection.updateOne(
                 { username: username },
                 { $set: { answers: { [category]: answer } } }
             );
         } else {
+            if(user.answers[category]){
+                if(user.answers[category].word.length > answer.word.length) return callback(null);
+            }
             user.answers[category] = answer;
 
             await collection.updateOne(
                 { username },
                 { $set: { answers: user.answers } }
+            );
+        }
+        callback(null);
+    }catch(error){
+        callback({message: "Error updating user"});
+    }     
+}
+
+async function postUserGame(win, score, username, callback) {
+    try{
+        const user = await collection.findOne({ username: username });
+        if (!user) return callback({ message: "User does not exist" });
+
+        await collection.updateOne(
+            { username: username },
+            { $inc: { total_score: score  } }
+        );
+
+        await collection.updateOne(
+            { username: username },
+            { $max: { high_score: score } }
+        );
+
+        await collection.updateOne(
+            { username: username },
+            { $inc: { games: 1 } }
+        );
+
+        if(win){
+            await collection.updateOne(
+                { username: username },
+                { $inc: { wins: 1 } }
             );
         }
         callback(null);
@@ -100,4 +142,4 @@ async function deleteUser(username, callback){
     
 }
 
-module.exports = {getUser,postUser,updateUserAnswer,updateUserPassword,deleteUser,addRefreshToken,findRefreshToken}
+module.exports = {getUser,postUser,updateUserAnswer,updateUserPassword,deleteUser,addRefreshToken,findRefreshToken, postUserGame}

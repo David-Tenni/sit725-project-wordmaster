@@ -24,6 +24,7 @@ const getRandomCategories = async (req, res) => {
 
 const getRandomUsers = async (req, res) => {
     try {
+        let username = req.user?.username;
         console.log('getRandomUsers called with params:', req.params);
         const number = parseInt(req.params.number);
 
@@ -37,7 +38,7 @@ const getRandomUsers = async (req, res) => {
             console.log('Got categories for users:', categories);
 
             // Then get random users for those categories
-            gameData.getRandomUsers(categories, number, (userError, rounds) => {
+            gameData.getRandomUsers(categories, number, username, (userError, rounds) => {
                 if (userError) {
                     console.error('User error:', userError);
                     return res.status(500).json({ message: userError.message });
