@@ -1,6 +1,6 @@
 const jwt = require('jsonwebtoken');
 
-const authenticator = (req, res, next) => {
+const protect= (req, res, next) => {
     const token = req.headers['authorization'];
     if (!token) return res.status(401).json({ message: "No token found" });
 
@@ -13,4 +13,16 @@ const authenticator = (req, res, next) => {
     });
 };
 
-module.exports = authenticator;
+const check = (req, res, next) => {
+    const token = req.headers['authorization'];
+    if (token){
+        jwt.verify(token, "temporary_secret_key", (error, result) => {
+            if (!error){
+                req.user = result;}
+
+        });
+    }            
+    next();
+};
+
+module.exports = {protect, check};
