@@ -275,9 +275,84 @@
   display: block; 
   margin: 0 auto;
 }
-  
- 
 
+/* Navigation Bar */
+.navbar{
+  position: absolute;
+  background-color: transparent;
+  border: none;
+  box-shadow: none;
+  top: 24px;
+  max-width: 80em;
+}
+.navbar ul {
+  display: flex;
+  gap: 20px;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  float: right;
+}
+
+.navbar ul li a {
+  text-decoration: none;
+  color: #A388EE;
+  font-weight: bold;
+  font-size: 16px;
+  transition: color 0.3s ease;
+}
+
+.navbar ul li a:hover {
+  color: #4a148c; 
+}
+
+.navbar ul li a.active{
+  color: #6a1b9a;
+}
+
+
+/* Reset Password Modal */
+#reset-password-modal .modal-content {
+  text-align: left;
+}
+
+#reset-password-modal .modal-content h4 {
+  color: var(--primary-purple);
+  font-size: 1.5rem;
+  margin-bottom: 20px;
+}
+
+#reset-password-modal .input-field input {
+  border: 1px solid #e0e0e0;
+  border-radius: 4px;
+  padding: 10px;
+  margin-bottom: 15px;
+}
+
+#reset-password-modal .modal-content button {
+  margin-right: 10px;
+}
+
+/* Delete Account Modal */
+#delete-account-modal .modal-content {
+  text-align: center;
+}
+
+#delete-account-modal .modal-content h4 {
+  color: #d32f2f; /* Red color for warning */
+  font-size: 1.5rem;
+  margin-bottom: 20px;
+}
+
+#delete-account-modal .modal-content p {
+  color: #555;
+  font-size: 1rem;
+  margin-bottom: 20px;
+}
+
+#delete-account-modal .modal-content button {
+  margin-right: 10px;
+}
 
 
 
