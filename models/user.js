@@ -4,7 +4,8 @@ let collection = client.db('authentication').collection("users");
 
 async function getUser(username, callback) {
     try{
-        const user = await collection.findOne({ username: username });
+        //making username case insensitive
+        const user = await collection.findOne({ username: { $regex: `^${username}$`, $options: 'i' } });
         callback(null, user);
     }catch(error){
         callback({message: "Error finding user"}, user);
