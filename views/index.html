@@ -9,15 +9,26 @@
   </head>
   <body>
     <div class="purple-blob"></div>
+    <!--header section-->
+    <div class="container">
+      <div class="brand-title">
+        <div class="logo-section">
+          <div class="logo">
+              <img src="Public/img/Image_265.svg" alt="WordMaster Logo" class="logo-svg" />
+          </div>
+        </div>
+        <h4>WordMaster</h4>
+      </div>
+    <!--navigation bar-->
+    <nav class="navbar">
+      <ul>
+        <li><a href="index.html" class="active">Home</a></li>
+        <li><a href="leaderboard.html">LeaderBoard</a></li>
+        <li><a href="settings.html" id="settings-menu">Settings</a></li>
+      </ul>
+    </nav>
 
     <div class="game-container">
-      <div class="header-section">
-        <div class="logo-section">
-          <div class="logo">WM</div>
-          <h4>WordMaster</h4>
-        </div>
-      </div>
-      
       <div class="game-content">
         <div id="scoreBoard"></div>
       </div>
@@ -51,6 +62,13 @@
         //reset the logged in flag
         $('#exit-game').on('click', function(){
           localStorage.removeItem('isLoggedIn');
+        });
+
+        $(document).ready(function(){
+          const isLoggedIn = localStorage.getItem('isLoggedIn')=== 'true';
+          if(!isLoggedIn){
+            $('#settings-menu').hide();
+          }
         });
       });
       </script>

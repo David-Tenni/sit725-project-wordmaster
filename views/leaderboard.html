@@ -11,10 +11,21 @@
     
     <div class="container">
       <div class="brand-title">
-        <div class="logo">WM</div>
+        <div class="logo-section">
+          <div class="logo">
+              <img src="Public/img/Image_265.svg" alt="WordMaster Logo" class="logo-svg" />
+          </div>
+        </div>
         <h4>WordMaster</h4>
       </div>
-
+    <!--navigation bar-->
+    <nav class="navbar">
+      <ul>
+        <li><a href="index.html">Home</a></li>
+        <li><a href="leaderboard.html" class="active">Leaderboard</a></li>
+        <li><a href="settings.html" id="settings-menu">Settings</a></li>
+      </ul>
+    </nav>
       <div class="tagline">
         Global Leaderboard
       </div>
@@ -51,5 +62,13 @@
         </div>
       </div>
     </div>
+    <script>
+      $(document).ready(function(){
+        const isLoggedIn = localStorage.getItem('isLoggedIn')=== 'true';
+        if(!isLoggedIn){
+          $('#settings-menu').hide();
+        }
+      });
+    </script>
   </body>
 </html>
