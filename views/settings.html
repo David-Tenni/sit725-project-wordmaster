@@ -1,31 +1,56 @@
 <!DOCTYPE html>
-<html>
-  <head>
-    <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
-    <link rel="stylesheet" href="wordmaster.css">
-  </head>
-  <body>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Settings - WordMaster</title>
+  <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+  <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+  <link rel="stylesheet" href="wordmaster.css">
+</head>
+<body>
     <div class="purple-blob"></div>
-    
-    <div class="container">
-      <div class="brand-title">
-        <div class="logo-section">
-          <div class="logo">
-              <img src="Public/img/Image_265.svg" alt="WordMaster Logo" class="logo-svg" />
+     <div class="container">
+          <div class="brand-title">
+            <div class="logo-section">
+              <div class="logo">
+                  <img src="Public/img/Image_265.svg" alt="WordMaster Logo" class="logo-svg" />
+              </div>
+            </div>
+            <h4>WordMaster</h4>
           </div>
-        </div>
-        <h4>WordMaster</h4>
-      </div>
-    <!--navigation bar-->
+              <!--navigation bar-->
     <nav class="navbar">
-      <ul>
-        <li><a href="index.html">Home</a></li>
-        <li><a href="leaderboard.html">Leaderboard</a></li>
-        <li><a href="settings.html" id="settings-menu" class="active">Settings</a></li>
-      </ul>
-    </nav>
+        <ul>
+          <li><a href="index.html">Home</a></li>
+          <li><a href="leaderboard.html">Leaderboard</a></li>
+          <li><a href="settings.html" class="active" id="settings-menu">Settings</a></li>
+        </ul>
+      </nav>
+  <!-- Collapsible Reset Password Section -->
+  <div class="container">
+    <div class="welcome-card">
+   <!-- Logout and Delete Account Buttons -->
+   <div class="action-buttons">
+    <button id="logout-button" class="waves-effect waves-light">Logout</button>
   </div>
+</div>
+
+  <script>
+    //Collapse reset section
+       // Handle Logout Button Click
+       $('#logout-button').on('click', function() {
+      // Clear tokens and user data from localStorage
+      localStorage.removeItem('accessToken');
+      localStorage.removeItem('refreshToken');
+      localStorage.removeItem('isLoggedIn');
+      localStorage.removeItem('user');
+
+      // Redirect to mainMenu.html
+      window.location.href = '/mainMenu.html';
+    });
+  </script>
 </body>
 </html>
