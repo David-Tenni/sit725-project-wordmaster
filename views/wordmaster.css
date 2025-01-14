@@ -52,7 +52,7 @@
     background-color: var(--primary-purple) !important;
   }
   
-  .login-btn, .signup-btn, .leaderboard-btn {
+  .login-btn, .signup-btn, .leaderboard-btn, .logout-btn {
     background-color: white !important;
     color: black !important;
     border: 1px solid var(--light-gray) !important;
@@ -132,7 +132,7 @@
     background-color: var(--primary-purple) !important;
   }
   
-  .login-btn, .signup-btn, .leaderboard-btn {
+  .login-btn, .signup-btn, .leaderboard-btn, .logout-btn {
     background-color: white !important;
     color: black !important;
     border: 1px solid var(--light-gray) !important;

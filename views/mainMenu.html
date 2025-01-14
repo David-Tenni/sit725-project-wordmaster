@@ -38,6 +38,7 @@
           <a href="/leaderboard.html" class="waves-effect waves-light btn btn-custom leaderboard-btn">
             LeaderBoard
           </a>
+          <button id="logout-btn" class="waves-effect waves-light btn btn-custom logout-btn">Logout</button>
         </div>
       </div>
     </div>
@@ -48,13 +49,26 @@
         if(isLoggedIn){
           $('.login-btn').hide();          
           $('.signup-btn').hide();
+          $('.logout-btn').show();
           document.getElementById('welcome-user').innerText = `Welcome back ${localStorage.getItem('user')} 👋`;
         } else {
           $('.login-btn').show();
           $('.signup-btn').show();
+          $('.logout-btn').hide();
         }
         $('.modal').modal();
       });
+      //Logout function
+      $('#logout-btn').on('click', function() {
+      // Clear tokens and user data from localStorage
+      localStorage.removeItem('accessToken');
+      localStorage.removeItem('refreshToken');
+      localStorage.removeItem('isLoggedIn');
+      localStorage.removeItem('user');
+
+      // Redirect to mainMenu.html
+      window.location.href = '/mainMenu.html';
+    });
     </script>
   </body>
 </html>
