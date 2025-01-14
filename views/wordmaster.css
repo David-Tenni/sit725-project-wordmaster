@@ -310,50 +310,106 @@
   color: #6a1b9a;
 }
 
-
-/* Reset Password Modal */
-#reset-password-modal .modal-content {
-  text-align: left;
+/* Collapsible Styling */
+.collapsible-header {
+  background-color: #6a1b9a;
+  color: white;
+  font-weight: bold;
+  padding: 15px;
+  border: none;
+  border-radius: 5px;
+  padding: 10px 20 px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 50px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
 }
 
-#reset-password-modal .modal-content h4 {
-  color: var(--primary-purple);
-  font-size: 1.5rem;
-  margin-bottom: 20px;
+.collapsible-header:hover {
+  background-color: #4a148c;
 }
 
-#reset-password-modal .input-field input {
-  border: 1px solid #e0e0e0;
-  border-radius: 4px;
+.collapsible-body {
+  padding: 20px;
+  background-color: #f8f8f8;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  margin-top: 10px;
+}
+
+/* Input Field Styling */
+.input-field input {
+  border: 1px solid #ddd;
+  border-radius: 5px;
   padding: 10px;
+  width: 100%;
   margin-bottom: 15px;
+  font-size: 16px;
 }
 
-#reset-password-modal .modal-content button {
-  margin-right: 10px;
+.input-field input:focus {
+  border-color: #6a1b9a;
+  outline: none;
+  box-shadow: 0 0 5px rgba(106, 27, 154, 0.5);
 }
 
-/* Delete Account Modal */
-#delete-account-modal .modal-content {
-  text-align: center;
+/* Action Buttons Container */
+.action-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  justify-content: space-between;
+  margin-top: 30px;
 }
 
-#delete-account-modal .modal-content h4 {
-  color: #d32f2f; /* Red color for warning */
-  font-size: 1.5rem;
-  margin-bottom: 20px;
+/* Logout Button Styling */
+#logout-button {
+  background-color: #A388EE;
+  color: white;
+  font-weight: bold;
+  border: none;
+  border-radius: 5px;
+  padding: 10px 20px;
+  height: 50px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
 }
 
-#delete-account-modal .modal-content p {
-  color: #555;
-  font-size: 1rem;
-  margin-bottom: 20px;
+#logout-button:hover {
+  background-color: #4a148c;
 }
 
-#delete-account-modal .modal-content button {
-  margin-right: 10px;
+/* Delete Account Button Styling */
+#delete-account-button {
+  background-color: #d32f2f;
+  color: white;
+  font-weight: bold;
+  border: none;
+  border-radius: 5px;
+  padding: 10px 20px;
+  height: 50px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
 }
 
+#delete-account-button:hover {
+  background-color: #b71c1c;
+}
+
+/* Error and Success Messages */
+.error-message {
+  color: #d32f2f;
+  font-size: 14px;
+  margin-top: 10px;
+}
+
+.success-message {
+  color: #388e3c;
+  font-size: 14px;
+  margin-top: 10px;
+}
 
 
 
