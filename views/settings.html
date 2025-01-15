@@ -34,23 +34,63 @@
     <div class="welcome-card">
    <!-- Logout and Delete Account Buttons -->
    <div class="action-buttons">
+    <button id="delete-account-button" class="waves-effect waves-light">Delete Account</button>
     <button id="logout-button" class="waves-effect waves-light">Logout</button>
   </div>
+  <p id="delete-account-error" class="error-message"></p>
+  <p id="delete-account-success" class="success-message"></p>
 </div>
+<script>
+  $('#logout-button').on('click', function() {
+    //clear tokens and user data from localStorage
+    localStorage.removeItem('accessToken');
+    localStorage.removeItem('refreshToken');
+    localStorage.removeItem('isLoggedIn');
+    localStorage.removeItem('user');
+    //redirect to mainMenu.html
+    window.location.href = '/mainMenu.html';
+ });
+ 
+ //delete account
+ $('#delete-account-button').on('click', function() {
+    const accessToken = localStorage.getItem('accessToken');
+    if (!accessToken) {
+        $('#delete-account-error').text('You are not logged in.');
+        return;
+    }
+    //delete confirmation
+    if (!confirm('Are you sure you want to delete your account? This action cannot be undone.')) {
+        return;
+    }
 
-  <script>
-    //Collapse reset section
-       // Handle Logout Button Click
-       $('#logout-button').on('click', function() {
-      // Clear tokens and user data from localStorage
-      localStorage.removeItem('accessToken');
-      localStorage.removeItem('refreshToken');
-      localStorage.removeItem('isLoggedIn');
-      localStorage.removeItem('user');
+     $.ajax({
+       url: '/api/user',
+       method: 'DELETE',
+       headers: {
+         'Authorization': accessToken
+       },
+       success: function(response) {
+         localStorage.removeItem('accessToken');
+         localStorage.removeItem('refreshToken');
+         localStorage.removeItem('isLoggedIn');
+         localStorage.removeItem('user');
 
-      // Redirect to mainMenu.html
-      window.location.href = '/mainMenu.html';
-    });
+         //success message and redirect to mainMenu.html
+         $('#delete-account-success').text('Account deleted successfully.');
+         setTimeout(() => {
+           window.location.href = '/mainMenu.html';
+         }, 2000);
+       },
+       error: function(xhr) {
+         if (xhr.status === 401) {
+           $('#delete-account-error').text('Invalid or expired token. Please log in again.');
+         } else {
+           $('#delete-account-error').text('An error occurred. Please try again.');
+         }
+       }
+     });
+   });
+
   </script>
 </body>
 </html>
