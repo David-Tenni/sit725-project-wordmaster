@@ -70,7 +70,33 @@
                 return false;
             }
         }
-
+        async fetchAndStoreValidWords(categories) {
+            console.log('Starting to fetch valid words for categories:', categories);
+            try {
+                for (const category of categories) {
+                    console.log(`Fetching words for category: ${category}`);
+                    const response = await fetch(`/api/word/${category}`);
+                    
+        
+                    const data = await response.json();
+                    console.log(`Raw API response for ${category}:`, data);
+        
+                    if (data.data) {
+                        // Extract just the word values from the objects
+                        const wordList = data.data.map(item => item.word);
+                        
+                        localStorage.setItem(`validWords_${category}`, JSON.stringify(wordList));
+                    }
+                }
+            } catch (error) {
+                console.error('Error fetching valid words:', error);
+                M.toast({
+                    html: 'Failed to load word lists. Please refresh the page.',
+                    classes: 'red',
+                    displayLength: 3000
+                });
+            }
+        }
         async initializeGame() {
             console.log('Initializing game...');
             
@@ -96,6 +122,12 @@
                 new window.Player(index + 1, name)
             );
         
+
+            // Fetch and store valid words for each category
+            const categories = this.gameData.rounds.map(round => round.category);
+            
+            await this.fetchAndStoreValidWords(categories);
+
             // Filter game data to only include selected players
             this.gameData.rounds = this.gameData.rounds.map(round => ({
                 ...round,
@@ -141,7 +173,23 @@
 
         handleWordSubmission(word) {
             if (!word || this.gameSession.isGameOver()) return;
-
+        
+            if (!this.isValidWord(word, this.gameSession.currentCategory)) {
+                // Show error using Materialize toast
+                M.toast({
+                    html: 'Invalid word for this category!',
+                    classes: 'red',
+                    displayLength: 2000
+                });
+                
+                // Add visual feedback by making input red
+                const input = document.getElementById('playerPoints');
+                input.classList.add('invalid');
+                setTimeout(() => input.classList.remove('invalid'), 1000);
+                //stop them getting points for the invalid one
+                return; 
+            }
+        
             const responseTime = Date.now() - this.startTime;
             
             const playerScore = new window.PlayerScore(
@@ -151,9 +199,9 @@
             );
             this.gameSession.human_player.addScore(playerScore);
             this.scoreBoard.recordAnswer('player', word, responseTime);
-
+        
             this.forceAIResponses();
-
+        
             if (this.gameSession.currentRound >= this.totalRounds-1) {
                 this.handleGameOver();
             } else if (this.gameSession.advanceRound()) {
@@ -193,7 +241,44 @@
             
             this.dispatchGameStateUpdate();
         }
-    
+        isValidWord(word, category) {
+            console.log(`Checking word: "${word}" for category: "${category}"`);
+            
+            const validWordsJson = localStorage.getItem(`validWords_${category}`);
+            if (!validWordsJson) {
+                console.error(`No valid words found in localStorage for category: ${category}`);
+                console.log('Current localStorage keys:', 
+                    Object.keys(localStorage).filter(key => key.startsWith('validWords_'))
+                );
+                M.toast({
+                    html: 'Error: Word list not loaded. Please refresh the page.',
+                    classes: 'red',
+                    displayLength: 3000
+                });
+                return false;
+            }
+            
+            try {
+                const validWords = JSON.parse(validWordsJson);
+                console.log(`Found ${validWords.length} words for category: ${category}`);
+                
+                // Debug: Print a few words from the list
+                console.log('Sample valid words:', validWords.slice(0, 5));
+                
+                // Convert both input word and valid words to lowercase for comparison
+                const normalizedWord = word.toLowerCase().trim();
+                const isValid = validWords.some(validWord => 
+                    validWord.toLowerCase().trim() === normalizedWord
+                );
+                
+                console.log(`Word "${word}" is ${isValid ? 'valid' : 'invalid'} for category ${category}`);
+                return isValid;
+            } catch (error) {
+                console.error('Error parsing valid words:', error);
+                console.log('Raw localStorage content:', validWordsJson);
+                return false;
+            }
+        }
         checkAIResponses(elapsed) {
             if (this.gameSession.isGameOver()) return;
     
@@ -264,9 +349,19 @@
             }, 100);
         }
 
+            //because of validation need to handle timeouts here now
+        handleTimeoutSubmission() {
+            const playerScore = new window.PlayerScore(this.gameSession.currentCategory, '', this.timeLimit);
+            this.gameSession.human_player.addScore(playerScore);
+            this.scoreBoard.recordAnswer('player', '', this.timeLimit);
+            
+            this.forceAIResponses();
+            this.gameSession.currentRound >= this.totalRounds-1 ? this.handleGameOver() : this.gameSession.advanceRound() && this.startNewRound();
+        }
+        
         handleTimeout() {
             clearInterval(this.timerInterval);
-            this.handleWordSubmission('a');
+            this.handleTimeoutSubmission();
         }
 
         startNewRound() {
