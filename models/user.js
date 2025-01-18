@@ -119,16 +119,14 @@ async function postUserGame(win, score, username, callback) {
 
 async function updateUserPassword(username, password, callback){
     try{
-        console.log(`Update password for the username: ${username}`); //temp code
         const user = await collection.findOne({ username: username });
         if (!user) return callback({ message: "User does not exist" }, null);
-    
+        
         await collection.updateOne(
             { username: username },
             { $set: { password: password } }
         );
 
-        console.log(`password update result: ${JSON.stringify(result)}`);//temp code
         callback(null);
     }catch(error){
         callback({message: "Error updating user"});
