@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profile - WordMaster</title>
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+    <link rel="stylesheet" href="wordmaster.css">
+    <style>
+        .stats-card {
+            padding: 20px;
+            margin: 10px;
+            border-radius: 8px;
+        }
+        .stat-value {
+            font-size: 2em;
+            font-weight: bold;
+            color: #A388EE;
+        }
+        .stat-label {
+            color: #666;
+            font-size: 1.1em;
+        }
+        .category-achievements {
+            margin-top: 20px;
+        }
+        .achievement-card {
+            margin: 10px;
+            padding: 15px;
+            border-radius: 8px;
+            background: #f5f5f5;
+        }
+    </style>
+</head>
+<body>
+    <div class="purple-blob"></div>
+    <div class="container">
+        <!-- Header -->
+        <div class="brand-title">
+            <div class="logo-section">
+                <div class="logo">
+                    <img src="Public/img/Image_265.svg" alt="WordMaster Logo" class="logo-svg" />
+                </div>
+            </div>
+            <h4>WordMaster</h4>
+        </div>
+
+        <!-- Navigation -->
+        <nav class="navbar">
+            <ul>
+                <li><a href="index.html">Home</a></li>
+                <li><a href="leaderboard.html">LeaderBoard</a></li>
+                <li><a href="settings.html" id="settings-menu">Settings</a></li>
+            </ul>
+        </nav>
+
+        <!-- Profile Content -->
+        <div class="welcome-card">
+            <h3 id="profile-username" class="wave-text center-align"></h3>
+            
+            <!-- Stats Grid -->
+            <div class="row">
+                <div class="col s12 m6">
+                    <div class="stats-card">
+                        <div class="stat-value" id="total-score">0</div>
+                        <div class="stat-label">Total Score</div>
+                    </div>
+                </div>
+                <div class="col s12 m6">
+                    <div class="stats-card">
+                        <div class="stat-value" id="high-score">0</div>
+                        <div class="stat-label">Highest Score</div>
+                    </div>
+                </div>
+                <div class="col s12 m6">
+                    <div class="stats-card">
+                        <div class="stat-value" id="total-wins">0</div>
+                        <div class="stat-label">Total Wins</div>
+                    </div>
+                </div>
+                <div class="col s12 m6">
+                    <div class="stats-card">
+                        <div class="stat-value" id="games-played">0</div>
+                        <div class="stat-label">Games Played</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Category Achievements -->
+            <div class="category-achievements">
+                <h5>Best Words By Category</h5>
+                <div id="category-list"></div>
+            </div>
+        </div>
+    </div>
+
+    <script src="/controllers/ProfileController.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const profileController = new ProfileController();
+        });
+    </script>
+</body>
+</html>
