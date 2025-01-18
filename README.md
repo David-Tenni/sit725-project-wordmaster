@@ -10,6 +10,7 @@ node server.js
 ```
 
 ## File structure
+```markdown
 ├── controllers
 │   ├── GameController.js
 │   ├── gameDataController.js
@@ -59,7 +60,7 @@ node server.js
 ├── package.json
 ├── README.md
 ├── server.js
-
+```
 
 
 ## Basic explantion of system
