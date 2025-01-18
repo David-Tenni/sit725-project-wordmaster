@@ -8,33 +8,56 @@ David started new branch 18/12/2024
 David started new branch 22/12/2024
 
 This is our filestrucure
-controllers/
-  GameController.js
-  ScoreBoardController.js
-  wordsController.js
-models/
-  connection.js
-  GameSession.js
-  index.js
-  Player.js
-  PlayerScore.js
-  ScoreBoard.js
-  word.js
-node_modules/
-routers/
-  wordsRouter.js
-test/
-  testGameSession.js
-views/
-.gitignore
-index.html
-package-lock.json
-package.json
-README.md
-server.js
-
-
-
+SIT725-PROJECT
+├── controllers
+│   ├── GameController.js
+│   ├── gameDataController.js
+│   ├── ScoreBoardController.js
+│   ├── userController.js
+│   ├── wordsController.js
+├── models
+│   ├── connection.js
+│   ├── gameData.js
+│   ├── GameSession.js
+│   ├── index.js
+│   ├── Player.js
+│   ├── PlayerScore.js
+│   ├── ScoreBoard.js
+│   ├── user.js
+│   ├── word.js
+├── node_modules
+├── routers
+│   ├── gameDataRouter.js
+│   ├── usersRouter.js
+│   ├── wordsRouter.js
+├── sockets
+│   ├── categories.js
+│   ├── highScore.js
+│   ├── totalScore.js
+│   ├── wins.js
+│   ├── wordLength.js
+├── test
+│   ├── gameTestData.js
+│   ├── testGameSession.js
+│   ├── user.test.js
+│   ├── word.test.js
+├── views
+│   ├── js
+│   │   ├── script.js
+│   ├── index.html
+│   ├── leaderboard.html
+│   ├── login.html
+│   ├── mainMenu.html
+│   ├── scoreBoard.css
+│   ├── settings.html
+│   ├── signup.html
+│   ├── wordmaster.css
+├── .gitignore
+├── authenticator.js
+├── package-lock.json
+├── package.json
+├── README.md
+├── server.js
 
 
 
