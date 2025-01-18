@@ -33,6 +33,21 @@
   <!-- Collapsible Reset Password Section -->
   <div class="container">
     <div class="welcome-card">
+      <ul class="collapsible">
+        <li>
+          <div class="collapsible-header">Reset Password</div>
+          <div class="collapsible-body">
+            <form id="reset-password-form">
+              <div class="input-field">
+                <input type="password" id="new-password" placeholder="New Password" required>
+              </div>
+              <button type="submit" class="waves-effect waves-light btn btn-custom play-btn">Update Password</button>
+            </form>
+            <p id="reset-password-error" class="error-message"></p>
+            <p id="reset-password-success" class="success-message"></p>
+          </div>
+        </li>
+      </ul>
    <!-- Logout and Delete Account Buttons -->
    <div class="action-buttons">
     <button id="delete-account-button" class="waves-effect waves-light">Delete Account</button>
@@ -42,6 +57,47 @@
   <p id="delete-account-success" class="success-message"></p>
 </div>
 <script>
+  //collapse reset section
+  $(document).ready(function() {
+     $('.collapsible').collapsible();
+   });
+   
+   $('#reset-password-form').on('submit', function(e) {
+     e.preventDefault();
+     const newPassword = $('#new-password').val();
+     const accessToken = localStorage.getItem('accessToken');
+
+
+     if (!accessToken) {
+       $('#reset-password-error').text('You are not logged in.');
+       return;
+     }
+
+
+     $.ajax({
+       url: '/api/user/password',
+       method: 'PATCH',
+       contentType: 'application/json',
+       headers: {
+         'Authorization': accessToken
+       },
+       data: JSON.stringify({ password: newPassword }),
+       success: function(response) {
+         $('#reset-password-success').text('Password updated successfully.');
+         $('#reset-password-error').text('');
+       },
+       error: function(xhr) {
+         if (xhr.status === 400) {
+           $('#reset-password-error').text('Password is required.');
+         } else if (xhr.status === 401) {
+           $('#reset-password-error').text('Invalid or expired token. Please log in again.');
+         } else {
+           $('#reset-password-error').text('An error occurred. Please try again.');
+         }
+         $('#reset-password-success').text('');
+       }
+     });
+   });
   $('#logout-button').on('click', function() {
     //clear tokens and user data from localStorage
     localStorage.removeItem('accessToken');
