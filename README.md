@@ -65,7 +65,6 @@ node server.js
 
 ## Basic explantion of system
 
-### Purpose of the Game:
 ### Game Structure:
 
 Players compete by entering words within specific categories (olympic sports, periodic elements, countries, capital cities)
