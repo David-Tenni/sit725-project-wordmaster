@@ -1,14 +1,15 @@
 # SIT725-project
+## Running the project
+To use this project first clone the repository and run the following commands:
+```bash
+npm install
+```
+After this run the following:
+```bash
+node server.js
+```
 
-This is the ReadMe for our SIT725 project in trimester 3 2024.
-Mike cloned and pushed.
-David cloned and pushed. 10/12/2024
-David approve Pull request 18/12/2024
-David started new branch 18/12/2024
-David started new branch 22/12/2024
-
-This is our filestrucure
-SIT725-PROJECT
+## File structure
 ├── controllers
 │   ├── GameController.js
 │   ├── gameDataController.js
@@ -61,44 +62,39 @@ SIT725-PROJECT
 
 
 
-Basic explantion of system
-Game Structure:
+## Basic explantion of system
 
+### Purpose of the Game:
+### Game Structure:
 
-Players compete by entering words within specific categories (animals, periodic elements, countries, best picture winning movies)
-There are multiple players: Player (human), James, Sofia, Lucas, and a special "ANTE" player
+Players compete by entering words within specific categories (olympic sports, periodic elements, countries, capital cities)
+There are multiple players: The player (this could also be a guest who is not logged in), three competitors, and a special "ANTE" player
 The game runs in rounds with a 7-second timer per round
 Score visualization is done through a bar chart system
 
-
-Scoring System:
-
+### Scoring System:
 
 Players score points based on word length
-AI players (James, Sofia, Lucas) get random growth in their scores using a BASE_GROWTH and GROWTH_VARIATION system
+Previous players have their words and times stored in the database and their score is automatically generated from this data
 The ANTE player seems to serve as a threshold - players below ANTE can be eliminated
 There's a crown system showing the current leader
 Players can be eliminated either by being the lowest scorer or by falling below ANTE
 
-
-Technical Architecture:
-
+### Technical Architecture:
 
 Frontend: HTML/CSS with Materialize CSS framework
-Backend: Node.js with Express
+Backend: Node.js with Express, socket.io, bcrypt, mongodb and jsonwebtoken
 Database: MongoDB (storing words in different category collections)
 Uses MVC (Model-View-Controller) pattern:
 
-Models: ScoreBoard.js, word.js
-Controllers: ScoreBoardController.js, wordsController.js
-Views: index.html, scoreBoard.css
+Models: Used as for object that are retrieved from the database of used in the code
+Controllers: Used to provide responses to api requests or to control frontend files
+Views: The pages that the user will see
 
-
-
-
-Key Features:
+### Key Features:
 
 Real-time score visualization
+Notifications when high score is exceeded
 7-second countdown timer with color warnings
 Word validation system
 Category rotation between rounds
@@ -106,9 +102,7 @@ Multiple elimination mechanisms
 Persistent storage of words in MongoDB
 Responsive design with Materialize CSS
 
-
-User Interface:
-
+### User Interface:
 
 Score visualization through animated bars
 Input field for word submission
