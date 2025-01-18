@@ -96,54 +96,10 @@
         </div>
     </div>
 
+    <script src="/controllers/ProfileController.js"></script>
     <script>
-        $(document).ready(function() {
-            const username = localStorage.getItem('user');
-            const accessToken = localStorage.getItem('accessToken');
-
-            if (!username || !accessToken) {
-                window.location.href = '/login.html';
-                return;
-            }
-
-            $('#profile-username').text(username);
-
-            // Fetch user data
-            $.ajax({
-                url: '/api/user',
-                method: 'GET',
-                headers: {
-                    'Authorization': accessToken
-                },
-                success: function(response) {
-                    const userData = response.data;
-                    $('#total-score').text(userData.total_score || 0);
-                    $('#high-score').text(userData.high_score || 0);
-                    $('#total-wins').text(userData.wins || 0);
-                    $('#games-played').text(userData.games || 0);
-
-                    // Display category answers
-                    if (userData.answers) {
-                        const categoryList = $('#category-list');
-                        Object.entries(userData.answers).forEach(([category, data]) => {
-                            categoryList.append(`
-                                <div class="achievement-card">
-                                    <div class="category-name">${category}</div>
-                                    <div class="best-word">Best Word: ${data.word}</div>
-                                    <div class="response-time">Time: ${(data.time / 1000).toFixed(2)}s</div>
-                                </div>
-                            `);
-                        });
-                    }
-                },
-                error: function(xhr) {
-                    if (xhr.status === 401) {
-                        window.location.href = '/login.html';
-                    } else {
-                        M.toast({html: 'Error loading profile data'});
-                    }
-                }
-            });
+        document.addEventListener('DOMContentLoaded', () => {
+            const profileController = new ProfileController();
         });
     </script>
 </body>
