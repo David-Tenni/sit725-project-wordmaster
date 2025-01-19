@@ -173,49 +173,52 @@
 
         handleWordSubmission(word) {
             if (!word || this.gameSession.isGameOver()) return;
-            
-            // First validate the word
+        
             if (!this.isValidWord(word, this.gameSession.currentCategory)) {
+                // Show error using Materialize toast
                 M.toast({
                     html: 'Invalid word for this category!',
                     classes: 'red',
                     displayLength: 2000
                 });
-                
+        
+                // Add visual feedback by making input red
                 const input = document.getElementById('playerPoints');
                 input.classList.add('invalid');
                 setTimeout(() => input.classList.remove('invalid'), 1000);
-                
-                return; 
+                //stop them getting points for the invalid one
+                return;
             }
         
-            // Calculate response time
             const responseTime = Date.now() - this.startTime;
-            
+        
             // If user is logged in, save to database
             if (localStorage.getItem('isLoggedIn') === 'true') {
                 const accessToken = localStorage.getItem('accessToken');
-                $.ajax({
-                    url: '/api/user/answer',
-                    method: 'PATCH',
-                    headers: {
-                        'Authorization': accessToken,
-                        'Content-Type': 'application/json'
-                    },
-                    data: JSON.stringify({
-                        category: this.gameSession.currentCategory,
-                        word: word,
-                        time: responseTime
-                    }),
-                    success: function(response) {
-                        console.log('Answer saved to database:', response);
-                    },
-                    error: function(error) {
-                        console.error('Error saving answer:', error);
-                    }
-                });
+                
+                if (accessToken && accessToken !== 'undefined' && accessToken !== 'null') {
+                    $.ajax({
+                        url: '/api/user/answer',
+                        method: 'PATCH',
+                        headers: {
+                            'Authorization': accessToken,
+                            'Content-Type': 'application/json'
+                        },
+                        data: JSON.stringify({
+                            category: this.gameSession.currentCategory,
+                            word: word,
+                            time: responseTime
+                        }),
+                        success: function(response) {
+                            console.log('Answer saved to database:', response);
+                        },
+                        error: function(error) {
+                            console.error('Error saving answer:', error);
+                        }
+                    });
+                }
             }
-            
+        
             // Record the score locally
             const playerScore = new window.PlayerScore(
                 this.gameSession.currentCategory,
@@ -227,7 +230,7 @@
         
             this.forceAIResponses();
         
-            if (this.gameSession.currentRound >= this.totalRounds-1) {
+            if (this.gameSession.currentRound >= this.totalRounds - 1) {
                 this.handleGameOver();
             } else if (this.gameSession.advanceRound()) {
                 this.startNewRound();
@@ -397,19 +400,70 @@
         }
 
         handleGameOver() {
-            console.log('Game over!');
+            console.log("Game over!");
             clearInterval(this.timerInterval);
-            const gameOverEvent = new CustomEvent('gameOver', {
+        
+            const finalScores = this.calculateFinalScores();
+            this.updateGameStats(finalScores);
+        
+            const gameOverEvent = new CustomEvent("gameOver", {
                 detail: {
                     players: [
                         this.gameSession.human_player,
                         ...this.gameSession.ai_players,
-                        this.gameSession.ante_player
+                        this.gameSession.ante_player,
                     ],
-                    finalScores: this.calculateFinalScores()
-                }
+                    finalScores: finalScores,
+                },
             });
             document.dispatchEvent(gameOverEvent);
+        }
+        async updateGameStats(finalScores) {
+            const isLoggedIn = localStorage.getItem("isLoggedIn") === "true";
+            const accessToken = localStorage.getItem("accessToken");
+        
+            if (!isLoggedIn || !accessToken) {
+                console.log("User not logged in, skipping stats update");
+                return;
+            }
+        
+            const playerScore = finalScores.find(
+                (s) => s.name === this.gameSession.human_player.playerName
+            )?.score ?? 0;
+            const otherScores = finalScores
+                .filter((s) => s.name !== this.gameSession.human_player.playerName)
+                .map((s) => s.score);
+            const isWin = playerScore >= Math.max(...otherScores);
+        
+            try {
+                const response = await fetch("/api/user/game", {
+                    method: "POST",
+                    headers: {
+                        'Accept': "application/json",
+                        'Content-Type': "application/json",
+                        'Authorization': accessToken
+                    },
+                    body: JSON.stringify({
+                        win: isWin,
+                        score: playerScore
+                    }),
+                });
+        
+                if (!response.ok) {
+                    throw new Error(`Failed to update game stats: ${response.status}`);
+                }
+        
+                console.log("Game stats updated successfully");
+            } catch (error) {
+                console.error("Error updating game stats:", error);
+                if (window.M && window.M.toast) {
+                    M.toast({
+                        html: "Failed to update game statistics",
+                        classes: "red",
+                        displayLength: 3000,
+                    });
+                }
+            }
         }
 
         calculateFinalScores() {
