@@ -41,6 +41,9 @@
           <a href="/leaderboard.html" class="waves-effect waves-light btn btn-custom leaderboard-btn">
             LeaderBoard
           </a>
+          <a href="/settings.html" class="waves-effect waves-light btn btn-custom settings-btn">
+            Settings
+          </a>
           <button id="logout-btn" class="waves-effect waves-light btn btn-custom logout-btn">Logout</button>
         </div>
       </div>
@@ -52,11 +55,13 @@
         if(isLoggedIn){
           $('.login-btn').hide();          
           $('.signup-btn').hide();
+          $('.settings-btn').show();
           $('.logout-btn').show();
           document.getElementById('welcome-user').innerText = `Welcome back ${localStorage.getItem('user')} 👋`;
         } else {
           $('.login-btn').show();
           $('.signup-btn').show();
+          $('.settings-btn').hide();
           $('.logout-btn').hide();
         }
         $('.modal').modal();
