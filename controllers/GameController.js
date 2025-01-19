@@ -173,25 +173,50 @@
 
         handleWordSubmission(word) {
             if (!word || this.gameSession.isGameOver()) return;
-        
+            
+            // First validate the word
             if (!this.isValidWord(word, this.gameSession.currentCategory)) {
-                // Show error using Materialize toast
                 M.toast({
                     html: 'Invalid word for this category!',
                     classes: 'red',
                     displayLength: 2000
                 });
                 
-                // Add visual feedback by making input red
                 const input = document.getElementById('playerPoints');
                 input.classList.add('invalid');
                 setTimeout(() => input.classList.remove('invalid'), 1000);
-                //stop them getting points for the invalid one
+                
                 return; 
             }
         
+            // Calculate response time
             const responseTime = Date.now() - this.startTime;
             
+            // If user is logged in, save to database
+            if (localStorage.getItem('isLoggedIn') === 'true') {
+                const accessToken = localStorage.getItem('accessToken');
+                $.ajax({
+                    url: '/api/user/answer',
+                    method: 'PATCH',
+                    headers: {
+                        'Authorization': accessToken,
+                        'Content-Type': 'application/json'
+                    },
+                    data: JSON.stringify({
+                        category: this.gameSession.currentCategory,
+                        word: word,
+                        time: responseTime
+                    }),
+                    success: function(response) {
+                        console.log('Answer saved to database:', response);
+                    },
+                    error: function(error) {
+                        console.error('Error saving answer:', error);
+                    }
+                });
+            }
+            
+            // Record the score locally
             const playerScore = new window.PlayerScore(
                 this.gameSession.currentCategory,
                 word,
@@ -208,7 +233,6 @@
                 this.startNewRound();
             }
         }
-
         forceAIResponses() {
             const currentRound = this.gameSession.currentRound;
             const roundData = this.gameData.rounds[currentRound - 1];
