@@ -39,13 +39,13 @@
                 
                 const categoriesData = await categoriesResponse.json();
                 console.log('Categories data:', categoriesData);
-
                 const playersUrl = '/api/game/players/3';
                 const playersResponse = await fetch(playersUrl, {
                     method: 'GET',
                     headers: {
                         'Accept': 'application/json',
-                        'Content-Type': 'application/json'
+                        'Content-Type': 'application/json',
+                        'Authorization': localStorage.getItem('accessToken')
                     }
                 });
 
