@@ -253,6 +253,20 @@
     width: 100%;
     margin-bottom: 30px;
   }
+  /*leaderboard table*/
+  .scrollable-table {
+    max-height: 400px; 
+    overflow-y: auto;
+    display: block;
+  }
+  .scrollable-table table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+  .scrollable-table th, .scrollable-table td {
+    padding: 8px 12px;
+    text-align: center;
+  }
   
   /*signup and login forms */
   .input-field input {

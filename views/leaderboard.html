@@ -1,26 +1,27 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Leaderboard - WordMaster</title>
-    <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
-    <link rel="stylesheet" href="wordmaster.css">
-  </head>
-  <body>
-    <div class="purple-blob"></div>
-    
-    <div class="container">
-      <div class="brand-title">
-        <div class="logo-section">
-          <div class="logo">
-              <img src="Public/img/Image_265.svg" alt="WordMaster Logo" class="logo-svg" />
-          </div>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Leaderboard - WordMaster</title>
+  <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+  <link rel="stylesheet" href="wordmaster.css">
+  <script src="/socket.io/socket.io.js"></script>
+</head>
+<body>
+  <div class="purple-blob"></div>
+
+  <div class="container">
+    <div class="brand-title">
+      <div class="logo-section">
+        <div class="logo">
+          <img src="Public/img/Image_265.svg" alt="WordMaster Logo" class="logo-svg" />
         </div>
-        <h4>WordMaster</h4>
       </div>
+      <h4>WordMaster</h4>
+    </div>
     <!--navigation bar-->
     <nav class="navbar">
       <ul>
@@ -30,49 +31,157 @@
         <li><a href="settings.html" id="settings-menu">Settings</a></li>
       </ul>
     </nav>
-      <div class="tagline">
-        Global Leaderboard
-      </div>
+    <div class="tagline">
+      Global Leaderboard
+    </div>
 
-      <div class="welcome-card">
-        <table class="striped centered">
-          <thead>
-            <tr>
-                <th>Name</th>
-                <th>Score</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-                <td>John Doe</td>
-                <td>1250</td>
-            </tr>
-            <tr>
-                <td>Jane Smith</td>
-                <td>980</td>
-            </tr>
-            <tr>
-                <td>Bob Johnson</td>
-                <td>875</td>
-            </tr>
-            <!-- Add more rows as needed -->
-          </tbody>
-        </table>
-
-        <div class="buttons-container">
-          <a href="/mainMenu.html" class="waves-effect waves-light btn btn-custom play-btn">
-            Back to Menu
-          </a>
+    <div class="welcome-card">
+      <div class="row">
+        <div class="input-field col s6">
+          <select id="leaderboard-filter">
+            <option value="highScore" selected>High Score</option>
+            <option value="totalScore">Total Score</option>
+            <option value="wins">Wins</option>
+            <option value="wordLength">Word Length</option>
+            <option value="categories">Categories</option>
+          </select>
+          <label>Filter Leaderboard</label>
+        </div>
+        <div class="input-field col s6">
+          <select id="results-per-page">
+            <option value="10" selected>10</option>
+            <option value="50">50</option>
+            <option value="100">100</option>
+          </select>
+          <label>Results Per Page</label>
         </div>
       </div>
+
+      <div class="scrollable-table">
+        <table class="striped centered">
+          <thead>
+            <tr id="table-header">
+              <th>Name</th>
+              <th>Score</th>
+            </tr>
+          </thead>
+          <tbody id="leaderboard-body">
+            <!--dynamic rows-->
+          </tbody>
+        </table>
+      </div>
+
+      <div class="buttons-container">
+        <a href="/mainMenu.html" class="waves-effect waves-light btn btn-custom play-btn">
+          Back to Menu
+        </a>
+      </div>
     </div>
-    <script>
-      $(document).ready(function(){
-        const isLoggedIn = localStorage.getItem('isLoggedIn')=== 'true';
-        if(!isLoggedIn){
-          $('#settings-menu').hide();
+  </div>
+  <script>
+    $(document).ready(function () {
+      const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
+      if (!isLoggedIn) {
+        $('#settings-menu').hide();
+      }
+
+      //select dropdown
+      $('select').formSelect();
+
+      let socket;
+
+      function updateTableHeader(headers) {
+        const headerRow = headers.map(header => `<th>${header}</th>`).join('');
+        $('#table-header').html(headerRow);
+      }
+
+      function updateTableBody(data, keys) {
+        //clear the table when changing filters
+        $('#leaderboard-body').empty();
+
+        //filter out rows where values are zero, empty, or null
+        const filteredData = data.filter(item => {
+          const valueKey = keys[1];  
+          const value = item[valueKey];
+            return value !== undefined && value !== null && value !== 0 && value !== '';
+          });
+
+        const rows = filteredData.map(item => {
+          const row = keys.map(key => `<td>${item[key]}</td>`).join('');
+          return `<tr>${row}</tr>`;
+        }).join('');
+        $('#leaderboard-body').html(rows);
+      }
+
+      function connectSocket(filter) {
+        if (socket) {
+          socket.disconnect();
         }
+
+        //clear the table body and header when switching filters
+        $('#leaderboard-body').empty();
+        $('#table-header').empty();
+
+        switch (filter) {
+          case 'highScore':
+            socket = io('/high_score');
+            updateTableHeader(['Name', 'High Score']);
+            socket.on('Users_by_high_score', data => {
+              updateTableBody(data, ['username', 'high_score']);
+            });
+            break;
+
+          case 'totalScore':
+            socket = io('/total_score');
+            updateTableHeader(['Name', 'Total Score']);
+            socket.on('Users_by_total_score', data => {
+              updateTableBody(data, ['username', 'total_score']);
+            });
+            break;
+
+          case 'wins':
+            socket = io('/wins');
+            updateTableHeader(['Name', 'Wins']);
+            socket.on('Users_by_wins', data => {
+              updateTableBody(data, ['username', 'wins']);
+            });
+            break;
+
+          case 'wordLength':
+            socket = io('/word_length');
+            updateTableHeader(['Name', 'Longest Word']);
+            socket.on('Users_by_word_length', data => {
+              updateTableBody(data, ['username', 'longest_word']);
+            });
+            break;
+
+          case 'categories':
+            socket = io('/categories');
+            updateTableHeader(['Category', 'Name', 'Word']);
+            socket.on('Categories', data => {
+              updateTableBody(data, ['category', 'username', 'word']);
+            });
+            break;
+
+          default:
+            console.error('Unknown filter:', filter);
+        }
+      }
+
+      connectSocket($('#leaderboard-filter').val());
+
+      //change socket connection on filter change
+      $('#leaderboard-filter').on('change', function () {
+        const selectedFilter = $(this).val();
+        connectSocket(selectedFilter);
       });
-    </script>
-  </body>
+
+      //update results per page
+      $('#results-per-page').on('change', function () {
+        const selectedResults = parseInt($(this).val());
+        $('.scrollable-table').css('max-height', `${selectedResults * 40}px`);
+      });
+    });
+  </script>
+</body>
 </html>
