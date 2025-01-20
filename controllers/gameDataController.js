@@ -1,11 +1,14 @@
 const gameData = require('../models/gameData');
 
 const getRandomCategories = async (req, res) => {
+    let game = req.params.game;
+    if(!["History", "Entertainment", "Geography", "Science", "Animals"].includes(game)) game = null;
+
     try {
         console.log('getRandomCategories called with params:', req.params);
         const number = parseInt(req.params.number);
-
-        gameData.getRandomCategories(number, (error, result) => {
+        
+        gameData.getRandomCategories(number, game, (error, result) => {
             if (error) {
                 console.error('Categories error:', error);
                 return res.status(500).json({ message: error.message });
@@ -27,28 +30,19 @@ const getRandomUsers = async (req, res) => {
         let username = req.user?.username;
         console.log('getRandomUsers called with params:', req.params);
         const number = parseInt(req.params.number);
+        const {categories} = req.body;
 
-        // First get random categories
-        gameData.getRandomCategories(5, (categoryError, categories) => {
-            if (categoryError) {
-                console.error('Category error:', categoryError);
-                return res.status(500).json({ message: categoryError.message });
+        // Then get random users for those categories
+        gameData.getRandomUsers(categories, number, username, (userError, rounds) => {
+            if (userError) {
+                console.error('User error:', userError);
+                return res.status(500).json({ message: userError.message });
             }
 
-            console.log('Got categories for users:', categories);
-
-            // Then get random users for those categories
-            gameData.getRandomUsers(categories, number, username, (userError, rounds) => {
-                if (userError) {
-                    console.error('User error:', userError);
-                    return res.status(500).json({ message: userError.message });
-                }
-
-                console.log('Successfully got rounds:', rounds.length);
-                res.status(200).json({
-                    data: rounds,
-                    message: 'Players successfully retrieved'
-                });
+            console.log('Successfully got rounds:', rounds.length);
+            res.status(200).json({
+                data: rounds,
+                message: 'Players successfully retrieved'
             });
         });
     } catch (error) {

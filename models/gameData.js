@@ -1,19 +1,32 @@
 const client = require('./connection');
 const db = client.db('words');
 const collection = client.db('authentication').collection("users");
+const games = client.db('games').collection("categories");
 
 // Get random categories from the words database
-async function getRandomCategories(number, callback) {
+async function getRandomCategories(number, game, callback) {
     try {
         console.log('Getting random categories, number:', number);
-        const categories = await db.listCollections().toArray();
-        const names = categories.map(category => category.name);
-        const randomCategories = names
+        if(game){
+            const categories = await games.findOne({ game: game });
+            const names = categories.categories;
+            console.log(categories);
+            const randomCategories = names
             .sort(() => Math.random() - 0.5)
             .slice(0, number);
         
-        console.log('Selected categories:', randomCategories);
-        callback(null, randomCategories);
+            console.log('Selected categories:', randomCategories);
+            callback(null, randomCategories);
+        }else{
+            const categories = await db.listCollections().toArray();
+            const names = categories.map(category => category.name);
+            const randomCategories = names
+                .sort(() => Math.random() - 0.5)
+                .slice(0, number);
+            
+            console.log('Selected categories:', randomCategories);
+            callback(null, randomCategories);
+        }
     } catch (error) {
         console.error('Error getting categories:', error);
         callback({ message: "Error getting categories list" }, null);
