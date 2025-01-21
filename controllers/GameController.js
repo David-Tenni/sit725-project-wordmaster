@@ -41,12 +41,15 @@
                 console.log('Categories data:', categoriesData);
                 const playersUrl = '/api/game/players/3';
                 const playersResponse = await fetch(playersUrl, {
-                    method: 'GET',
+                    method: 'POST',
                     headers: {
                         'Accept': 'application/json',
                         'Content-Type': 'application/json',
                         'Authorization': localStorage.getItem('accessToken')
-                    }
+                    },
+                    body: JSON.stringify({
+                        categories: categoriesData.data
+                    })
                 });
 
                 if (!playersResponse.ok) {
@@ -448,6 +451,8 @@
                         score: playerScore
                     }),
                 });
+
+                console.log(response);
         
                 if (!response.ok) {
                     throw new Error(`Failed to update game stats: ${response.status}`);
