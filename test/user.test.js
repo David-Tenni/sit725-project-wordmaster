@@ -10,7 +10,19 @@ jest.mock('../models/connection', () => ({
                     find: jest.fn().mockReturnValue({ 
                         toArray: jest.fn(() => users) 
                     }),
-                    findOne: jest.fn((filter) => users.find((user) => filter.hasOwnProperty('username') ? user.username === filter.username : user.token === filter.token) ?? null),
+                    findOne: jest.fn((filter) => 
+                        users.find((user) => {
+                            if (filter.hasOwnProperty('username')) {
+                                if (typeof filter.username === 'object') {
+                                    const regex = new RegExp(filter.username.$regex, filter.username.$options);
+                                    return regex.test(user.username);
+                                }else{
+                                    return user.username === filter.username;
+                                }
+                            }
+                            return user.token === filter.token;
+                        })
+                    ),
                     insertOne: jest.fn(() => { acknowledged: true }),
                     updateOne: jest.fn(() => { acknowledged: true }),
                     deleteOne: jest.fn(() => { acknowledged: true }),
