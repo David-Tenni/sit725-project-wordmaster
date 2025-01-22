@@ -1,12 +1,15 @@
 (function(window) {
     class GameController {
-        constructor(totalRounds = 5) {
+        //added a parameter selected category
+        constructor(totalRounds = 5, selectedCategory = null) {
             console.log('GameController initializing...');
             this.timeLimit = 7000;
             this.startTime = null;
             this.timerInterval = null;
             this.initialCategoryDisplayed = false;
             this.totalRounds = totalRounds;
+            //added selected category property
+            this.selectedCategory = selectedCategory;
             this.gameData = null;
             this.initializeGame();
             this.initializeEventListeners();
@@ -29,13 +32,24 @@
         async fetchGameData() {
             try {
                 console.log('Starting data fetch...');
-                
-                const categoriesResponse = await fetch('/api/game/categories/5', {
+                //updated the api call for the selected category and kept a default number 7 for sub categories
+                let categoriesResponse;
+                if(this.selectedCategory){
+                    categoriesResponse = await fetch(`/api/game/categories/7/${this.selectedCategory}`, {
+                        headers: {
+                            'Accept': 'application/json',
+                            'Content-Type': 'application/json'
+                        }
+                    });
+                }else{
+                //random category
+                    categoriesResponse = await fetch('/api/game/categories/7',{
                     headers: {
                         'Accept': 'application/json',
-                        'Content-Type': 'application/json'
-                    }
+                        'Content-Type': 'application/json',
+                    },
                 });
+            }
                 
                 const categoriesData = await categoriesResponse.json();
                 console.log('Categories data:', categoriesData);

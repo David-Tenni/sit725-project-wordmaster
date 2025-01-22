@@ -30,8 +30,15 @@
         <h5 id="welcome-user" class="wave-text"></h5>
         <div class="buttons-container">
           <a href="/index.html" class="waves-effect waves-light btn btn-custom play-btn">
-            Play
+            Play &#128377
           </a>
+          <div class="category-buttons">
+            <a href="#" class="waves-effect waves-light btn btn-custom category-btn" data-category="Geography">Geography &#127759</a>
+            <a href="#" class="waves-effect waves-light btn btn-custom category-btn" data-category="Science">Science &#128300</a>
+            <a href="#" class="waves-effect waves-light btn btn-custom category-btn" data-category="Entertainment">Entertainment &#128250</a>
+            <a href="#" class="waves-effect waves-light btn btn-custom category-btn" data-category="Animals">Animals &#128037</a>
+            <a href="#" class="waves-effect waves-light btn btn-custom category-btn" data-category="History">History &#127963</a>
+          </div>
           <a href="/login.html" class="waves-effect waves-light btn btn-custom login-btn">
             Log in
           </a>
@@ -47,8 +54,7 @@
           <button id="logout-btn" class="waves-effect waves-light btn btn-custom logout-btn">Logout</button>
         </div>
       </div>
-    </div>
-
+    </div> 
     <script>
       $(document).ready(function(){
         const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
@@ -77,6 +83,19 @@
       // Redirect to mainMenu.html
       window.location.href = '/mainMenu.html';
     });
+//category game play
+    $('.category-btn').on('click', function () {
+    const selectedCategory = $(this).data('category');
+
+    //selected category in localStorage
+    localStorage.setItem('selectedCategory', selectedCategory);
+
+    //redirect to the game page
+    window.location.href = '/index.html';
+  });
+  $('.play-btn').on('click', function(){
+    localStorage.removeItem('selectedCategory')
+  });
     </script>
   </body>
 </html>
