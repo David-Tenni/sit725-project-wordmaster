@@ -7,30 +7,26 @@
       this.timeLimit = 7000;
       this.totalRounds = totalRounds;
       this.players = new Map();
+      this.maxBarHeight = 500; // Set maximum height for bars
 
       // Initialize components
       try {
         this.createScoreBoardHTML();
-        // Wait for DOM to be ready before initializing Materialize
         document.addEventListener("DOMContentLoaded", () => {
           this.setupMaterializeComponents();
         });
         this.initializeEventListeners();
         console.log("ScoreBoardController initialization complete");
       } catch (error) {
-        console.error(
-          "Error during ScoreBoardController initialization:",
-          error
-        );
+        console.error("Error during ScoreBoardController initialization:", error);
       }
     }
 
-
     addPlayer(playerName) {
       const playerId = playerName.toLowerCase().trim();
-      if (!this.players.has(playerId)) {
+      if (!this.players.has(playerId) && playerId !== 'ante') { // Don't add ANTE player
         this.players.set(playerId, {
-          name: playerName, // Keep original name for display
+          name: playerName,
           totalScore: 0,
           scores: [],
           eliminated: false,
@@ -39,6 +35,7 @@
         this.updateBars();
       }
     }
+
     updateCategoryDisplay(category) {
       const categoryDisplay = document.getElementById("current-category");
       if (categoryDisplay) {
@@ -47,6 +44,7 @@
         console.error("Category display element not found.");
       }
     }
+
     createScoreBoardHTML() {
       console.log("Creating ScoreBoard HTML...");
       const container = document.getElementById(this.containerId);
@@ -55,17 +53,17 @@
         return;
       }
       container.innerHTML = `
-                <div class="chart-container">
-                    <h2 class="title">Word Master Challenge</h2>
-                    <div class="round-display">
-                        <h5>Round: <span id="current-round">1</span>/${
-                          this.totalRounds
-                        }</h5>
+                <div class="chart-container" style="max-width: 800px; margin: 0 auto; height: 90vh;">
+                    <h2 class="title" style="margin: 0; padding: 10px 0;">Word Master Challenge</h2>
+                    <div style="margin-bottom: 10px;">
+                        <div class="round-display">
+                            <h5 style="margin: 5px 0;">Round: <span id="current-round">1</span>/${this.totalRounds}</h5>
+                        </div>
+                        <div class="category-display">
+                            <h5 style="margin: 5px 0;">Category: <span id="current-category"></span></h5>
+                        </div>
                     </div>
-                    <div class="category-display">
-                        <h5>Category: <span id="current-category"></span></h5>
-                    </div>
-                    <div class="chart">
+                    <div class="chart" style="height: 60vh; margin-top: 20px;">
                         ${this.createBarContainers()}
                     </div>
                     <div class="timer-container">
@@ -98,18 +96,21 @@
 
     createBarContainers() {
       return Array.from(this.players.entries())
+        .filter(([playerId]) => playerId !== 'ante')
         .map(
           ([playerId, playerData]) => `
-                    <div class="bar-container">
-                        <div class="bar" id="${playerId}" data-value="0">
-                            <div class="bar-value">
-                                <div class="current-word"></div>
-                                <div class="total-score">Total: 0</div>
-                            </div>
-                        </div>
-                        <div class="player-name">${playerData.name}</div>
+            <div class="bar-container">
+                <div class="bar" id="${playerId}" data-value="0">
+                    <div class="word-display" style="position: absolute; width: 100%; text-align: center; top: 40%;">
+                        <div class="current-word" style="color: white; text-shadow: 1px 1px 2px rgba(0,0,0,0.7);"></div>
                     </div>
-                `
+                    <div class="score-display" style="position: absolute; width: 100%; text-align: center; top: 60%;">
+                        <div class="total-score" style="color: white; text-shadow: 1px 1px 2px rgba(0,0,0,0.7);">Total: 0</div>
+                    </div>
+                </div>
+                <div class="player-name">${playerData.name}</div>
+            </div>
+          `
         )
         .join("");
     }
@@ -121,7 +122,6 @@
       }
     }
 
-
     updateRoundDisplay(round) {
       const roundDisplay = document.getElementById("current-round");
       if (roundDisplay) {
@@ -130,74 +130,81 @@
         console.error("Round display element not found.");
       }
     }
+
     handleGameStateUpdate(gameState) {
       console.log("Received game state update:", gameState);
 
-      // Update category and round
       if (gameState.currentCategory) {
         this.updateCategoryDisplay(gameState.currentCategory);
       }
       this.updateRoundDisplay(gameState.currentRound);
 
-      // Add any new players from the state
       gameState.players.forEach((player) => {
-        this.addPlayer(player.playerName);
+        if (player.playerName.toLowerCase() !== 'ante') {
+          this.addPlayer(player.playerName);
+        }
       });
 
-      // Update scores
       this.updateScoreBars(gameState.players);
     }
-    updateTimer(elapsed) {
-        const timerBar = document.querySelector(".timer-bar");
-        if (timerBar) {
-            const progress = Math.min(elapsed / this.timeLimit, 1); // Clamp progress this stops it exploding
-            timerBar.style.width = `${progress * 100}%`; 
-        } else {
-            console.error("Timer bar element not found.");
-        }
-    }
-    
-    updateScoreBars(players) {
-        players.forEach((player) => {
-            const playerId = player.playerName.toLowerCase().trim();
-            const bar = document.getElementById(playerId);
-    
-            if (!bar) {
-                console.warn(`Bar not found for player: ${player.playerName}`);
-                this.addPlayer(player.playerName);
-                return;
-            }
-    
-            const totalScore = player.scores.reduce(
-                (sum, score) => sum + score.answer.length,
-                0
-            );
-            const height = totalScore * 10;
-    
-            bar.style.transition = "height 0.5s ease-out";
-            bar.style.height = `${height}px`;
-    
-            if (playerId === "player") {
-                bar.style.backgroundColor = "green"; // Player bar color
-            } else if (playerId === "ante") {
-                bar.style.backgroundColor = "red"; // Ante bar color
-            } else {
-                // Assign a random color for AI players
-                if (!bar.style.backgroundColor || bar.style.backgroundColor === "transparent") {
-                    const randomColor = `#${Math.floor(Math.random() * 16777215).toString(16)}`;
-                    bar.style.backgroundColor = randomColor;
-                }
-            }
-    
-            const latestScore = player.scores[player.scores.length - 1];
-            this.updateValueLabel(bar, {
-                latest: latestScore ? latestScore.answer : "",
-                total: totalScore,
-            });
-        });
-    }
-    
 
+    updateTimer(elapsed) {
+      const timerBar = document.querySelector(".timer-bar");
+      if (timerBar) {
+        const progress = Math.min(elapsed / this.timeLimit, 1);
+        timerBar.style.width = `${progress * 100}%`;
+      } else {
+        console.error("Timer bar element not found.");
+      }
+    }
+
+    updateScoreBars(players) {
+      players.forEach((player) => {
+        if (player.playerName.toLowerCase() === 'ante') return;
+        
+        const playerId = player.playerName.toLowerCase().trim();
+        const bar = document.getElementById(playerId);
+    
+        if (!bar) {
+          console.warn(`Bar not found for player: ${player.playerName}`);
+          this.addPlayer(player.playerName);
+          return;
+        }
+    
+        const totalScore = player.scores.reduce(
+          (sum, score) => sum + score.answer.length,
+          0
+        );
+    
+        const height = Math.min((totalScore * 10), this.maxBarHeight);
+    
+        bar.style.transition = "height 0.5s ease-out";
+        bar.style.height = `${height}px`;
+    
+        if (playerId === "player") {
+          bar.style.backgroundColor = "#2196F3";
+        } else {
+          if (!bar.style.backgroundColor || bar.style.backgroundColor === "transparent") {
+            const randomColor = `#${Math.floor(Math.random() * 16777215).toString(16)}`;
+            bar.style.backgroundColor = randomColor;
+          }
+        }
+    
+        const latestScore = player.scores[player.scores.length - 1];
+        
+        // Update word display
+        const wordDisplay = bar.querySelector('.current-word');
+        if (wordDisplay) {
+          wordDisplay.textContent = latestScore ? latestScore.answer : "";
+        }
+    
+        // Update score display
+        const scoreDisplay = bar.querySelector('.total-score');
+        if (scoreDisplay) {
+          scoreDisplay.textContent = `Total: ${totalScore}`;
+        }
+      });
+    }
     updateValueLabel(bar, values) {
       const valueLabel = bar.querySelector(".bar-value");
       if (valueLabel) {
@@ -235,7 +242,7 @@
 
       const scoresList = modal.querySelector(".final-scores-list");
       if (scoresList) {
-        scoresList.innerHTML = this.generateFinalScores(gameState.finalScores);
+        scoresList.innerHTML = this.generateFinalScores(gameState.finalScores.filter(score => score.name.toLowerCase() !== 'ante'));
       }
 
       const modalInstance = M.Modal.getInstance(modal);
@@ -301,8 +308,8 @@
         this.handleGameOver(e.detail)
       );
       document.addEventListener("timerTick", (e) =>
-        this.updateTimer(e.detail.elapsed) 
-    );
+        this.updateTimer(e.detail.elapsed)
+      );
 
       const wordForm = document.getElementById("wordForm");
       if (wordForm) {
