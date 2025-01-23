@@ -1,38 +1,63 @@
 #scoreBoard .chart-container {
   padding: 20px;
-  max-width: 800px;
+  max-width: 600px;
   font-family: system-ui, sans-serif;
   margin: 0 auto;
+  margin-top: 0; 
+  height: auto;   
+}
+
+#exitGame {
+  background-color: black !important; 
+  margin: 10px 0;
 }
 
 #scoreBoard .chart {
-  padding: 20px;
-  height: 400px;
+  padding: 10px;
+  height: 60vh;
   display: flex;
   align-items: flex-end;
   justify-content: center;
   gap: 40px;
+  margin-top: 10px;
 }
 
+#scoreBoard .title {
+  margin: 0;
+  padding: 5px 0;   
+  font-size: 2em;    
+}
 #scoreBoard .bar-container {
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: 10px;
 }
-
+#scoreBoard .round-display,
+#scoreBoard .category-display {
+  margin-top: 5px;   
+}
+#scoreBoard .round-display h5,
+#scoreBoard .category-display h5 {
+  margin: 5px 0;     
+}
 #scoreBoard .bar {
-  width: 60px;
+  width: 120px;
   min-height: 0;
   transition: height 1s ease-out;
   position: relative;
 }
-
+#scoreBoard .exit-game-container {
+  text-align: center;
+  margin: 20px 0;  
+}
 #scoreBoard .player-name {
   font-weight: bold;
   margin-top: 10px;
 }
-
+#scoreBoard .exit-game-btn {
+  margin-top: 10px;  
+}
 #scoreBoard #emma { background: #FF6B6B; }
 #scoreBoard #james { background: #4ECDC4; }
 #scoreBoard #sofia { background: #9B59B6; }
@@ -41,15 +66,30 @@
   background: #000000;
   border: 3px solid red;
 }
-
-#scoreBoard .bar-value {
+#scoreBoard .word-line {
   position: absolute;
-  top: -25px;
   width: 100%;
   text-align: center;
-  color: #333;
-  font-size: 14px;
+  top: 40%;
+  color: white;
+  text-shadow: 1px 1px 2px rgba(0,0,0,0.7);
   font-weight: bold;
+}
+
+#scoreBoard .score-line {
+  position: absolute;
+  width: 100%;
+  text-align: center;
+  top: 60%;
+  color: white;
+  text-shadow: 1px 1px 2px rgba(0,0,0,0.7);
+  font-weight: bold;
+}
+
+#scoreBoard #player {
+  width: 120px;
+  min-height: 0;
+  transition: height 1s ease-out;
 }
 
 #scoreBoard .eliminated {
@@ -75,7 +115,7 @@
 }
 .input-section {
   text-align: center;
-  margin: 20px 0;
+  margin: 20px 0 10px 0;  
 }
 
 .input-section input {
