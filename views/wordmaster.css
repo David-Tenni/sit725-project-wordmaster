@@ -465,3 +465,18 @@
 }
 
 /* Profile Stats Styling ENds */
+
+
+
+/* Leadboard links */
+.username-link {
+  color: #A388EE;
+  text-decoration: none;
+  transition: color 0.3s ease;
+}
+
+.username-link:hover {
+  color: #6a1b9a;
+  text-decoration: underline;
+}
+/* leaderboard links end */
