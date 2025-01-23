@@ -9,6 +9,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
     <link rel="stylesheet" href="/views/scoreboard.css">
     <link rel="stylesheet" href="wordmaster.css">
+    <script src="/controllers/catergoryController.js"></script>
   </head>
   <body>
     <div class="purple-blob"></div>
@@ -17,64 +18,61 @@
       <div class="brand-title">
         <div class="logo-section">
           <div class="logo">
-              <img src="Public/img/Image_265.svg" alt="WordMaster Logo" class="logo-svg" />
+            <img src="Public/img/Image_265.svg" alt="WordMaster Logo" class="logo-svg" />
           </div>
         </div>
         <h4>WordMaster</h4>
       </div>
-    <!--navigation bar-->
-    <nav class="navbar">
-      <ul>
-        <li><a href="index.html" class="active">Home</a></li>
-        <li><a href="/profile.html" id="profile-menu">Profile</a></li>
-        <li><a href="leaderboard.html">LeaderBoard</a></li>
-        <li><a href="settings.html" id="settings-menu">Settings</a></li>
-      </ul>
-    </nav>
-
-    <div class="game-container">
-      <div class="game-content">
-        <div id="scoreBoard"></div>
+      <!--navigation bar-->
+      <nav class="navbar">
+        <ul>
+          <li>
+            <a href="index.html" class="active">Home</a>
+          </li>
+          <li>
+            <a href="/profile.html" id="profile-menu">Profile</a>
+          </li>
+          <li>
+            <a href="leaderboard.html">LeaderBoard</a>
+          </li>
+          <li>
+            <a href="settings.html" id="settings-menu">Settings</a>
+          </li>
+        </ul>
+      </nav>
+      <div class="game-container">
+        <div class="game-content">
+          <div id="scoreBoard"></div>
+        </div>
+        <a href="/mainMenu.html" class="waves-effect waves-light btn btn-custom login-btn" id="exit-game" style="width: 150px; padding: 0 20px; display: block; margin: 20px auto;"> Exit Game </a>
       </div>
-      <a href="/mainMenu.html" class="waves-effect waves-light btn btn-custom login-btn" id="exit-game" style="width: 150px; padding: 0 20px; display: block; margin: 20px auto;">
-        Exit Game
-      </a></div>
-    
-
-    
-    <!-- Scripts -->
-    <script src="/test/gameTestData.js"></script>
-    <script src="/models/PlayerScore.js"></script>
-    <script src="/models/Player.js"></script>
-    <script src="/models/GameSession.js"></script>
-    <script src="/models/ScoreBoard.js"></script>
-    <script src="/controllers/GameController.js"></script>
-    <script src="/controllers/ScoreBoardController.js"></script>
-    <script>
+      <!-- Scripts -->
+      <script src="/test/gameTestData.js"></script>
+      <script src="/models/PlayerScore.js"></script>
+      <script src="/models/Player.js"></script>
+      <script src="/models/GameSession.js"></script>
+      <script src="/models/ScoreBoard.js"></script>
+      <script src="/controllers/GameController.js"></script>
+      <script src="/controllers/ScoreBoardController.js"></script>
+      <script>
       document.addEventListener('DOMContentLoaded', () => {
-        const gameController = new GameController();
         const scoreBoardController = new ScoreBoardController('scoreBoard');
-        
+
         $('.modal').modal({
           dismissible: false,
           onCloseEnd: function() {
-            // Any additional initialization after modal closes
           }
         });
-        
         $('#modal1').modal('open');
         //reset the logged in flag
-        $('#exit-game').on('click', function(){
+        $('#exit-game').on('click', function() {
           localStorage.removeItem('isLoggedIn');
         });
-
-        $(document).ready(function(){
-          const isLoggedIn = localStorage.getItem('isLoggedIn')=== 'true';
-          if(!isLoggedIn){
-            $('#settings-menu').hide();
-          }
+        const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
+        if (!isLoggedIn) {
+          $('#settings-menu').hide();
+        }
         });
-      });
       </script>
   </body>
-  </html>
+</html>

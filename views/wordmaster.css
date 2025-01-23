@@ -424,7 +424,10 @@
   font-size: 14px;
   margin-top: 10px;
 }
-
+/* Category button */
+.category-btn {
+  background-color: var(--primary-purple) !important;
+}
 
 
   
