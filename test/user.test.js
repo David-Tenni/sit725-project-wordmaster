@@ -26,6 +26,11 @@ jest.mock('../models/connection', () => ({
                     insertOne: jest.fn(() => { acknowledged: true }),
                     updateOne: jest.fn(() => { acknowledged: true }),
                     deleteOne: jest.fn(() => { acknowledged: true }),
+                    aggregate: jest.fn(() => ({
+                        toArray: jest.fn(() => [
+                            { } // Add something to this when testing sockets
+                        ])
+                    }))
                 })
             }
         }
@@ -35,6 +40,11 @@ jest.mock('../models/connection', () => ({
                     find: jest.fn().mockReturnValue({ 
                         toArray: jest.fn(() => [{word:'Cat'}, {word:'Dog'}, {word:'Cow'}, {word:'Horse'}]) 
                     }),
+                    aggregate: jest.fn(() => ({
+                        toArray: jest.fn(() => [
+                            { } // Add something to this when testing sockets
+                        ])
+                    }))
                 }),
                 listCollections: jest.fn().mockReturnValue({
                     toArray: jest.fn(() => [{ name: 'domesticated_animals' }]),

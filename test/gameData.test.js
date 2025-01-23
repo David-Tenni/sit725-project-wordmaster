@@ -4,7 +4,7 @@ const server = require('../server');
 jest.mock('../models/connection', () => ({
     db: jest.fn((name) => {
         if(name == 'authentication'){
-            const users = [{username:'TestUser',password:'TestPass',token:'Token'}, {username:'Username',password:'Password',token:'Token'}]
+            const users = [{username:'TestUser',password:'TestPass',token:'Token',answers:{domesticated_animals: {word:"dog",time:4000}, dog_breeds: {word: "beagle", time: 4000}}}, {username:'Username',password:'Password',token:'Token',answers:{domesticated_animals: {word:"dog",time:4000}, dog_breeds: {word: "beagle", time: 4000}}}]
             return {
                 collection: jest.fn().mockReturnValue({
                     find: jest.fn().mockReturnValue({ 
@@ -34,6 +34,16 @@ jest.mock('../models/connection', () => ({
                 })
             }
         }
+        else if(name == 'games'){
+            const games = [{game:'Animals',categories:["domesticated_animals", "dog_breeds", "bird_species"]}, {game:'History',categories:["autralian_prime_ministers", "canadian_prime_ministers"]}]
+            return {
+                collection: jest.fn().mockReturnValue({
+                    findOne: jest.fn((filter) => 
+                        games.find((game) =>  game.game == filter.game)
+                    ),
+                })
+            }
+        }
         else{
             return {
                 collection: jest.fn().mockReturnValue({
@@ -47,7 +57,7 @@ jest.mock('../models/connection', () => ({
                     }))
                 }),
                 listCollections: jest.fn().mockReturnValue({
-                    toArray: jest.fn(() => [{ name: 'domesticated_animals' }]),
+                    toArray: jest.fn(() => [{ name: 'domesticated_animals' }, { name: "dog_breeds"}, { name: "bird_species" }, { name: "autralian_prime_ministers" }, { name: "canadian_prime_ministers" }]),
                 })
             }
             
@@ -81,31 +91,36 @@ jest.mock('bcrypt', () => ({
     }),
 }));
 
-describe('Testing Word Routes', () => {
+describe('Testing Game Data Routes', () => {
     afterEach(() => {
         server.close();
     });
 
-    describe('GET api/word/:category', () => {
-        it('should return a list of all words in that category if it exists', async () => {
-            const response = await request(server).get('/api/word/domesticated_animals');
-            expect(response.status).toBe(200);
-            expect(response.body.data.length).toEqual(4);
-            expect(response.body.message).toBe('Word list successfully retrieved');
-        });
-        it('should respond with an 404 error if the category does not exist', async () => {
-            const response = await request(server).get('/api/word/animals');
+    describe('GET api/game/categories/:number', () => {
+        it('should respond with a 404 error if no number is given', async () => {
+            const response = await request(server).get('/api/game/categories');
             expect(response.status).toBe(404);
-            expect(response.body.message).toBe('Category not found');
+        });
+        it('should respond with a 400 error if number is not a number is given', async () => {
+            const response = await request(server).get('/api/game/categories/num');
+            expect(response.status).toBe(400);
+        });
+        it('should respond with a 200 if categories are successfully retrieved', async () => {
+            const response = await request(server).get('/api/game/categories/3');
+            expect(response.status).toBe(200);
+            expect(response.body.data.length).toBe(3);
         });
     });
 
-    describe('GET api/word/categories', () => {
-        it('should return a list of all categories', async () => {
-            const response = await request(server).get('/api/word/categories');
+    describe('GET api/game/categories/:number/:game', () => {
+        it('should respond with a 400 error if number is not a number is given', async () => {
+            const response = await request(server).get('/api/game/categories/num/History');
+            expect(response.status).toBe(400);
+        });
+        it('should respond with a 200 if categories are successfully retrieved', async () => {
+            const response = await request(server).get('/api/game/categories/3/History');
             expect(response.status).toBe(200);
-            expect(response.body.data.length).toEqual(1);
-            expect(response.body.message).toBe('Category list successfully retrieved');
+            expect(response.body.data.length).toBe(2); // only responds with 2 since there is only 2 history categories
         });
     });
 });

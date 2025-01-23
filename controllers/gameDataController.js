@@ -7,6 +7,7 @@ const getRandomCategories = async (req, res) => {
     try {
         console.log('getRandomCategories called with params:', req.params);
         const number = parseInt(req.params.number);
+        if (isNaN(number)) return  res.status(400).json({ message: 'number must be a number' });
         
         gameData.getRandomCategories(number, game, (error, result) => {
             if (error) {
