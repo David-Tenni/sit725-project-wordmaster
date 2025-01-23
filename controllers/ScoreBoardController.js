@@ -7,7 +7,7 @@
       this.timeLimit = 7000;
       this.totalRounds = totalRounds;
       this.players = new Map();
-      this.maxBarHeight = 500; // Set maximum height for bars
+      this.maxBarHeight = 390;
 
       // Initialize components
       try {
@@ -24,7 +24,7 @@
 
     addPlayer(playerName) {
       const playerId = playerName.toLowerCase().trim();
-      if (!this.players.has(playerId) && playerId !== 'ante') { // Don't add ANTE player
+      if (!this.players.has(playerId) && playerId !== 'ante') { // Don't add ANTE player we are probalby removing it for good
         this.players.set(playerId, {
           name: playerName,
           totalScore: 0,
