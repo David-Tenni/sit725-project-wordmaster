@@ -1,83 +1,94 @@
 <!DOCTYPE html>
 <html>
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Leaderboard - WordMaster</title>
-  <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
-  <link rel="stylesheet" href="wordmaster.css">
-  <script src="/socket.io/socket.io.js"></script>
-  <script type="text/javascript" src="/controllers/leaderboardController.js"></script>
-</head>
-<body>
-  <div class="purple-blob"></div>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Leaderboard - WordMaster</title>
+    <script
+      src="https://code.jquery.com/jquery-3.7.1.min.js"
+      integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo="
+      crossorigin="anonymous"
+    ></script>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css"
+    />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+    <link rel="stylesheet" href="wordmaster.css" />
+    <script src="/socket.io/socket.io.js"></script>
+    <script
+      type="text/javascript"
+      src="/controllers/leaderboardController.js"
+    ></script>
+  </head>
+  <body>
+    <div class="purple-blob"></div>
 
-  <div class="container">
-    <div class="brand-title">
-      <div class="logo-section">
-        <div class="logo">
-          <img src="Public/img/Image_265.svg" alt="WordMaster Logo" class="logo-svg" />
+    <div class="container">
+      <div class="brand-title">
+        <div class="logo-section">
+          <div class="logo">
+            <img src="img/logo.png" alt="WordMaster Logo" class="logo-svg" />
+          </div>
+        </div>
+        <h4>WordMaster</h4>
+      </div>
+      <!--navigation bar-->
+      <nav class="navbar">
+        <ul>
+          <li><a href="index.html">Home</a></li>
+          <li><a href="/profile.html" id="profile-menu">Profile</a></li>
+          <li><a href="leaderboard.html" class="active">Leaderboard</a></li>
+          <li><a href="settings.html" id="settings-menu">Settings</a></li>
+        </ul>
+      </nav>
+      <div class="tagline">Global Leaderboard</div>
+
+      <div class="welcome-card">
+        <div class="row">
+          <div class="input-field col s6">
+            <select id="leaderboard-filter">
+              <option value="highScore" selected>High Score</option>
+              <option value="totalScore">Total Score</option>
+              <option value="wins">Wins</option>
+              <option value="wordLength">Word Length</option>
+              <option value="categories">Categories</option>
+            </select>
+            <label>Filter Leaderboard</label>
+          </div>
+          <div class="input-field col s6">
+            <select id="results-per-page">
+              <option value="10" selected>10</option>
+              <option value="50">50</option>
+              <option value="100">100</option>
+            </select>
+            <label>Results Per Page</label>
+          </div>
+        </div>
+
+        <div class="scrollable-table">
+          <table class="striped centered">
+            <thead>
+              <tr id="table-header">
+                <th>Name</th>
+                <th>Score</th>
+              </tr>
+            </thead>
+            <tbody id="leaderboard-body">
+              <!--dynamic rows-->
+            </tbody>
+          </table>
+        </div>
+
+        <div class="buttons-container">
+          <a
+            href="/mainMenu.html"
+            class="waves-effect waves-light btn btn-custom play-btn"
+          >
+            Back to Menu
+          </a>
         </div>
       </div>
-      <h4>WordMaster</h4>
     </div>
-    <!--navigation bar-->
-    <nav class="navbar">
-      <ul>
-        <li><a href="index.html">Home</a></li>
-        <li><a href="/profile.html" id="profile-menu">Profile</a></li>
-        <li><a href="leaderboard.html" class="active">Leaderboard</a></li>
-        <li><a href="settings.html" id="settings-menu">Settings</a></li>
-      </ul>
-    </nav>
-    <div class="tagline">
-      Global Leaderboard
-    </div>
-
-    <div class="welcome-card">
-      <div class="row">
-        <div class="input-field col s6">
-          <select id="leaderboard-filter">
-            <option value="highScore" selected>High Score</option>
-            <option value="totalScore">Total Score</option>
-            <option value="wins">Wins</option>
-            <option value="wordLength">Word Length</option>
-            <option value="categories">Categories</option>
-          </select>
-          <label>Filter Leaderboard</label>
-        </div>
-        <div class="input-field col s6">
-          <select id="results-per-page">
-            <option value="10" selected>10</option>
-            <option value="50">50</option>
-            <option value="100">100</option>
-          </select>
-          <label>Results Per Page</label>
-        </div>
-      </div>
-
-      <div class="scrollable-table">
-        <table class="striped centered">
-          <thead>
-            <tr id="table-header">
-              <th>Name</th>
-              <th>Score</th>
-            </tr>
-          </thead>
-          <tbody id="leaderboard-body">
-            <!--dynamic rows-->
-          </tbody>
-        </table>
-      </div>
-
-      <div class="buttons-container">
-        <a href="/mainMenu.html" class="waves-effect waves-light btn btn-custom play-btn">
-          Back to Menu
-        </a>
-      </div>
-    </div>
-  </div>
-</body>
+  </body>
 </html>
