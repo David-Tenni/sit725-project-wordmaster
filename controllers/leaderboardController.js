@@ -17,21 +17,27 @@ $(document).ready(function () {
     function updateTableBody(data, keys) {
       //clear the table when changing filters
       $('#leaderboard-body').empty();
-
+    
       //filter out rows where values are zero, empty, or null
       const filteredData = data.filter(item => {
         const valueKey = keys[1];  
         const value = item[valueKey];
-          return value !== undefined && value !== null && value !== 0 && value !== '';
-        });
-
+        return value !== undefined && value !== null && value !== 0 && value !== '';
+      });
+    
       const rows = filteredData.map(item => {
-        const row = keys.map(key => `<td>${item[key]}</td>`).join('');
-        return `<tr>${row}</tr>`;
+        const cells = keys.map((key, index) => {
+          // add links to the users profile
+          if (key === 'username') {
+            return `<td><a href="/user/${item[key]}" class="username-link">${item[key]}</a></td>`;
+          }
+          return `<td>${item[key]}</td>`;
+        }).join('');
+        return `<tr>${cells}</tr>`;
       }).join('');
+      
       $('#leaderboard-body').html(rows);
     }
-
     function connectSocket(filter) {
       if (socket) {
         socket.disconnect();

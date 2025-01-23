@@ -1,68 +1,81 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Sign Up - WordMaster</title>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
-  <link rel="stylesheet" href="wordmaster.css">
-  <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
-</head>
-<body>
-  <div class="purple-blob"></div>
-  <div class="container">
-    <div class="brand-title">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Sign Up - WordMaster</title>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css"
+    />
+    <link rel="stylesheet" href="wordmaster.css" />
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  </head>
+  <body>
+    <div class="purple-blob"></div>
+    <div class="container">
+      <div class="brand-title">
         <div class="logo-section">
-          <a href="/mainMenu.html">
-            <div class="logo">
-                <img src="Public/img/Image_265.svg" alt="WordMaster Logo" class="logo-svg" />
-            </div>
-            </a>
+          <div class="logo">
+            <img src="img/logo.png" alt="WordMaster Logo" class="logo-svg" />
           </div>
-          <h4>WordMaster</h4>
         </div>
-    <div class="tagline">Challenge your trivia knowledge with this daily word game</div>
-    <div class="welcome-card">
-      <h5 class="wave-text">Create an account</h5>
-      <form id="signup-form">
-        <div class="input-field">
-          <input type="text" id="username" placeholder="User name" required>
-        </div>
-        <div class="input-field">
-          <input type="password" id="password" placeholder="Password" required>
-        </div>
-        <button type="submit" class="waves-effect waves-light btn btn-custom play-btn">Sign up</button>
-      </form>
-      <p id="signup-error" class="error-message"></p>
+        <h4>WordMaster</h4>
+      </div>
+      <div class="tagline">
+        Challenge your trivia knowledge with this daily word game
+      </div>
+      <div class="welcome-card">
+        <h5 class="wave-text">Create an account</h5>
+        <form id="signup-form">
+          <div class="input-field">
+            <input type="text" id="username" placeholder="User name" required />
+          </div>
+          <div class="input-field">
+            <input
+              type="password"
+              id="password"
+              placeholder="Password"
+              required
+            />
+          </div>
+          <button
+            type="submit"
+            class="waves-effect waves-light btn btn-custom play-btn"
+          >
+            Sign up
+          </button>
+        </form>
+        <p id="signup-error" class="error-message"></p>
+      </div>
     </div>
-  </div>
-  <script>
-    $('#signup-form').on('submit', function(e) {
-      e.preventDefault();
-      const username = $('#username').val();
-      const password = $('#password').val();
+    <script>
+      $("#signup-form").on("submit", function (e) {
+        e.preventDefault();
+        const username = $("#username").val();
+        const password = $("#password").val();
 
-      $.ajax({
-        url: '/api/user/signup',
-        method: 'POST',
-        contentType: 'application/json',
-        data: JSON.stringify({ username, password }),
-        success: function() {
+        $.ajax({
+          url: "/api/user/signup",
+          method: "POST",
+          contentType: "application/json",
+          data: JSON.stringify({ username, password }),
+          success: function () {
             //check for logged in status
-            localStorage.setItem('isLoggedIn','true');
-            localStorage.setItem('user',username);
+            localStorage.setItem("isLoggedIn", "true");
+            localStorage.setItem("user", username);
 
-            window.location.href = '/mainMenu.html';
-        },
-        error: function(xhr) {
-          if (xhr.status === 409) {
-            $('#signup-error').text('Username already exists.');
-          } else {
-            $('#signup-error').text('An error occurred. Please try again.');
-          }
-        }
+            window.location.href = "/mainMenu.html";
+          },
+          error: function (xhr) {
+            if (xhr.status === 409) {
+              $("#signup-error").text("Username already exists.");
+            } else {
+              $("#signup-error").text("An error occurred. Please try again.");
+            }
+          },
+        });
       });
-    });
-  </script>
-</body>
+    </script>
+  </body>
 </html>
