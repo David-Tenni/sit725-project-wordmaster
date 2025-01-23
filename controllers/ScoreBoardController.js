@@ -53,7 +53,7 @@
         return;
       }
       container.innerHTML = `
-                <div class="chart-container" style="max-width: 600px; margin: 0 auto;">
+             <div class="chart-container" style="max-width: 600px; margin: 0 auto; padding-top: 0;">
                     <h2 class="title" style="margin: 0; padding: 5px 0; text-align: center;">Word Master Challenge</h2>
                     <div style="margin-bottom: 5px;">
                         <div class="round-display">

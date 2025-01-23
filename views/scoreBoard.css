@@ -7,7 +7,10 @@
   height: auto;   
 }
 
-
+#exitGame {
+  background-color: black !important; 
+  margin: 10px 0;
+}
 
 #scoreBoard .chart {
   padding: 10px;
