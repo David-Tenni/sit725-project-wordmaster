@@ -41,7 +41,25 @@ const login = async (req, res) => {
         res.status(200).json({message: "Successfully logged in", accessToken: accessToken, refreshToken: refreshToken });
     });
 };
+async function getUserByUsername(req, res) {
+    const username = req.params.username;
+    if (!username) {
+        return res.status(400).json({message: "Username is required"});
+    }
 
+    db.getUser(username, (error, result) => {
+        if(!result) {
+            return res.status(404).json({message: "User not found"});
+        }
+        if (!error) {
+            delete result.password; 
+            delete result.token;
+            res.status(200).json({data: result, message: 'User successfully retrieved'});
+        } else {
+            res.status(500).json({message: error.message});
+        }
+    });
+}
 const refresh = async (req, res) => {
     const token = req.body.token;
     if (!token) return res.status(401).json({ message: "Invalid token" });
@@ -159,4 +177,4 @@ async function deleteUser(req, res) {
     })
 }
 
-module.exports = {postUser, login, refresh, getUser, updateUserAnswer, updateUserPassword, deleteUser, postUserGame}
+module.exports = {postUser, login, refresh, getUser, updateUserAnswer, updateUserPassword, deleteUser, postUserGame, getUserByUsername};
