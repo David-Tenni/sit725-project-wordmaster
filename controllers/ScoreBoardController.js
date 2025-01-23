@@ -53,9 +53,9 @@
         return;
       }
       container.innerHTML = `
-                <div class="chart-container" style="max-width: 800px; margin: 0 auto; height: 90vh;">
-                    <h2 class="title" style="margin: 0; padding: 10px 0;">Word Master Challenge</h2>
-                    <div style="margin-bottom: 10px;">
+                <div class="chart-container" style="max-width: 600px; margin: 0 auto;">
+                    <h2 class="title" style="margin: 0; padding: 5px 0; text-align: center;">Word Master Challenge</h2>
+                    <div style="margin-bottom: 5px;">
                         <div class="round-display">
                             <h5 style="margin: 5px 0;">Round: <span id="current-round">1</span>/${this.totalRounds}</h5>
                         </div>
@@ -63,19 +63,22 @@
                             <h5 style="margin: 5px 0;">Category: <span id="current-category"></span></h5>
                         </div>
                     </div>
-                    <div class="chart" style="height: 60vh; margin-top: 20px;">
+                    <div class="chart" style="height: 50vh; margin: 10px 0;">
                         ${this.createBarContainers()}
                     </div>
                     <div class="timer-container">
                         <div class="timer-bar"></div>
                     </div>
-                    <div class="input-section">
+                    <div class="input-section" style="margin: 10px 0;">
                         <form id="wordForm">
                             <div class="input-field">
                                 <input type="text" id="playerPoints" autofocus class="browser-default" placeholder="Enter a word">
                                 <button type="submit" class="waves-effect waves-light btn" id="submitPoints">Submit</button>
                             </div>
                         </form>
+                    </div>
+                    <div style="text-align: center; margin: 10px 0;">
+                        <button class="waves-effect waves-light btn" id="exitGame">EXIT GAME</button>
                     </div>
                 </div>
 
@@ -92,8 +95,14 @@
                         <a href="/mainmenu.html" class="waves-effect waves-light btn btn-custom signup-btn">Main Menu</a>
                     </div>
                 </div>`;
-    }
 
+      const exitButton = document.getElementById('exitGame');
+      if (exitButton) {
+        exitButton.addEventListener('click', () => {
+          window.location.href = 'mainmenu.html';
+        });
+      }
+}
     createBarContainers() {
       return Array.from(this.players.entries())
         .filter(([playerId]) => playerId !== 'ante')
