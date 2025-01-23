@@ -110,7 +110,7 @@
           ([playerId, playerData]) => `
             <div class="bar-container">
                 <div class="bar" id="${playerId}" data-value="0">
-                    <div class="word-display" style="position: absolute; width: 100%; text-align: center; top: 40%;">
+                    <div class="word-display" style="position: absolute; width: 100%; text-align: center; top: 10%;">
                         <div class="current-word" style="color: white; text-shadow: 1px 1px 2px rgba(0,0,0,0.7);"></div>
                     </div>
                     <div class="score-display" style="position: absolute; width: 100%; text-align: center; top: 60%;">
