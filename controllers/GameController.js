@@ -235,6 +235,24 @@
                     });
                 }
             }
+
+            $.ajax({
+                url: '/api/word/count',
+                method: 'PATCH',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                data: JSON.stringify({
+                    category: this.gameSession.currentCategory,
+                    word: word
+                }),
+                success: function(response) {
+                    console.log('Word count incremented:', response);
+                },
+                error: function(error) {
+                    console.error('Error incrementing word count:', error);
+                }
+            });
         
             // Record the score locally
             const playerScore = new window.PlayerScore(
