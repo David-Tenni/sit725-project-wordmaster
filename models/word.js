@@ -22,6 +22,23 @@ async function getCategories(callback){
     }
 }
 
+async function addWordCount(word, category, callback){
+    try{
+        const categoryList = db.collection(category);
+
+        const simplifiedWord = word.toLowerCase().replace(/[\s\W_]+/g, '');
+
+        result = await categoryList.updateOne(
+            { word: simplifiedWord },
+            { $inc: { count: 1  } }
+        );
+        callback(null)
+        
+    }catch(error){
+        callback({message: "Error updating the word count"})
+    }
+}
+
 async function isCategory(category){
     try{
         const categories = await db.listCollections().toArray();
@@ -32,4 +49,4 @@ async function isCategory(category){
     }
 }
 
-module.exports = {getWords,getCategories,isCategory}
+module.exports = {getWords,getCategories,isCategory,addWordCount}

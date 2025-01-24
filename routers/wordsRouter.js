@@ -10,4 +10,8 @@ routes.get('/:category', (req, res) => {
     controller.getWords(req, res);
 });
 
+routes.patch('/count', (req, res) => {
+    controller.addCount(req, res);
+})
+
 module.exports = routes;

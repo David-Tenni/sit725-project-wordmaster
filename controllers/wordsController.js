@@ -28,4 +28,18 @@ const getCategories = (req,res) => {
     });
 }
 
-module.exports = {getWords,getCategories}
+async function addCount(req, res){
+    let { category, word } = req.body;
+    if(!category || !word) return res.status(400).json({message:"Answer must contain category and word"});
+
+    db.addWordCount(word, category, (error)=>{
+        if(!error){
+            res.status(201).json({message:'Word count updated'});
+        }
+        else{
+            res.status(500).json({message:error.message});
+        }
+    });
+}
+
+module.exports = {getWords,getCategories,addCount}
