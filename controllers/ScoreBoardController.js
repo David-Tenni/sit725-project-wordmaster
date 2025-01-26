@@ -141,7 +141,7 @@
     }
 
     handleGameStateUpdate(gameState) {
-      console.log("Received game state update:", gameState);
+      // console.log("Received game state update:", gameState);
 
       if (gameState.currentCategory) {
         this.updateCategoryDisplay(gameState.currentCategory);

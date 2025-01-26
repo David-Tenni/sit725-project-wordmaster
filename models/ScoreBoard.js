@@ -71,28 +71,35 @@
       return aiPlayers.every(name => this.aiResponded.has(name));
     }
 
-    recordAIResponse(playerName, answer, time) {
+    recordAIResponse(playerName, answer, time, score) {
       const player = this.players[playerName];
       if (player && !this.aiResponded.has(playerName)) {
-        const score = answer.length;
-        player.scores.push({ 
-          round: this.currentRound, 
-          score: score, 
-          answer: answer,
-          time: time 
-        });
-        player.totalScore += score;
-        this.aiResponded.add(playerName);
-
-        console.log(`Recorded response for ${playerName}:`, answer);
-
-        if (this.allAIRespondedThisRound()) {
-          this.roundComplete = true;
-        }
-
-        this.updateAnteScore();
+          // default to 0 if not provided
+          const finalScore = Number(score) || answer.length/3;  // Fallback to answer length  divied by 3
+  
+          player.scores.push({ 
+              round: this.currentRound, 
+              score: finalScore,
+              answer: answer,
+              time: time 
+          });
+          
+          player.totalScore += finalScore;
+          this.aiResponded.add(playerName);
+  
+          console.log(`Recorded response for ${playerName}:`, {
+              answer,
+              score: finalScore,
+              totalScore: player.totalScore
+          });
+  
+          if (this.allAIRespondedThisRound()) {
+              this.roundComplete = true;
+          }
+  
+          this.updateAnteScore();
       }
-    }
+  }
 
     recordAnswer(playerName, answer, time) {
       const player = this.players[playerName];
