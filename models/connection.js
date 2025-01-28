@@ -1,6 +1,6 @@
 const { MongoClient, ServerApiVersion } = require("mongodb");
 
-const uri = "mongodb+srv://dbuser:GutqNP8iGf5D8ZPQ@wordmastercluster.fspcr.mongodb.net/?retryWrites=true&w=majority&appName=WordMasterCluster";
+const uri = process.env.URI;
 
 const client = new MongoClient(uri);
  

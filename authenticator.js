@@ -4,7 +4,7 @@ const protect= (req, res, next) => {
     const token = req.headers['authorization'];
     if (!token) return res.status(401).json({ message: "No token found" });
 
-    jwt.verify(token, "temporary_secret_key", (error, result) => {
+    jwt.verify(token, process.env.ACCESS_TOKEN_KEY, (error, result) => {
         if (error){
             //console.log(error);
             return res.status(401).json({ message: "Invalid token" });}
@@ -16,7 +16,7 @@ const protect= (req, res, next) => {
 const check = (req, res, next) => {
     const token = req.headers['authorization'];
     if (token){
-        jwt.verify(token, "temporary_secret_key", (error, result) => {
+        jwt.verify(token, process.env.ACCESS_TOKEN_KEY, (error, result) => {
             if (!error){
                 req.user = result;}
 
