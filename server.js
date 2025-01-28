@@ -14,6 +14,7 @@ const totalScoreSocket = require('./sockets/totalScore');
 const highScoreSocket = require('./sockets/highScore');
 const winsSocket = require('./sockets/wins');
 const categoriesSocket = require('./sockets/categories');
+const notificationSocket = require('./sockets/notification');
 
 // Default route
 app.get('/', (req, res) => {
@@ -50,6 +51,7 @@ totalScoreSocket(io.of('/total_score'));
 highScoreSocket(io.of('/high_score'));
 winsSocket(io.of('/wins'));
 categoriesSocket(io.of('/categories'));
+notificationSocket(io.of('/notification'));
 
 module.exports = http.listen(port, () => {
     console.log(`App is listening on port ${port}`);

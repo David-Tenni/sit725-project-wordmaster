@@ -70,6 +70,25 @@
             </div>
         </div>
     </div>
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+        let notificationSocket= io("/notification");
+    
+        notificationSocket.on("connect", () => {
+            let token = localStorage.getItem("accessToken");
+            if (token) {
+                notificationSocket.emit("authenticate", token);
+            }
+        });
+    
+        notificationSocket.on("alert", (message) => {
+                console.log("Message:", message);
+            });
+    
+        notificationSocket.on("disconnect", () => {
+            console.log("Disconnected");
+        });
+    </script>
 
     <script src="/controllers/ProfileController.js"></script>
     <script>
