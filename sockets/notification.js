@@ -33,7 +33,7 @@ module.exports = function(io) {
                     }
                 }
                 previous = rank;
-            }, 1000);
+            }, 10000);
 
             socket.on("disconnect", () => {
                 clearInterval(interval);
