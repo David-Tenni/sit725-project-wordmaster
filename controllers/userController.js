@@ -33,8 +33,8 @@ const login = async (req, res) => {
         const isPassword = await bcrypt.compare(password, user.password);
         if (!isPassword) return res.status(401).json({message: "Password or Username are incorrect" });
 
-        const accessToken = jwt.sign({ username: user.username }, "temporary_secret_key", { expiresIn: "1h" });
-        const refreshToken = jwt.sign({ username: user.username }, "temporary_refresh_secret", { expiresIn: "1d" });
+        const accessToken = jwt.sign({ username: user.username }, process.env.ACCESS_TOKEN_KEY, { expiresIn: "1h" });
+        const refreshToken = jwt.sign({ username: user.username }, process.env.REFRESH_TOKEN_KEY, { expiresIn: "1d" });
 
         db.addRefreshToken(username, refreshToken)
 
@@ -66,9 +66,9 @@ const refresh = async (req, res) => {
 
     db.findRefreshToken(token, async (error, user) => {
         if(!error){
-            jwt.verify(token, "temporary_refresh_secret", (err, result) => {
+            jwt.verify(token, process.env.REFRESH_TOKEN_KEY, (err, result) => {
                 if (err) return res.status(401).json({ message: "Invalid token" });
-                const accessToken = jwt.sign({ username: result.username }, "temporary_secret_key", { expiresIn: "1h" });
+                const accessToken = jwt.sign({ username: result.username }, process.env.ACCESS_TOKEN_KEY, { expiresIn: "1h" });
                 res.status(200).json({ message: "Token successfully refreshed", accessToken: accessToken });
             });
         }else if(error.message == "User not found"){

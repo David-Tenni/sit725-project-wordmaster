@@ -3,6 +3,7 @@ var app = express()
 let http = require('http').createServer(app);
 let io = require('socket.io')(http);
 const path = require('path');
+require('dotenv').config();
 const fs = require('fs');
 
 // Import controllers and routers
