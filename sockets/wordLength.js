@@ -3,9 +3,6 @@ const client = require('../models/connection');
 module.exports = function(io) {
     io.on('connection', (socket) => {
         console.log('User connected');
-        socket.on('disconnect', () => {
-            console.log('User disconnected');
-        });
 
         async function getUserByWordLength() {
             let collection = client.db('authentication').collection("users");
@@ -25,12 +22,16 @@ module.exports = function(io) {
             return rankedUsers;
         }
 
-
-        setInterval(async () => {
+        const interval = setInterval(async () => {
             let users = await getUserByWordLength()
             let filtered = users.map(user => ({ username: user.username, longest_word: user.longest_word ? user.longest_word : '' }));
             socket.emit('Users_by_word_length', filtered);
             //console.log('Emitting:', filtered);
-        }, 1000);
+        }, 10000);
+
+        socket.on('disconnect', () => {
+            console.log('User disconnected');
+            clearInterval(interval);
+        });
     });
 };

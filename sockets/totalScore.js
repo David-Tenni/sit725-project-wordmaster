@@ -3,9 +3,6 @@ const client = require('../models/connection');
 module.exports = function(io) {
     io.on('connection', (socket) => {
         console.log('User connected');
-        socket.on('disconnect', () => {
-            console.log('User disconnected');
-        });
 
         async function getUserByTotalScore() {
             let collection = client.db('authentication').collection("users");
@@ -19,11 +16,16 @@ module.exports = function(io) {
         }
 
 
-        setInterval(async () => {
+        const interval = setInterval(async () => {
             let users = await getUserByTotalScore()
             let filtered = users.map(user => ({ username: user.username, total_score: user.total_score ? user.total_score : 0 }));
             socket.emit('Users_by_total_score', filtered);
             //console.log('Emitting:', filtered);
-        }, 1000);
+        }, 10000);
+
+        socket.on('disconnect', () => {
+            console.log('User disconnected');
+            clearInterval(interval);
+        });
     });
 };
