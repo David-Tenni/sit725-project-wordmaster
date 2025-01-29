@@ -8,6 +8,8 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
     <link rel="stylesheet" href="wordmaster.css">
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="/controllers/notificationController.js"></script>
 </head>
 <body>
     <div class="purple-blob"></div>
@@ -72,26 +74,6 @@
             </div>
         </div>
     </div>
-    <script src="/socket.io/socket.io.js"></script>
-    <script>
-        let notificationSocket= io("/notification");
-    
-        notificationSocket.on("connect", () => {
-            let token = localStorage.getItem("accessToken");
-            if (token) {
-                notificationSocket.emit("authenticate", token);
-            }
-        });
-    
-        notificationSocket.on("alert", (message) => {
-                console.log("Message:", message);
-            });
-    
-        notificationSocket.on("disconnect", () => {
-            console.log("Disconnected");
-        });
-    </script>
-
     <script src="/controllers/ProfileController.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', () => {

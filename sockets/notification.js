@@ -29,7 +29,8 @@ module.exports = function(io) {
                 let rank = ranking.findIndex(user => user.username === socket.username) + 1;
                 if(previous != 0 && rank != 0){
                     if(rank > previous){
-                        socket.emit("alert", `Your high score has been surpassed!`);
+                        const surpassingUser = ranking[rank - 2];
+                        socket.emit("alert", `Your high score has been surpassed by ${surpassingUser.username}!`);
                     }
                 }
                 previous = rank;
