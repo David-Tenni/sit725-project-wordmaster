@@ -37,12 +37,6 @@ $(document).ready(function () {
         const cells = keys
           .map((key, index) => {
             // add links to the users profile
-
-            if (key === "category" && typeof value === "string") {
-              let modifiedCategory = value.replace(/_/g, " ");
-              console.log(`${value} → ${modifiedCategory}`);
-              value = modifiedCategory;
-            }
             if (key === "username") {
               return `<td><a href="/user/${item[key]}" class="username-link">${item[key]}</a></td>`;
             }
