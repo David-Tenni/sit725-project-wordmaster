@@ -109,7 +109,7 @@
 
 #scoreBoard #player {
   background: #4CAF50;
-  width: 60px;
+  width: 130px;
   min-height: 0;
   transition: height 1s ease-out;
 }
@@ -228,5 +228,46 @@
   color: white;
   margin-left: 10px;
   text-transform: uppercase;
+  font-weight: bold;
+}
+
+/* score display */
+#scoreBoard .scoring-box {
+  position: absolute;
+  top: 80px;
+  left: -80px;
+  background-color: white;
+  border: 2px solid #a388ee;
+  border-radius: 8px;
+  padding: 10px;
+  width: 180px;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+  z-index: 1;
+}
+#scoreBoard .chart-container {
+  position: relative;
+}
+
+#scoreBoard .scoring-detail {
+  font-size: 14px;
+  margin: 4px 0;
+  color: #333;
+}
+
+.final-score {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 0;
+  border-bottom: 1px solid #eee;
+}
+
+.final-score .player-name {
+  font-weight: bold;
+  color: #333;
+}
+
+.final-score .score {
+  color: #4CAF50;
   font-weight: bold;
 }
