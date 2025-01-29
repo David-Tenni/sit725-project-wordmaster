@@ -8,20 +8,24 @@ module.exports = function(io) {
             let collection = client.db('authentication').collection("users");
             const rankedUsers = await collection.aggregate([
                 {
-                    $project: {
-                        username: 1,
-                        longest_word: 1,
-                        length: { $strLenCP: { $ifNull: ["$longest_word", ""] } }
-                    }
+                    $match: { longest_word: { $exists: true } }
                 },
                 {
-                    $sort: { length: -1 }
+                    $project: {
+                        username: 1,
+                        longest_word: 1
+                    }
                 }
-                ]).toArray();
+            ]).toArray();
+
+
+            rankedUsers.forEach(user => {
+                user.length = user.longest_word.replace(/[\s\W_]+/g, '').length;
+            });
+            rankedUsers.sort((a, b) => b.length - a.length);
 
             return rankedUsers;
         }
-
         const interval = setInterval(async () => {
             let users = await getUserByWordLength()
             let filtered = users.map(user => ({ username: user.username, longest_word: user.longest_word ? user.longest_word : '' }));

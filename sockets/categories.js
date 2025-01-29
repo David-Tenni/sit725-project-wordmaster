@@ -8,36 +8,36 @@ module.exports = function(io) {
             let categories = await client.db("words").listCollections().toArray();
             let collection = client.db('authentication').collection("users");
             let result = [];
-
-            for(const category of categories){
-                const highest = await collection.aggregate([
+        
+            for (const category of categories) {
+                const answers = await collection.aggregate([
                     { 
                         $match: { [`answers.${category.name}`]: { $exists: true } } 
                     },
                     {
                         $project: {
                             username: 1,
-                            word: { $ifNull: [`$answers.${category.name}.word`, ''] },
-                            length: { $strLenCP: { $ifNull: [`$answers.${category.name}.word`, ''] } },
+                            word: { $ifNull: [`$answers.${category.name}.word`, ''] }
                         }
-                    },
-                    { 
-                        $sort: { length: -1 } 
-                    },
-                    { 
-                        $limit: 1 
                     }
                 ]).toArray();
-
+        
+                let longestAnswer = answers
+                    .map(answer => ({
+                        ...answer,
+                        simplified: answer.word.replace(/[\s\W_]+/g, '')
+                    }))
+                    .reduce((max, current) => current.simplified.length > max.simplified.length ? current : max);
+        
                 result.push({
                     category: category.name,
-                    username: highest[0].username,
-                    word: highest[0].word
-                })
+                    username: longestAnswer.username,
+                    word: longestAnswer.word
+                });
             }
+        
             return result;
         }
-
 
         const interval = setInterval(async () => {
             let categories = await getLongestWordForEachCategory()
