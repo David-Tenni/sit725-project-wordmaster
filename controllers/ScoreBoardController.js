@@ -1,7 +1,7 @@
 (function (window) {
   class ScoreBoardController {
     constructor(containerId, totalRounds = 5) {
-      console.log("ScoreBoardController initializing...");
+      // console.log("ScoreBoardController initializing...");
       this.containerId = containerId;
       this.timerInterval = null;
       this.timeLimit = 7000;
@@ -16,22 +16,26 @@
           this.setupMaterializeComponents();
         });
         this.initializeEventListeners();
-        console.log("ScoreBoardController initialization complete");
+        // console.log("ScoreBoardController initialization complete");
       } catch (error) {
-        console.error("Error during ScoreBoardController initialization:", error);
+        console.error(
+          "Error during ScoreBoardController initialization:",
+          error
+        );
       }
     }
 
     addPlayer(playerName) {
       const playerId = playerName.toLowerCase().trim();
-      if (!this.players.has(playerId) && playerId !== 'ante') { // Don't add ANTE player we are probalby removing it for good
+      if (!this.players.has(playerId) && playerId !== "ante") {
+        // Don't add ANTE player we are probalby removing it for good
         this.players.set(playerId, {
           name: playerName,
           totalScore: 0,
           scores: [],
           eliminated: false,
         });
-        console.log(`Added player: ${playerName}`);
+        // console.log(`Added player: ${playerName}`);
         this.updateBars();
       }
     }
@@ -46,7 +50,7 @@
     }
 
     createScoreBoardHTML() {
-      console.log("Creating ScoreBoard HTML...");
+      // console.log("Creating ScoreBoard HTML...");
       const container = document.getElementById(this.containerId);
       if (!container) {
         console.error("Container not found:", this.containerId);
@@ -57,7 +61,9 @@
                     <h2 class="title" style="margin: 0; padding: 5px 0; text-align: center;">Word Master Challenge</h2>
                     <div style="margin-bottom: 5px;">
                         <div class="round-display">
-                            <h5 style="margin: 5px 0;">Round: <span id="current-round">1</span>/${this.totalRounds}</h5>
+                            <h5 style="margin: 5px 0;">Round: <span id="current-round">1</span>/${
+                              this.totalRounds
+                            }</h5>
                         </div>
                         <div class="category-display">
                             <h5 style="margin: 5px 0;">Category: <span id="current-category"></span></h5>
@@ -96,16 +102,16 @@
                     </div>
                 </div>`;
 
-      const exitButton = document.getElementById('exitGame');
+      const exitButton = document.getElementById("exitGame");
       if (exitButton) {
-        exitButton.addEventListener('click', () => {
-          window.location.href = 'mainmenu.html';
+        exitButton.addEventListener("click", () => {
+          window.location.href = "mainmenu.html";
         });
       }
-}
+    }
     createBarContainers() {
       return Array.from(this.players.entries())
-        .filter(([playerId]) => playerId !== 'ante')
+        .filter(([playerId]) => playerId !== "ante")
         .map(
           ([playerId, playerData]) => `
             <div class="bar-container">
@@ -149,7 +155,7 @@
       this.updateRoundDisplay(gameState.currentRound);
 
       gameState.players.forEach((player) => {
-        if (player.playerName.toLowerCase() !== 'ante') {
+        if (player.playerName.toLowerCase() !== "ante") {
           this.addPlayer(player.playerName);
         }
       });
@@ -169,46 +175,51 @@
 
     updateScoreBars(players) {
       players.forEach((player) => {
-        if (player.playerName.toLowerCase() === 'ante') return;
-        
+        if (player.playerName.toLowerCase() === "ante") return;
+
         const playerId = player.playerName.toLowerCase().trim();
         const bar = document.getElementById(playerId);
-    
+
         if (!bar) {
           console.warn(`Bar not found for player: ${player.playerName}`);
           this.addPlayer(player.playerName);
           return;
         }
-    
+
         const totalScore = player.scores.reduce(
           (sum, score) => sum + score.answer.length,
           0
         );
-    
-        const height = Math.min((totalScore * 10), this.maxBarHeight);
-    
+
+        const height = Math.min(totalScore * 10, this.maxBarHeight);
+
         bar.style.transition = "height 0.5s ease-out";
         bar.style.height = `${height}px`;
-    
+
         if (playerId === "player") {
           bar.style.backgroundColor = "#2196F3";
         } else {
-          if (!bar.style.backgroundColor || bar.style.backgroundColor === "transparent") {
-            const randomColor = `#${Math.floor(Math.random() * 16777215).toString(16)}`;
+          if (
+            !bar.style.backgroundColor ||
+            bar.style.backgroundColor === "transparent"
+          ) {
+            const randomColor = `#${Math.floor(
+              Math.random() * 16777215
+            ).toString(16)}`;
             bar.style.backgroundColor = randomColor;
           }
         }
-    
+
         const latestScore = player.scores[player.scores.length - 1];
-        
+
         // Update word display
-        const wordDisplay = bar.querySelector('.current-word');
+        const wordDisplay = bar.querySelector(".current-word");
         if (wordDisplay) {
           wordDisplay.textContent = latestScore ? latestScore.answer : "";
         }
-    
+
         // Update score display
-        const scoreDisplay = bar.querySelector('.total-score');
+        const scoreDisplay = bar.querySelector(".total-score");
         if (scoreDisplay) {
           scoreDisplay.textContent = `Total: ${totalScore}`;
         }
@@ -241,7 +252,7 @@
     }
 
     handleGameOver(gameState) {
-      console.log("Game Over triggered with state:", gameState);
+      // console.log("Game Over triggered with state:", gameState);
 
       const modal = document.getElementById("gameOverModal");
       if (!modal) {
@@ -251,7 +262,11 @@
 
       const scoresList = modal.querySelector(".final-scores-list");
       if (scoresList) {
-        scoresList.innerHTML = this.generateFinalScores(gameState.finalScores.filter(score => score.name.toLowerCase() !== 'ante'));
+        scoresList.innerHTML = this.generateFinalScores(
+          gameState.finalScores.filter(
+            (score) => score.name.toLowerCase() !== "ante"
+          )
+        );
       }
 
       const modalInstance = M.Modal.getInstance(modal);
@@ -274,7 +289,7 @@
     }
 
     generateFinalScores(scores) {
-      console.log("Generating final scores:", scores);
+      // console.log("Generating final scores:", scores);
       return scores
         .map(
           ({ name, score }) => `
@@ -300,7 +315,7 @@
             dismissible: false,
             onCloseEnd: () => location.reload(),
           });
-          console.log("Modal initialized successfully");
+          // console.log("Modal initialized successfully");
         }
 
         M.AutoInit();
