@@ -21,7 +21,7 @@ module.exports = function(io) {
             let filtered = users.map(user => ({ username: user.username, high_score: user.high_score ? user.high_score : 0 }));
             socket.emit('Users_by_high_score', filtered);
             //console.log('Emitting:', filtered);
-        }, 10000);
+        }, 1000);
 
         socket.on('disconnect', () => {
             console.log('User disconnected');
