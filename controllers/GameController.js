@@ -430,11 +430,13 @@
         );
 
         // Convert both input word and valid words to lowercase
-        const normalizedWord = word.toLowerCase().trim();
-        const isValid = validWords.some(
-          (validWord) => validWord.toLowerCase().trim() === normalizedWord
-        );
+        const normalizedWord = word.replace(/[\s\W_]+/g, "").toLowerCase();
 
+        // Normalize stored words and check if the input matches any
+        const isValid = validWords.some(
+          (validWord) =>
+            validWord.replace(/[\s\W_]+/g, "").toLowerCase() === normalizedWord
+        );
         // If valid, find the word data (for count/frequency)
         const wordData = isValid ? { count: 1 } : null; // Default count  1
 
