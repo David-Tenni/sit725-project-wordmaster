@@ -43,7 +43,7 @@
     updateCategoryDisplay(category) {
       const categoryDisplay = document.getElementById("current-category");
       if (categoryDisplay) {
-        categoryDisplay.textContent = category;
+        categoryDisplay.textContent = category.replace(/_/g, " ");
       } else {
         console.error("Category display element not found.");
       }
