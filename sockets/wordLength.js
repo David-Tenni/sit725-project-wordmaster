@@ -22,9 +22,9 @@ module.exports = function(io) {
             rankedUsers.forEach(user => {
                 user.length = user.longest_word.replace(/[\s\W_]+/g, '').length;
             });
-          rankedUsers.sort((a, b) => b.length - a.length);
+            rankedUsers.sort((a, b) => b.length - a.length);
 
-          return rankedUsers;
+            return rankedUsers;
         }
         const interval = setInterval(async () => {
             let users = await getUserByWordLength()
