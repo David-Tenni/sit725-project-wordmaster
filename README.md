@@ -1,9 +1,12 @@
 # SIT725-project
 ## Running the project
-To use this project first clone the repository and run the following commands:
+To use this project first clone the repository and run the following command:
 ```bash
 npm install
 ```
+
+Ensure that you have the correct .env file. If you do not, message someone in the team to send it to you.
+
 After this run the following:
 ```bash
 node server.js
@@ -12,8 +15,11 @@ node server.js
 ## File structure
 ```markdown
 ├── controllers
+│   ├── categoryController.js
 │   ├── GameController.js
 │   ├── gameDataController.js
+│   ├── leaderboardController.js
+│   ├── ProfileController.js
 │   ├── ScoreBoardController.js
 │   ├── userController.js
 │   ├── wordsController.js
@@ -30,30 +36,39 @@ node server.js
 ├── node_modules
 ├── routers
 │   ├── gameDataRouter.js
+│   ├── userProfileRouter.js
 │   ├── usersRouter.js
 │   ├── wordsRouter.js
 ├── sockets
 │   ├── categories.js
 │   ├── highScore.js
+│   ├── notification.js
 │   ├── totalScore.js
 │   ├── wins.js
 │   ├── wordLength.js
 ├── test
+│   ├── gameData.test.js
 │   ├── gameTestData.js
 │   ├── testGameSession.js
 │   ├── user.test.js
 │   ├── word.test.js
 ├── views
+│   ├── img
+│   │   ├── logo.png
+│   │   ├── new_logo.svg
 │   ├── js
 │   │   ├── script.js
 │   ├── index.html
 │   ├── leaderboard.html
 │   ├── login.html
 │   ├── mainMenu.html
+│   ├── Profile.html
 │   ├── scoreBoard.css
 │   ├── settings.html
 │   ├── signup.html
+│   ├── userProfile.html
 │   ├── wordmaster.css
+├── .env
 ├── .gitignore
 ├── authenticator.js
 ├── package-lock.json
@@ -72,13 +87,13 @@ There are multiple players: The player (this could also be a guest who is not lo
 The game runs in rounds with a 7-second timer per round
 Score visualization is done through a bar chart system
 
+Games can be played with any categories or users can choose an area that they wish to play in (e.g. Geography or History)
+
 ### Scoring System:
 
-Players score points based on word length
-Previous players have their words and times stored in the database and their score is automatically generated from this data
-The ANTE player seems to serve as a threshold - players below ANTE can be eliminated
+Players score points based on word length, the time taken the give the answer and the rarity of the word.
+Previous players have their words and times stored in the database and their score is automatically generated from this data.
 There's a crown system showing the current leader
-Players can be eliminated either by being the lowest scorer or by falling below ANTE
 
 ### Technical Architecture:
 
