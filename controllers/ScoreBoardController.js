@@ -197,10 +197,14 @@
     updateScoreBars(players) {
       const MAX_POSSIBLE_SCORE = 70;
       
-      // Find highest score
-      const highestScore = Math.max(...players.map(player => 
+      // Get current round
+      const currentRound = document.getElementById("current-round");
+      const isFirstRound = currentRound && currentRound.textContent === "1";
+    
+      // Only calculate highest score if not first round
+      const highestScore = !isFirstRound ? Math.max(...players.map(player => 
         player.scores.reduce((sum, score) => sum + (score.score || 0), 0)
-      ));
+      )) : 0;
     
       players.forEach((player) => {
         if (player.playerName.toLowerCase() === "ante") return;
@@ -219,7 +223,6 @@
           0
         );
     
-        // Scale height based on maximum possible score
         const height = Math.min(
           (totalScore / MAX_POSSIBLE_SCORE) * this.maxBarHeight,
           this.maxBarHeight
@@ -239,19 +242,19 @@
     
         const latestScore = player.scores[player.scores.length - 1];
     
-        // Update word display and add crown if highest score
         const wordDisplay = bar.querySelector(".current-word");
         if (wordDisplay) {
           wordDisplay.textContent = latestScore ? latestScore.answer : "";
         }
     
-        // Update score display with crown for highest score
+        // Only show crown after first round
         const scoreDisplay = bar.querySelector(".total-score");
         if (scoreDisplay) {
-          scoreDisplay.textContent = `Total: ${totalScore}${totalScore === highestScore ? ' 👑' : ''}`;
+          scoreDisplay.textContent = `Total: ${totalScore}${(!isFirstRound && totalScore === highestScore) ? ' 👑' : ''}`;
         }
       });
     }
+
     updateValueLabel(bar, values) {
       const valueLabel = bar.querySelector(".bar-value");
       if (valueLabel) {
