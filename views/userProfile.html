@@ -88,7 +88,7 @@
                             Object.entries(userData.answers).forEach(([category, data]) => {
                                 categoryList.innerHTML += `
                                     <div class="achievement-card">
-                                        <div class="category-name">${category}</div>
+                                        <div class="category-name">${category.replace(/_/g, " ")}</div>
                                         <div class="best-word">Best Word: ${data.word}</div>
                                         <div class="response-time">Time: ${(data.time / 1000).toFixed(2)}s</div>
                                     </div>
