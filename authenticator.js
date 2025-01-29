@@ -1,5 +1,6 @@
 const jwt = require('jsonwebtoken');
 
+//prevents unauthenticated users from accessing
 const protect= (req, res, next) => {
     const token = req.headers['authorization'];
     if (!token) return res.status(401).json({ message: "No token found" });
@@ -13,6 +14,7 @@ const protect= (req, res, next) => {
     });
 };
 
+//checks if users are authenticated but allows access either way
 const check = (req, res, next) => {
     const token = req.headers['authorization'];
     if (token){

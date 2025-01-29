@@ -2,6 +2,7 @@ let client = require('./connection');
 
 let db = client.db('words')
 
+// get all words in a category
 async function getWords(category, callback) {
     try{
         collection = db.collection(category);
@@ -12,6 +13,7 @@ async function getWords(category, callback) {
     }
 }
 
+//get a list of all categories
 async function getCategories(callback){
     try{
         const categories = await db.listCollections().toArray();
@@ -22,12 +24,16 @@ async function getCategories(callback){
     }
 }
 
+//update a word count when it is used
 async function addWordCount(word, category, callback){
     try{
+        //find the right collection
         const categoryList = db.collection(category);
 
+        //simplify the word by removing uppercase, spaces and symbols
         const simplifiedWord = word.toLowerCase().replace(/[\s\W_]+/g, '');
 
+        //increment the word count
         result = await categoryList.updateOne(
             { word: simplifiedWord },
             { $inc: { count: 1  } }
@@ -39,6 +45,7 @@ async function addWordCount(word, category, callback){
     }
 }
 
+// check if a string is a category name
 async function isCategory(category){
     try{
         const categories = await db.listCollections().toArray();
