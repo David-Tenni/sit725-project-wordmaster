@@ -18,7 +18,7 @@
       if (!word) return 0;
 
       let baseScore;
-      const wordLength = word.length;
+      const wordLength = word.replace(/[^a-zA-Z0-9_-]/g, '').length;
 
       switch (true) {
         case wordLength <= 3:
