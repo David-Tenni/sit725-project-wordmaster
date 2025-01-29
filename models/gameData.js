@@ -7,10 +7,12 @@ const games = client.db('games').collection("categories");
 async function getRandomCategories(number, game, callback) {
     try {
         console.log('Getting random categories, number:', number);
+        //if game is not null then only get categories in that game
         if(game){
             const categories = await games.findOne({ game: game });
             const names = categories.categories;
             console.log(categories);
+            //select random categories
             const randomCategories = names
             .sort(() => Math.random() - 0.5)
             .slice(0, number);
@@ -18,8 +20,11 @@ async function getRandomCategories(number, game, callback) {
             console.log('Selected categories:', randomCategories);
             callback(null, randomCategories);
         }else{
+            //if game is null then that means we can take any categories
             const categories = await db.listCollections().toArray();
             const names = categories.map(category => category.name);
+
+            //get random categories
             const randomCategories = names
                 .sort(() => Math.random() - 0.5)
                 .slice(0, number);
@@ -36,12 +41,15 @@ async function getRandomCategories(number, game, callback) {
 // Get random users with answers for given categories
 async function getRandomUsers(categories, number, username, callback) {
     try {
+        //ensure categories are an array
         if (!categories || !Array.isArray(categories)) {
             console.error('Invalid categories:', categories);
             throw new Error('Categories must be an array');
         }
 
         console.log('Getting random users:', { categories, number });
+
+        //make database query
 
         let match = categories.map(category => ({ [`answers.${category}`]: { $exists: true } }));
 
@@ -55,6 +63,8 @@ async function getRandomUsers(categories, number, username, callback) {
         ]).toArray();
 
         console.log('Found players:', players.length);
+
+        //structure data in a way that will make it easier for the frontend
 
         let rounds = categories.map(category => ({
             category: category,
