@@ -21,7 +21,7 @@ module.exports = function(io) {
             let filtered = users.map(user => ({ username: user.username, wins: user.wins ? user.wins : 0 }));
             socket.emit('Users_by_wins', filtered);
             //console.log('Emitting:', filtered);
-        }, 10000);
+        }, 100);
 
         socket.on('disconnect', () => {
             console.log('User disconnected');
