@@ -56,7 +56,7 @@ async function updateUserAnswer(username, category, answer, callback){
         const user = await collection.findOne({ username: username });
         if (!user) return callback({ message: "User does not exist" });
 
-        if(!user.longest_word || answer.word.length >= user.longest_word?.length){
+        if(!user.longest_word || answer.word.replace(/[\s\W_]+/g, '').length >= user.longest_word?.replace(/[\s\W_]+/g, '').length){
             await collection.updateOne(
                 { username: username },
                 { $set: { longest_word:  answer.word  } }
@@ -70,7 +70,7 @@ async function updateUserAnswer(username, category, answer, callback){
             );
         } else {
             if(user.answers[category]){
-                if(user.answers[category].word.length > answer.word.length) return callback(null);
+                if(user.answers[category].word.replace(/[\s\W_]+/g, '').length > answer.word.replace(/[\s\W_]+/g, '').length) return callback(null);
             }
             user.answers[category] = answer;
 
