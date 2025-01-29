@@ -27,7 +27,7 @@ module.exports = function(io) {
             let filtered = users.map(user => ({ username: user.username, longest_word: user.longest_word ? user.longest_word : '' }));
             socket.emit('Users_by_word_length', filtered);
             //console.log('Emitting:', filtered);
-        }, 1000);
+        }, 100);
 
         socket.on('disconnect', () => {
             console.log('User disconnected');

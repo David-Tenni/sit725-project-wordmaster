@@ -44,7 +44,7 @@ module.exports = function(io) {
             let filtered = categories.map(cat => ({ category: cat.category, username: cat.username, word: cat.word }));
             socket.emit('Categories', filtered);
             //console.log('Emitting:', filtered);
-        }, 1000);
+        }, 100);
 
         socket.on('disconnect', () => {
             console.log('User disconnected');
