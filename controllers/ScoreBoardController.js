@@ -1,7 +1,7 @@
 (function (window) {
   class ScoreBoardController {
     constructor(containerId, totalRounds = 5) {
-      // console.log("ScoreBoardController initializing...");
+      console.log("ScoreBoardController initializing...");
       this.containerId = containerId;
       this.timerInterval = null;
       this.timeLimit = 7000;
@@ -16,7 +16,7 @@
           this.setupMaterializeComponents();
         });
         this.initializeEventListeners();
-        // console.log("ScoreBoardController initialization complete");
+        console.log("ScoreBoardController initialization complete");
       } catch (error) {
         console.error(
           "Error during ScoreBoardController initialization:",
@@ -35,7 +35,7 @@
           scores: [],
           eliminated: false,
         });
-        // console.log(`Added player: ${playerName}`);
+        console.log(`Added player: ${playerName}`);
         this.updateBars();
       }
     }
@@ -50,57 +50,67 @@
     }
 
     createScoreBoardHTML() {
-      // console.log("Creating ScoreBoard HTML...");
+      console.log("Creating ScoreBoard HTML...");
       const container = document.getElementById(this.containerId);
       if (!container) {
         console.error("Container not found:", this.containerId);
         return;
       }
       container.innerHTML = `
-             <div class="chart-container" style="max-width: 600px; margin: 0 auto; padding-top: 0;">
-                    <h2 class="title" style="margin: 0; padding: 5px 0; text-align: center;">Word Master Challenge</h2>
-                    <div style="margin-bottom: 5px;">
-                        <div class="round-display">
-                            <h5 style="margin: 5px 0;">Round: <span id="current-round">1</span>/${
-                              this.totalRounds
-                            }</h5>
-                        </div>
-                        <div class="category-display">
-                            <h5 style="margin: 5px 0;">Category: <span id="current-category"></span></h5>
-                        </div>
-                    </div>
-                    <div class="chart" style="height: 50vh; margin: 10px 0;">
-                        ${this.createBarContainers()}
-                    </div>
-                    <div class="timer-container">
-                        <div class="timer-bar"></div>
-                    </div>
-                    <div class="input-section" style="margin: 10px 0;">
-                        <form id="wordForm">
-                            <div class="input-field">
-                                <input type="text" id="playerPoints" autofocus class="browser-default" placeholder="Enter a word">
-                                <button type="submit" class="waves-effect waves-light btn" id="submitPoints">Submit</button>
-                            </div>
-                        </form>
-                    </div>
-                    <div style="text-align: center; margin: 10px 0;">
-                        <button class="waves-effect waves-light btn" id="exitGame">EXIT GAME</button>
-                    </div>
-                </div>
+  <div class="chart-container" style="max-width: 600px; margin: 0 auto; padding-top: 0;">
+    <h2 class="title" style="margin: 0; padding: 5px 0; text-align: center;">Word Master Challenge</h2>
+    
+    <div class="scoring-box">
+      <h6>Scoring Guide</h6>
+      <div class="scoring-detail" id="length-bonus">Length Bonus: --</div>
+      <div class="scoring-detail" id="rarity-bonus">Rarity Bonus: --</div>
+      <div class="scoring-detail" id="speed-multi">Speed Multi: --</div>
+        <hr style="margin: 8px 0; border-top: 1px solid #a388ee;">
+  <div class="scoring-detail" id="total-score">Total Score: --</div>
+    </div>
 
-                <div id="gameOverModal" class="modal">
-                    <div class="modal-content">
-                        <h3>Game Over!</h3>
-                        <p>Final Scores:</p>
-                        <ul class="final-scores-list">
-                        </ul>
-                    </div>
-                    <div class="modal-footer">
-                        <a href="/index.html" class="waves-effect waves-light btn btn-custom play-btn">Play Again</a>
-                        <a href="/leaderboard.html" class="waves-effect waves-light btn btn-custom signup-btn">LeaderBoard</a>
-                        <a href="/mainmenu.html" class="waves-effect waves-light btn btn-custom signup-btn">Main Menu</a>
-                    </div>
-                </div>`;
+    <div style="margin-bottom: 5px;">
+      <div class="round-display">
+        <h5 style="margin: 5px 0;">Round: <span id="current-round">1</span>/${
+          this.totalRounds
+        }</h5>
+      </div>
+      <div class="category-display">
+        <h5 style="margin: 5px 0;">Category: <span id="current-category"></span></h5>
+      </div>
+    </div>
+    <div class="chart" style="height: 50vh; margin: 10px 0;">
+      ${this.createBarContainers()}
+    </div>
+    <div class="timer-container">
+      <div class="timer-bar"></div>
+    </div>
+    <div class="input-section" style="margin: 10px 0;">
+      <form id="wordForm">
+        <div class="input-field">
+          <input type="text" id="playerPoints" autofocus class="browser-default" placeholder="Enter a word">
+          <button type="submit" class="waves-effect waves-light btn" id="submitPoints">Submit</button>
+        </div>
+      </form>
+    </div>
+    <div style="text-align: center; margin: 10px 0;">
+      <button class="waves-effect waves-light btn" id="exitGame">EXIT GAME</button>
+    </div>
+  </div>
+
+  <div id="gameOverModal" class="modal">
+    <div class="modal-content">
+      <h3>Game Over!</h3>
+      <p>Final Scores:</p>
+      <ul class="final-scores-list">
+      </ul>
+    </div>
+    <div class="modal-footer">
+      <a href="/index.html" class="waves-effect waves-light btn btn-custom play-btn">Play Again</a>
+      <a href="/leaderboard.html" class="waves-effect waves-light btn btn-custom signup-btn">LeaderBoard</a>
+      <a href="/mainmenu.html" class="waves-effect waves-light btn btn-custom signup-btn">Main Menu</a>
+    </div>
+  </div>`;
 
       const exitButton = document.getElementById("exitGame");
       if (exitButton) {
@@ -136,7 +146,18 @@
         chart.innerHTML = this.createBarContainers();
       }
     }
+    updateScoringDisplay(lengthBonus, rarityBonus, speedMulti) {
+      const lengthElement = document.getElementById("length-bonus");
+      const rarityElement = document.getElementById("rarity-bonus");
+      const speedElement = document.getElementById("speed-multi");
 
+      if (lengthElement)
+        lengthElement.textContent = `Length Bonus: +${lengthBonus}`;
+      if (rarityElement)
+        rarityElement.textContent = `Rarity Bonus: +${rarityBonus}`;
+      if (speedElement)
+        speedElement.textContent = `Speed Multi: ×${speedMulti}`;
+    }
     updateRoundDisplay(round) {
       const roundDisplay = document.getElementById("current-round");
       if (roundDisplay) {
@@ -174,6 +195,8 @@
     }
 
     updateScoreBars(players) {
+      const MAX_POSSIBLE_SCORE = 70; // Maximum possible score in 5 rounds
+
       players.forEach((player) => {
         if (player.playerName.toLowerCase() === "ante") return;
 
@@ -187,11 +210,15 @@
         }
 
         const totalScore = player.scores.reduce(
-          (sum, score) => sum + score.answer.length,
+          (sum, score) => sum + (score.score || 0),
           0
         );
 
-        const height = Math.min(totalScore * 10, this.maxBarHeight);
+        // Scale height based on maximum possible score
+        const height = Math.min(
+          (totalScore / MAX_POSSIBLE_SCORE) * this.maxBarHeight,
+          this.maxBarHeight
+        );
 
         bar.style.transition = "height 0.5s ease-out";
         bar.style.height = `${height}px`;
@@ -252,7 +279,7 @@
     }
 
     handleGameOver(gameState) {
-      // console.log("Game Over triggered with state:", gameState);
+      console.log("Game Over triggered with state:", gameState);
 
       const modal = document.getElementById("gameOverModal");
       if (!modal) {
@@ -289,7 +316,7 @@
     }
 
     generateFinalScores(scores) {
-      // console.log("Generating final scores:", scores);
+      console.log("Generating final scores:", scores);
       return scores
         .map(
           ({ name, score }) => `
@@ -315,7 +342,7 @@
             dismissible: false,
             onCloseEnd: () => location.reload(),
           });
-          // console.log("Modal initialized successfully");
+          console.log("Modal initialized successfully");
         }
 
         M.AutoInit();

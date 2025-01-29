@@ -2,7 +2,7 @@
   class GameController {
     //added a parameter selected category
     constructor(totalRounds = 5, selectedCategory = null) {
-      // console.log("GameController initializing...");
+      console.log("GameController initializing...");
       this.timeLimit = 7000;
       this.startTime = null;
       this.timerInterval = null;
@@ -59,24 +59,33 @@
 
       const finalScore = (baseScore + rarityBonus) * timeBonus;
 
-      // console.log(`Score calculation for "${word}":
-      //     - Word length: ${wordLength} → Base score: ${baseScore}
-      //     - Usage count: ${count} → Rarity multiplier: ${rarityBonus}
-      //     - Response time: ${responseTime}ms → Time bonus: ${timeBonus}
-      //     Final calculation: (${baseScore} + ${timeBonus}) × ${rarityBonus} = ${finalScore}
-      //   `);
+      // Update scoring display only for human player
+      const lengthElement = document.getElementById("length-bonus");
+      const rarityElement = document.getElementById("rarity-bonus");
+      const speedElement = document.getElementById("speed-multi");
+      const totalScoreElement = document.getElementById("total-score");
 
-      return finalScore;
+      if (lengthElement)
+        lengthElement.textContent = `Length Bonus: +${baseScore}`;
+      if (rarityElement)
+        rarityElement.textContent = `Rarity Bonus: +${rarityBonus}`;
+      if (speedElement) speedElement.textContent = `Speed Multi: ×${timeBonus}`;
+      if (totalScoreElement)
+        totalScoreElement.textContent = `Total Score: ${Math.round(
+          finalScore
+        )}`;
+
+      return Math.round(finalScore);
     }
     async checkEndpoint(url) {
       try {
         const response = await fetch(url);
-        // console.log(`Endpoint check (${url}):`, {
-        //   status: response.status,
-        //   statusText: response.statusText,
-        //   headers: Object.fromEntries(response.headers),
-        //   ok: response.ok,
-        // });
+        console.log(`Endpoint check (${url}):`, {
+          status: response.status,
+          statusText: response.statusText,
+          headers: Object.fromEntries(response.headers),
+          ok: response.ok,
+        });
       } catch (error) {
         console.error(`Endpoint check failed (${url}):`, error);
       }
@@ -84,7 +93,7 @@
 
     async fetchGameData() {
       try {
-        // console.log("Starting data fetch...");
+        console.log("Starting data fetch...");
         //updated the api call for the selected category and kept a default number 7 for sub categories
         let categoriesResponse;
         if (this.selectedCategory) {
@@ -108,7 +117,7 @@
         }
 
         const categoriesData = await categoriesResponse.json();
-        // console.log("Categories data:", categoriesData);
+        console.log("Categories data:", categoriesData);
         const playersUrl = "/api/game/players/3";
         const playersResponse = await fetch(playersUrl, {
           method: "POST",
@@ -144,14 +153,14 @@
       }
     }
     async fetchAndStoreValidWords(categories) {
-      // console.log("Starting to fetch valid words for categories:", categories);
+      console.log("Starting to fetch valid words for categories:", categories);
       try {
         for (const category of categories) {
-          // console.log(`Fetching words for category: ${category}`);
+          console.log(`Fetching words for category: ${category}`);
           const response = await fetch(`/api/word/${category}`);
 
           const data = await response.json();
-          // console.log(`Raw API response for ${category}:`, data);
+          console.log(`Raw API response for ${category}:`, data);
 
           if (data.data) {
             // Extract just the word values from the objects
@@ -173,7 +182,7 @@
       }
     }
     async initializeGame() {
-      // console.log("Initializing game...");
+      console.log("Initializing game...");
 
       const dataFetched = await this.fetchGameData();
       if (!dataFetched) {
@@ -190,7 +199,7 @@
 
       // Take only the first 3 AI players
       const aiPlayerNames = allAiPlayerNames.slice(0, 3);
-      // console.log("Selected AI Player Names:", aiPlayerNames);
+      console.log("Selected AI Player Names:", aiPlayerNames);
 
       // Create AI player instances (only 3)
       const aiPlayers = aiPlayerNames.map(
@@ -245,7 +254,9 @@
       document.addEventListener("wordSubmitted", (e) => {
         this.handleWordSubmission(e.detail.word);
       });
-
+      if (this.scoreBoard) {
+        this.scoreBoard.updateScoringDisplay(baseScore, rarityBonus, timeBonus);
+      }
       document.addEventListener("timerTick", (e) => {
         this.checkAIResponses(e.detail.elapsed);
       });
@@ -272,9 +283,6 @@
 
       const responseTime = Date.now() - this.startTime;
       const score = this.calculateScore(word, wordData.count, responseTime);
-      // console.log(
-      //   `Word: ${word}, Count: ${wordData.count}, Time: ${responseTime}ms, Total Score: ${score}`
-      // );
 
       // If user is logged in, save to database
       if (localStorage.getItem("isLoggedIn") === "true") {
@@ -299,7 +307,7 @@
               score: score,
             }),
             success: function (response) {
-              // console.log("Answer saved to database:", response);
+              console.log("Answer saved to database:", response);
             },
             error: function (error) {
               console.error("Error saving answer:", error);
@@ -326,7 +334,7 @@
         },
       });
 
-      // Record the score locally with the calculated score
+      // Record the score for human player
       const playerScore = new window.PlayerScore(
         this.gameSession.currentCategory,
         word,
@@ -336,8 +344,10 @@
       this.gameSession.human_player.addScore(playerScore);
       this.scoreBoard.recordAnswer("player", word, responseTime, score);
 
+      // Handle AI responses
       this.forceAIResponses();
 
+      // Check game state
       if (this.gameSession.currentRound >= this.totalRounds - 1) {
         this.handleGameOver();
       } else if (this.gameSession.advanceRound()) {
@@ -347,53 +357,46 @@
     forceAIResponses() {
       const currentRound = this.gameSession.currentRound;
       const roundData = this.gameData.rounds[currentRound - 1];
-
+    
       if (!roundData) {
         console.error("No round data found for round:", currentRound);
         return;
       }
-
+    
       this.gameSession.ai_players.forEach(async (player) => {
         if (!player.scores[currentRound - 1]) {
           const aiResponse = roundData.answers[player.playerName];
-
+    
           if (!aiResponse) {
-            console.error(
-              "No AI response found for player:",
-              player.playerName
-            );
+            console.error("No AI response found for player:", player.playerName);
             return;
           }
-
-          // Get word count from the server
+    
           try {
-            const response = await fetch(
-              `/api/word/${this.gameSession.currentCategory}`
-            );
+            const response = await fetch(`/api/word/${this.gameSession.currentCategory}`);
             const data = await response.json();
             const wordData = data.data.find(
               (w) => w.word.toLowerCase() === aiResponse.word.toLowerCase()
             );
             const count = wordData ? wordData.count : 0;
-
+    
             // Calculate score using the same formula
             const calculatedScore = this.calculateScore(
               aiResponse.word,
               count,
               aiResponse.time
             );
-
-            // console.log(
-            //   `AI ${player.playerName} score calculated:`,
-            //   calculatedScore
-            // );
-
+    
+            console.log(`AI ${player.playerName} score calculated:`, calculatedScore);
+    
+            // Pass the calculated score to PlayerScore
             const aiScore = new window.PlayerScore(
               this.gameSession.currentCategory,
               aiResponse.word,
-              aiResponse.time
+              aiResponse.time,
+              calculatedScore  // Add the score here
             );
-
+    
             player.addScore(aiScore);
             this.scoreBoard.recordAIResponse(
               player.playerName,
@@ -406,98 +409,86 @@
           }
         }
       });
-
+    
       this.dispatchGameStateUpdate();
     }
     isValidWord(word, category) {
-      // Retrieve stored valid words from localStorage
-      const validWordsJson = localStorage.getItem(`validWords_${category}`);
+      console.log(`Checking word: "${word}" for category: "${category}"`);
 
+      const validWordsJson = localStorage.getItem(`validWords_${category}`);
       if (!validWordsJson) {
         console.error(
-          `No valid words found for category: "${category}" in localStorage.`
+          `No valid words found in localStorage for category: ${category}`
         );
-        return {
-          isValid: false,
-          error: "Category not found in localStorage",
-          wordData: null,
-        };
+        return { isValid: false, wordData: null };
       }
 
       try {
         const validWords = JSON.parse(validWordsJson);
-        if (!Array.isArray(validWords)) {
-          throw new Error("Invalid data format: expected an array");
-        }
-
-        // Normalize input word: remove all spaces, convert to lowercase, also remove wild elements
-        const normalizedWord = word.replace(/[\s\W_]+/g, "").toLowerCase();
-
-        // Normalize stored words and check if the input matches any
-        const isValid = validWords.some(
-          (validWord) =>
-            validWord.replace(/[\s\W_]+/g, "").toLowerCase() === normalizedWord
+        console.log(
+          `Found ${validWords.length} words for category: ${category}`
         );
 
-        const wordData = isValid ? { count: 1 } : null; // Default count: 1
+        // Convert both input word and valid words to lowercase
+        const normalizedWord = word.toLowerCase().trim();
+        const isValid = validWords.some(
+          (validWord) => validWord.toLowerCase().trim() === normalizedWord
+        );
 
-        // console.log(
-        //   `Word "${normalizedWord}" is ${
-        //     isValid ? "valid" : "invalid"
-        //   } for category "${category}". word ${[...normalizedWord]}`
-        // );
+        // If valid, find the word data (for count/frequency)
+        const wordData = isValid ? { count: 1 } : null; // Default count  1
 
+        console.log(
+          `Word "${word}" is ${
+            isValid ? "valid" : "invalid"
+          } for category ${category}`
+        );
         return { isValid, wordData };
       } catch (error) {
-        console.error(
-          `Error processing valid words for category "${category}":`,
-          error.message
-        );
-        return { isValid: false, error: error.message, wordData: null };
+        console.error("Error parsing valid words:", error);
+        console.log("Raw localStorage content:", validWordsJson);
+        return { isValid: false, wordData: null };
       }
     }
-
     async checkAIResponses(elapsed) {
       if (this.gameSession.isGameOver()) return;
-
+     
       const currentRound = this.gameSession.currentRound;
       if (currentRound > this.totalRounds) {
         this.handleGameOver();
         return;
       }
-
+     
       const roundData = this.gameData.rounds[currentRound - 1];
-
+     
       if (!roundData) {
         console.error("No round data found for round:", currentRound);
         return;
       }
-
+     
       if (!this.initialCategoryDisplayed) {
         this.gameSession.currentCategory = roundData.category;
         this.scoreBoard.currentCategory = roundData.category;
         this.dispatchGameStateUpdate();
         this.initialCategoryDisplayed = true;
       }
-
-      // Process AI responses sequentially using for...of instead of forEach
+     
+      // Add immediate response after player submission
+      const playerHasSubmitted = this.gameSession.human_player.scores[currentRound - 1];
+      
       for (const player of this.gameSession.ai_players) {
         const aiResponse = roundData.answers[player.playerName];
-
+     
         if (!aiResponse) {
           console.error("No AI response found for player:", player.playerName);
-          continue; // Skip to next player
+          continue;
         }
-
-        if (
-          aiResponse.time <= elapsed &&
-          (!player.scores[currentRound - 1] ||
-            player.scores[currentRound - 1].answer === "")
-        ) {
-          // console.log("AI player responding:", player.playerName, aiResponse);
-
+     
+        // Change condition to respond immediately if player has submitted
+        if (playerHasSubmitted && 
+            (!player.scores[currentRound - 1] ||
+             player.scores[currentRound - 1].answer === "")) {
           try {
-            // Get word data and calculate score
             const response = await fetch(
               `/api/word/${this.gameSession.currentCategory}`
             );
@@ -506,28 +497,57 @@
               (w) => w.word.toLowerCase() === aiResponse.word.toLowerCase()
             );
             const count = wordData ? wordData.count : 0;
-
-            // Calculate score using newscoring system
+     
             const calculatedScore = this.calculateScore(
               aiResponse.word,
               count,
               aiResponse.time
             );
-
-            // console.log(`${player.playerName} score calculation:`, {
-            //   word: aiResponse.word,
-            //   count,
-            //   time: aiResponse.time,
-            //   score: calculatedScore,
-            // });
-
-            // Create and record the score
+     
             const aiScore = new window.PlayerScore(
               this.gameSession.currentCategory,
               aiResponse.word,
+              aiResponse.time,
+              calculatedScore
+            );
+     
+            player.addScore(aiScore);
+            this.scoreBoard.recordAIResponse(
+              player.playerName,
+              aiResponse.word,
+              aiResponse.time,
+              calculatedScore
+            );
+          } catch (error) {
+            console.error("Error processing AI response:", error);
+          }
+        } else if (aiResponse.time <= elapsed &&
+                  (!player.scores[currentRound - 1] ||
+                   player.scores[currentRound - 1].answer === "")) {
+          try {
+            const response = await fetch(
+              `/api/word/${this.gameSession.currentCategory}`
+            );
+            const data = await response.json();
+            const wordData = data.data.find(
+              (w) => w.word.toLowerCase() === aiResponse.word.toLowerCase()
+            );
+            const count = wordData ? wordData.count : 0;
+     
+            // Calculate score for AI without updating display
+            const calculatedScore = this.calculateScore(
+              aiResponse.word,
+              count,
               aiResponse.time
             );
-
+     
+            const aiScore = new window.PlayerScore(
+              this.gameSession.currentCategory,
+              aiResponse.word,
+              aiResponse.time,
+              calculatedScore // Include the calculated score
+            );
+     
             player.addScore(aiScore);
             this.scoreBoard.recordAIResponse(
               player.playerName,
@@ -540,11 +560,9 @@
           }
         }
       }
-
-      // Update game state after processing all AI responses
+     
       this.dispatchGameStateUpdate();
-    }
-
+     }
     startTimer() {
       this.startTime = Date.now();
       this.initialCategoryDisplayed = false;
@@ -597,7 +615,7 @@
     }
 
     handleGameOver() {
-      // console.log("Game over!");
+      console.log("Game over!");
       clearInterval(this.timerInterval);
 
       const finalScores = this.calculateFinalScores();
@@ -647,13 +665,13 @@
           }),
         });
 
-        // console.log(response);
+        console.log(response);
 
         if (!response.ok) {
           throw new Error(`Failed to update game stats: ${response.status}`);
         }
 
-        // console.log("Game stats updated successfully");
+        console.log("Game stats updated successfully");
       } catch (error) {
         console.error("Error updating game stats:", error);
         if (window.M && window.M.toast) {
@@ -672,17 +690,16 @@
         ...this.gameSession.ai_players,
         this.gameSession.ante_player,
       ];
-
+    
       return allPlayers.map((player) => ({
         name: player.playerName,
         score: player.scores.reduce(
-          (sum, score) => sum + score.answer.length,
+          (sum, score) => sum + (score.score || 0), 
           0
         ),
         scores: player.scores,
       }));
     }
-
     dispatchGameStateUpdate() {
       const allPlayers = [
         this.gameSession.human_player,
