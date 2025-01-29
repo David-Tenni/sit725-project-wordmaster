@@ -253,3 +253,21 @@
   margin: 4px 0;
   color: #333;
 }
+
+.final-score {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 0;
+  border-bottom: 1px solid #eee;
+}
+
+.final-score .player-name {
+  font-weight: bold;
+  color: #333;
+}
+
+.final-score .score {
+  color: #4CAF50;
+  font-weight: bold;
+}

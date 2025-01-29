@@ -195,60 +195,60 @@
     }
 
     updateScoreBars(players) {
-      const MAX_POSSIBLE_SCORE = 70; // Maximum possible score in 5 rounds
-
+      const MAX_POSSIBLE_SCORE = 70;
+      
+      // Find highest score
+      const highestScore = Math.max(...players.map(player => 
+        player.scores.reduce((sum, score) => sum + (score.score || 0), 0)
+      ));
+    
       players.forEach((player) => {
         if (player.playerName.toLowerCase() === "ante") return;
-
+    
         const playerId = player.playerName.toLowerCase().trim();
         const bar = document.getElementById(playerId);
-
+    
         if (!bar) {
           console.warn(`Bar not found for player: ${player.playerName}`);
           this.addPlayer(player.playerName);
           return;
         }
-
+    
         const totalScore = player.scores.reduce(
           (sum, score) => sum + (score.score || 0),
           0
         );
-
+    
         // Scale height based on maximum possible score
         const height = Math.min(
           (totalScore / MAX_POSSIBLE_SCORE) * this.maxBarHeight,
           this.maxBarHeight
         );
-
+    
         bar.style.transition = "height 0.5s ease-out";
         bar.style.height = `${height}px`;
-
+    
         if (playerId === "player") {
           bar.style.backgroundColor = "#2196F3";
         } else {
-          if (
-            !bar.style.backgroundColor ||
-            bar.style.backgroundColor === "transparent"
-          ) {
-            const randomColor = `#${Math.floor(
-              Math.random() * 16777215
-            ).toString(16)}`;
+          if (!bar.style.backgroundColor || bar.style.backgroundColor === "transparent") {
+            const randomColor = `#${Math.floor(Math.random() * 16777215).toString(16)}`;
             bar.style.backgroundColor = randomColor;
           }
         }
-
+    
         const latestScore = player.scores[player.scores.length - 1];
-
-        // Update word display
+    
+        // Update word display and add crown if highest score
         const wordDisplay = bar.querySelector(".current-word");
         if (wordDisplay) {
           wordDisplay.textContent = latestScore ? latestScore.answer : "";
         }
-
-        // Update score display
+    
+        // Update score display with crown for highest score
         const scoreDisplay = bar.querySelector(".total-score");
         if (scoreDisplay) {
-          scoreDisplay.textContent = `Total: ${totalScore}`;
+          scoreDisplay.textContent = `Total: ${totalScore}${totalScore === highestScore ? ' 👑' : ''}`;
         }
       });
     }
@@ -317,14 +317,19 @@
 
     generateFinalScores(scores) {
       console.log("Generating final scores:", scores);
+      
+      // Find highest score
+      const highestScore = Math.max(...scores.map(score => score.score));
+      
       return scores
+        .sort((a, b) => b.score - a.score) // Sort by score in descending order
         .map(
           ({ name, score }) => `
-                    <li class="final-score">
-                        <span class="player-name">${name}</span>
-                        <span class="score">${score} points</span>
-                    </li>
-                `
+            <li class="final-score">
+              <span class="player-name">${name}${score === highestScore ? ' 👑' : ''}</span>
+              <span class="score">${score} points</span>
+            </li>
+          `
         )
         .join("");
     }
