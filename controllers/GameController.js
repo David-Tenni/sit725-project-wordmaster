@@ -18,7 +18,7 @@
       if (!word) return 0;
 
       let baseScore;
-      const wordLength = word.length;
+      const wordLength = word.trim().length;
 
       switch (true) {
         case wordLength <= 3:
