@@ -91,19 +91,17 @@ $(document).ready(function () {
         });
         break;
 
-      case "categories":
-        socket = io("/categories");
-        updateTableHeader(["Category", "Name", "Word"]);
-        socket.on("Categories", (data) => {
-          // console.log("Received categories data:", data);
-          console.log(
-            "categories",
-            data.map((item) => item.category.replace(/_/g, " "))
-          );
-
-          updateTableBody(data, ["category", "username", "word"]);
-        });
-        break;
+        case "categories":
+          socket = io("/categories");
+          updateTableHeader(["Category", "Name", "Word"]);
+          socket.on("Categories", (data) => {
+            const updatedData = data.map(item => ({
+              ...item,
+              category: item.category.replace(/_/g, " ") 
+            }));
+            updateTableBody(updatedData, ["category", "username", "word"]);
+          });
+          break;
 
       default:
         console.error("Unknown filter:", filter);
