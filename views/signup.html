@@ -50,31 +50,26 @@
       </div>
     </div>
     <script>
-      $("#signup-form").on("submit", function (e) {
+      $("#signup-form").on("submit", async function (e) {
         e.preventDefault();
         const username = $("#username").val();
         const password = $("#password").val();
 
-        $.ajax({
-          url: "/api/user/signup",
+        const response = await fetch("/api/user/signup", {
           method: "POST",
-          contentType: "application/json",
-          data: JSON.stringify({ username, password }),
-          success: function () {
-            //check for logged in status
-            localStorage.setItem("isLoggedIn", "true");
-            localStorage.setItem("user", username);
-
-            window.location.href = "/login.html";
+          headers: {
+            Accept: "application/json",
+            'Content-Type': 'application/json'
           },
-          error: function (xhr) {
-            if (xhr.status === 409) {
-              $("#signup-error").text("Username already exists.");
-            } else {
-              $("#signup-error").text("An error occurred. Please try again.");
-            }
-          },
-        });
+          body: JSON.stringify({ username, password })
+        })
+        if(response.status === 201){
+          window.location.href = "/login.html";
+        }else if(response.status === 409){
+          $("#signup-error").text("Username already exists.");
+        }else{
+          $("#signup-error").text("An error occurred. Please try again.");
+        }
       });
     </script>
   </body>

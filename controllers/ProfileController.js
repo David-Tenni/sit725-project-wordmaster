@@ -34,27 +34,28 @@
 
         async fetchUserData(accessToken) {
             try {
-                const response = await $.ajax({
-                    url: '/api/user',
-                    method: 'GET',
+                const response = await requestWithRefresh('/api/user', {
                     headers: {
                         'Authorization': accessToken
                     },
-                    beforeSend: function() {
-                        console.log('Starting API request...');
-                    }
-                });
-
-                console.log('API response:', response);
-                if (!response.data) {
-                    console.error('No data in response');
-                    M.toast({html: 'Error: Invalid response format'});
-                    return;
-                }
+                })
                 
-                this.updateUI(response.data);
-            } catch (xhr) {
-                this.handleError(xhr);
+                if(response.status === 200){
+                    const data = await response.json();
+
+                    console.log('API response:', data);
+                    if (!data.data) {
+                        console.error('No data in response');
+                        M.toast({html: 'Error: Invalid response format'});
+                        return;
+                    }
+                    
+                    this.updateUI(data.data);
+                }else{
+                    M.toast({html: `Error: ${'Unknown error'}`});
+                }
+            } catch {
+                M.toast({html: `Error: ${'Unknown error'}`});
             }
         }
 
@@ -79,51 +80,6 @@
                         </div>
                     `);
                 });
-            }
-        }
-
-        handleError(xhr) {
-            console.error('API Error:', {
-                status: xhr.status,
-                statusText: xhr.statusText,
-                responseText: xhr.responseText,
-                error: xhr.responseJSON
-            });
-            
-            if (xhr.status === 401) {
-                console.log('Authentication failed - trying token refresh...');
-                this.tryRefreshToken();
-            } else if (xhr.status === 403) {
-                console.log('Access forbidden');
-                M.toast({html: 'Access denied'});
-            } else {
-                M.toast({html: `Error: ${xhr.responseJSON?.message || 'Unknown error'}`});
-            }
-        }
-
-        async tryRefreshToken() {
-            const refreshToken = localStorage.getItem('refreshToken');
-            if (!refreshToken) {
-                console.log('No refresh token - redirecting to login');
-                window.location.href = '/login.html';
-                return;
-            }
-
-            try {
-                const response = await $.ajax({
-                    url: '/api/user/refresh',
-                    method: 'POST',
-                    contentType: 'application/json',
-                    data: JSON.stringify({ token: refreshToken })
-                });
-
-                console.log('Token refreshed successfully');
-                localStorage.setItem('accessToken', response.accessToken);
-                window.location.reload();
-            } catch (error) {
-                console.log('Token refresh failed - redirecting to login');
-                localStorage.clear();
-                window.location.href = '/login.html';
             }
         }
     }

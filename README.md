@@ -74,6 +74,7 @@ node server.js
 ├── package-lock.json
 ├── package.json
 ├── README.md
+├── requestWithRefresh.js
 ├── server.js
 ```
 
@@ -83,45 +84,45 @@ node server.js
 ### Game Structure:
 
 Players compete by entering words within specific categories (olympic sports, periodic elements, countries, capital cities)
-There are multiple players: The player (this could also be a guest who is not logged in), three competitors, and a special "ANTE" player
-The game runs in rounds with a 7-second timer per round
-Score visualization is done through a bar chart system
+There are multiple players: The player (this could also be a guest who is not logged in) and three competitors.
+The game runs in rounds with a 7-second timer per round.
+Score visualization is done through a bar chart system.
 
-Games can be played with any categories or users can choose an area that they wish to play in (e.g. Geography or History)
+Games can be played with any categories or users can choose an area that they wish to play in (e.g. Geography or History).
 
 ### Scoring System:
 
 Players score points based on word length, the time taken the give the answer and the rarity of the word.
 Previous players have their words and times stored in the database and their score is automatically generated from this data.
-There's a crown system showing the current leader
+There's a crown system showing the current leader.
 
 ### Technical Architecture:
 
-Frontend: HTML/CSS with Materialize CSS framework
-Backend: Node.js with Express, socket.io, bcrypt, mongodb and jsonwebtoken
-Database: MongoDB (storing words in different category collections)
-Uses MVC (Model-View-Controller) pattern:
+- Frontend: HTML/CSS with Materialize CSS framework
+- Backend: Node.js with Express, socket.io, bcrypt, mongodb and jsonwebtoken
+- Database: MongoDB (storing words in different category collections)
+- Uses MVC (Model-View-Controller) pattern:
 
-Models: Used as for object that are retrieved from the database of used in the code
-Controllers: Used to provide responses to api requests or to control frontend files
-Views: The pages that the user will see
+- Models: Used as for object that are retrieved from the database of used in the code
+- Controllers: Used to provide responses to api requests or to control frontend files
+- Views: The pages that the user will see
 
 ### Key Features:
 
-Real-time score visualization
-Notifications when high score is exceeded
-7-second countdown timer with color warnings
-Word validation system
-Category rotation between rounds
-Multiple elimination mechanisms
-Persistent storage of words in MongoDB
-Responsive design with Materialize CSS
+- Real-time score visualization
+- Notifications when high score is exceeded
+- 7-second countdown timer with color warnings
+- Word validation system
+- Category rotation between rounds
+- Multiple elimination mechanisms
+- Persistent storage of words in MongoDB
+- Responsive design with Materialize CSS
 
 ### User Interface:
 
-Score visualization through animated bars
-Input field for word submission
-Timer bar with color changes (green → orange → red)
-Control buttons for reset, adding points, and elimination
-Visual feedback for eliminated players
-Category and round number display
+- Score visualization through animated bars
+- Input field for word submission
+- Timer bar with color changes (green → orange → red)
+- Control buttons for reset, adding points, and elimination
+- Visual feedback for eliminated players
+- Category and round number display

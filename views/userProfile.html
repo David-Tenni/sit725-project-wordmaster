@@ -70,12 +70,13 @@
             loadUserProfile(username);
         });
 
-        function loadUserProfile(username) {
-            fetch(`/api/user/${username}`)
-                .then(response => response.json())
-                .then(response => {
-                    if (response.data) {
-                        const userData = response.data;
+        async function loadUserProfile(username) {
+            try{
+                const response = await fetch(`/api/user/${username}`);
+                const data = await response.json();
+
+                if (data.data) {
+                        const userData = data.data;
                         document.getElementById('profile-username').textContent = userData.username;
                         document.getElementById('total-score').textContent = userData.total_score || 0;
                         document.getElementById('high-score').textContent = userData.high_score || 0;
@@ -96,11 +97,10 @@
                             });
                         }
                     }
-                })
-                .catch(error => {
-                    console.error('Error loading profile:', error);
-                    M.toast({html: 'Error loading user profile'});
-                });
+            }catch(error){
+                console.error('Error loading profile:', error);
+                M.toast({html: 'Error loading user profile'});
+            }
         }
     </script>
 </body>
