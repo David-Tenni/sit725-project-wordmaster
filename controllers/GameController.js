@@ -14,6 +14,7 @@
       this.initializeGame();
       this.initializeEventListeners();
     }
+    
     async initializeGame() {
       console.log("Initializing game...");
   
@@ -34,7 +35,6 @@
       const aiPlayerNames = allAiPlayerNames.slice(0, 3);
       console.log("Selected AI Player Names:", aiPlayerNames);
   
-      // Create AI player instances (only 3)
       const aiPlayers = aiPlayerNames.map(
           (name, index) => new window.Player(index + 1, name)
       );
@@ -72,13 +72,14 @@
   
       // Initialize ScoreBoard with filtered game data
       this.scoreBoard.initializeAIPlayers(this.gameData);
-  
+      this.scoreBoard.currentCategory = "Get Ready!";
       // Instead of starting immediately, show a countdown and start after 5 seconds
       if (firstRound) {
-          this.gameSession.currentCategory = firstRound.category;
-          this.scoreBoard.currentCategory = firstRound.category;
+
           this.dispatchGameStateUpdate();
-          
+          this.gameSession.currentCategory = "Get Ready!"
+          this.scoreBoard.currentCategory = "Get Ready!";
+          this.dispatchGameStateUpdate();
           // Create and show countdown element
           const countdownDiv = document.createElement('div');
           countdownDiv.style.position = 'fixed';
@@ -91,12 +92,15 @@
           document.body.appendChild(countdownDiv);
   
           // Start countdown
-          let countdown = 5;
+          let countdown = 3;
           const countdownInterval = setInterval(() => {
               if (countdown > 0) {
                   countdownDiv.textContent = `Game starting in ${countdown}...`;
                   countdown--;
               } else {
+                //display the current category
+                this.gameSession.currentCategory = firstRound.category;
+                this.scoreBoard.currentCategory = firstRound.category;
                   clearInterval(countdownInterval);
                   countdownDiv.remove();
                   this.startTimer(); // Start the game timer
