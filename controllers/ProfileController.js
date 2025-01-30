@@ -34,11 +34,12 @@
 
         async fetchUserData(accessToken) {
             try {
-                const response = await fetch('/api/user', {
+                const response = await requestWithRefresh('/api/user', {
                     headers: {
                         'Authorization': accessToken
                     },
                 })
+                
                 if(response.status === 200){
                     const data = await response.json();
 
@@ -51,25 +52,10 @@
                     
                     this.updateUI(data.data);
                 }else{
-                    console.error('API Error:', {
-                        status: xhr.status,
-                        statusText: xhr.statusText,
-                        responseText: xhr.responseText,
-                        error: xhr.responseJSON
-                    });
-
-                    if (response.status === 401) {
-                        console.log('Authentication failed - trying token refresh...');
-                        this.tryRefreshToken();
-                    } else if (response.status === 403) {
-                        console.log('Access forbidden');
-                        M.toast({html: 'Access denied'});
-                    } else {
-                        M.toast({html: `Error: ${xhr.responseJSON?.message || 'Unknown error'}`});
-                    }
+                    M.toast({html: `Error: ${'Unknown error'}`});
                 }
             } catch {
-                M.toast({html: `Error: ${xhr.responseJSON?.message || 'Unknown error'}`});
+                M.toast({html: `Error: ${'Unknown error'}`});
             }
         }
 
@@ -94,36 +80,6 @@
                         </div>
                     `);
                 });
-            }
-        }
-
-        async tryRefreshToken() {
-            const refreshToken = localStorage.getItem('refreshToken');
-            if (!refreshToken) {
-                console.log('No refresh token - redirecting to login');
-                window.location.href = '/login.html';
-                return;
-            }
-
-            try {
-                const response = await fetch('/api/user/refresh', {
-                    method: 'POST',
-                    headers: {
-                        'Authorization': accessToken,
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({ token: refreshToken })
-                });
-
-                const data = await response.json();
-
-                console.log('Token refreshed successfully');
-                localStorage.setItem('accessToken', data.accessToken);
-                window.location.reload();
-            } catch (error) {
-                console.log('Token refresh failed - redirecting to login');
-                localStorage.clear();
-                window.location.href = '/login.html';
             }
         }
     }

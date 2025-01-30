@@ -293,7 +293,7 @@
           accessToken !== "undefined" &&
           accessToken !== "null"
         ) {
-          const response = await fetch('/api/user/answer', {
+          const response = await requestWithRefresh('/api/user/answer', {
             method: 'PATCH',
             headers: {
               Accept: "application/json",
@@ -655,7 +655,7 @@
       const isWin = playerScore >= Math.max(...otherScores);
 
       try {
-        const response = await fetch("/api/user/game", {
+        const response = await requestWithRefresh("/api/user/game", {
           method: "POST",
           headers: {
             Accept: "application/json",
