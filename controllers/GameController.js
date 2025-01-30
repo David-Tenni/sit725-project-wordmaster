@@ -14,6 +14,99 @@
       this.initializeGame();
       this.initializeEventListeners();
     }
+    async initializeGame() {
+      console.log("Initializing game...");
+  
+      const dataFetched = await this.fetchGameData();
+      if (!dataFetched) {
+          console.error("Failed to initialize game");
+          return;
+      }
+  
+      // Create ScoreBoard and initialize with game data
+      this.scoreBoard = new window.ScoreBoard();
+  
+      // Get player names from the first round
+      const firstRound = this.gameData.rounds[0];
+      const allAiPlayerNames = Object.keys(firstRound.answers);
+  
+      // Take only the first 3 AI players
+      const aiPlayerNames = allAiPlayerNames.slice(0, 3);
+      console.log("Selected AI Player Names:", aiPlayerNames);
+  
+      // Create AI player instances (only 3)
+      const aiPlayers = aiPlayerNames.map(
+          (name, index) => new window.Player(index + 1, name)
+      );
+  
+      // Fetch and store valid words for each category
+      const categories = this.gameData.rounds.map((round) => round.category);
+      await this.fetchAndStoreValidWords(categories);
+  
+      // Filter game data to only include selected players
+      this.gameData.rounds = this.gameData.rounds.map((round) => ({
+          ...round,
+          answers: Object.fromEntries(
+              Object.entries(round.answers).filter(([name]) =>
+                  aiPlayerNames.includes(name)
+              )
+          ),
+          category: round.category,
+      }));
+  
+      let currentPlayerName = "Player";
+      const isLoggedIn = localStorage.getItem("isLoggedIn") === "true";
+      if (isLoggedIn) {
+          currentPlayerName = localStorage.getItem("user");
+      }
+      const humanPlayer = new window.Player(4, currentPlayerName);
+      const antePlayer = new window.Player(5, "ANTE");
+  
+      // Initialize game session with exactly 3 AI players
+      this.gameSession = new window.GameSession(
+          aiPlayers,
+          humanPlayer,
+          antePlayer,
+          this.totalRounds
+      );
+  
+      // Initialize ScoreBoard with filtered game data
+      this.scoreBoard.initializeAIPlayers(this.gameData);
+  
+      // Instead of starting immediately, show a countdown and start after 5 seconds
+      if (firstRound) {
+          this.gameSession.currentCategory = firstRound.category;
+          this.scoreBoard.currentCategory = firstRound.category;
+          this.dispatchGameStateUpdate();
+          
+          // Create and show countdown element
+          const countdownDiv = document.createElement('div');
+          countdownDiv.style.position = 'fixed';
+          countdownDiv.style.top = '50%';
+          countdownDiv.style.left = '50%';
+          countdownDiv.style.transform = 'translate(-50%, -50%)';
+          countdownDiv.style.fontSize = '48px';
+          countdownDiv.style.color = '#A388EE';
+          countdownDiv.style.zIndex = '1000';
+          document.body.appendChild(countdownDiv);
+  
+          // Start countdown
+          let countdown = 5;
+          const countdownInterval = setInterval(() => {
+              if (countdown > 0) {
+                  countdownDiv.textContent = `Game starting in ${countdown}...`;
+                  countdown--;
+              } else {
+                  clearInterval(countdownInterval);
+                  countdownDiv.remove();
+                  this.startTimer(); // Start the game timer
+              }
+          }, 1000);
+      }
+  }
+
+
+
     calculateScore(word, count, responseTime) {
       if (!word) return 0;
 
@@ -181,74 +274,7 @@
         });
       }
     }
-    async initializeGame() {
-      console.log("Initializing game...");
-
-      const dataFetched = await this.fetchGameData();
-      if (!dataFetched) {
-        console.error("Failed to initialize game");
-        return;
-      }
-
-      // Create ScoreBoard and initialize with game data
-      this.scoreBoard = new window.ScoreBoard();
-
-      // Get player names from the first round
-      const firstRound = this.gameData.rounds[0];
-      const allAiPlayerNames = Object.keys(firstRound.answers);
-
-      // Take only the first 3 AI players
-      const aiPlayerNames = allAiPlayerNames.slice(0, 3);
-      console.log("Selected AI Player Names:", aiPlayerNames);
-
-      // Create AI player instances (only 3)
-      const aiPlayers = aiPlayerNames.map(
-        (name, index) => new window.Player(index + 1, name)
-      );
-
-      // Fetch and store valid words for each category
-      const categories = this.gameData.rounds.map((round) => round.category);
-
-      await this.fetchAndStoreValidWords(categories);
-
-      // Filter game data to only include selected players
-      this.gameData.rounds = this.gameData.rounds.map((round) => ({
-        ...round,
-        answers: Object.fromEntries(
-          Object.entries(round.answers).filter(([name]) =>
-            aiPlayerNames.includes(name)
-          )
-        ),
-        category: round.category,
-      }));
-
-      let currentPlayerName = "Player";
-      const isLoggedIn = localStorage.getItem("isLoggedIn") === "true";
-      if (isLoggedIn) {
-        currentPlayerName = localStorage.getItem("user");
-      }
-      const humanPlayer = new window.Player(4, currentPlayerName);
-      const antePlayer = new window.Player(5, "ANTE");
-
-      // Initialize game session with exactly 3 AI players
-      this.gameSession = new window.GameSession(
-        aiPlayers,
-        humanPlayer,
-        antePlayer,
-        this.totalRounds
-      );
-
-      // Initialize ScoreBoard with filtered game data
-      this.scoreBoard.initializeAIPlayers(this.gameData);
-
-      if (firstRound) {
-        this.gameSession.currentCategory = firstRound.category;
-        this.scoreBoard.currentCategory = firstRound.category;
-        this.dispatchGameStateUpdate();
-      }
-
-      this.startTimer();
-    }
+   
 
     initializeEventListeners() {
       document.addEventListener("wordSubmitted", (e) => {
