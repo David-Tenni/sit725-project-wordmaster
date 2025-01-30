@@ -504,3 +504,11 @@
 .instructions-container .emoji {
   font-size: 1.2em;
 }
+/*notification toast */
+.toast {
+  font-size: 16px;
+  font-weight: bold;
+  text-align: center;
+  background-color: #ff5252;
+  color: white;
+}
