@@ -262,7 +262,7 @@
       });
     }
 
-    handleWordSubmission(word) {
+    async handleWordSubmission(word) {
       if (!word || this.gameSession.isGameOver()) return;
 
       const { isValid, wordData } = this.isValidWord(
@@ -293,47 +293,48 @@
           accessToken !== "undefined" &&
           accessToken !== "null"
         ) {
-          $.ajax({
-            url: "/api/user/answer",
-            method: "PATCH",
+          const response = await fetch('/api/user/answer', {
+            method: 'PATCH',
             headers: {
-              Authorization: accessToken,
-              "Content-Type": "application/json",
+              Accept: "application/json",
+              'Authorization': accessToken,
+              'Content-Type': 'application/json',
             },
-            data: JSON.stringify({
+            body: JSON.stringify({
               category: this.gameSession.currentCategory,
               word: word,
               time: responseTime,
               score: score,
             }),
-            success: function (response) {
-              console.log("Answer saved to database:", response);
-            },
-            error: function (error) {
-              console.error("Error saving answer:", error);
-            },
           });
+
+          if(response.status === 201){
+            console.log("Answer saved to database:", response);
+          }
+          else{
+            console.error("Error saving answer:", error);
+          }
         }
       }
 
-      $.ajax({
-        url: "/api/word/count",
-        method: "PATCH",
+      const response = await fetch('/api/word/count', {
+        method: 'PATCH',
         headers: {
-          "Content-Type": "application/json",
+          'Content-Type': 'application/json',
         },
-        data: JSON.stringify({
+        body: JSON.stringify({
           category: this.gameSession.currentCategory,
           word: word,
         }),
-        success: function (response) {
-          console.log("Word count incremented:", response);
-        },
-        error: function (error) {
-          console.error("Error incrementing word count:", error);
-        },
       });
 
+      if(response.status === 201){
+        console.log("Word count incremented:", response);
+      }
+      else{
+        console.error("Error incrementing word count:", error);
+      }
+      
       // Record the score for human player
       const playerScore = new window.PlayerScore(
         this.gameSession.currentCategory,

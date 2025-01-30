@@ -63,7 +63,7 @@
      $('.collapsible').collapsible();
    });
    
-   $('#reset-password-form').on('submit', function(e) {
+   $('#reset-password-form').on('submit', async function(e) {
      e.preventDefault();
      const newPassword = $('#new-password').val();
      const accessToken = localStorage.getItem('accessToken');
@@ -74,30 +74,39 @@
        return;
      }
 
+     try{
+      const response = await fetch('/api/user/password', {
+        method: 'PATCH',
+        headers: {
+          Accept: "application/json",
+          'Authorization': accessToken,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ password: newPassword })
+      });
 
-     $.ajax({
-       url: '/api/user/password',
-       method: 'PATCH',
-       contentType: 'application/json',
-       headers: {
-         'Authorization': accessToken
-       },
-       data: JSON.stringify({ password: newPassword }),
-       success: function(response) {
-         $('#reset-password-success').text('Password updated successfully.');
-         $('#reset-password-error').text('');
-       },
-       error: function(xhr) {
-         if (xhr.status === 400) {
-           $('#reset-password-error').text('Password is required.');
-         } else if (xhr.status === 401) {
-           $('#reset-password-error').text('Invalid or expired token. Please log in again.');
-         } else {
-           $('#reset-password-error').text('An error occurred. Please try again.');
-         }
-         $('#reset-password-success').text('');
-       }
-     });
+      if(response.status === 201){
+        $('#reset-password-success').text('Password updated successfully.');
+        $('#reset-password-error').text('');
+      }
+      else if(response.status === 400){
+        $('#reset-password-error').text('Password is required.');
+        $('#reset-password-success').text('');
+      }
+      else if(response.status === 401){
+        $('#reset-password-error').text('Invalid or expired token. Please log in again.');
+        $('#reset-password-success').text('');
+      }
+      else{
+        $('#reset-password-error').text('An error occurred. Please try again.');
+        $('#reset-password-success').text('');
+      }
+     }
+     catch{
+      $('#reset-password-error').text('An error occurred. Please try again.');
+      $('#reset-password-success').text('');
+     }
+
    });
   $('#logout-button').on('click', function() {
     //clear tokens and user data from localStorage
@@ -110,7 +119,7 @@
  });
  
  //delete account
- $('#delete-account-button').on('click', function() {
+ $('#delete-account-button').on('click', async function() {
     const accessToken = localStorage.getItem('accessToken');
     if (!accessToken) {
         $('#delete-account-error').text('You are not logged in.');
@@ -120,33 +129,35 @@
     if (!confirm('Are you sure you want to delete your account? This action cannot be undone.')) {
         return;
     }
+    try{
+      const response = await fetch('api/user', {
+          method: 'DELETE',
+            headers: {
+              'Authorization': accessToken
+            }
+        });
 
-     $.ajax({
-       url: '/api/user',
-       method: 'DELETE',
-       headers: {
-         'Authorization': accessToken
-       },
-       success: function(response) {
-         localStorage.removeItem('accessToken');
-         localStorage.removeItem('refreshToken');
-         localStorage.removeItem('isLoggedIn');
-         localStorage.removeItem('user');
+      if(response.status === 204){
+        localStorage.removeItem('accessToken');
+        localStorage.removeItem('refreshToken');
+        localStorage.removeItem('isLoggedIn');
+        localStorage.removeItem('user');
 
-         //success message and redirect to mainMenu.html
-         $('#delete-account-success').text('Account deleted successfully.');
-         setTimeout(() => {
-           window.location.href = '/mainMenu.html';
-         }, 2000);
-       },
-       error: function(xhr) {
-         if (xhr.status === 401) {
-           $('#delete-account-error').text('Invalid or expired token. Please log in again.');
-         } else {
-           $('#delete-account-error').text('An error occurred. Please try again.');
-         }
-       }
-     });
+        //success message and redirect to mainMenu.html
+        $('#delete-account-success').text('Account deleted successfully.');
+        setTimeout(() => {
+          window.location.href = '/mainMenu.html';
+        }, 2000);
+      }
+      else if(respone.status === 401) {
+        $('#delete-account-error').text('Invalid or expired token. Please log in again.');
+      }
+      else{
+        $('#delete-account-error').text('An error occurred. Please try again.');
+      }
+    }catch{
+      $('#delete-account-error').text('An error occurred. Please try again.');
+    }
    });
 
   </script>
