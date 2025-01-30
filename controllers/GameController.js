@@ -252,16 +252,14 @@
     async fetchAndStoreValidWords(categories) {
       console.log("Starting to fetch valid words for categories:", categories);
       try {
-        for (const category of categories) {
-          console.log(`Fetching words for category: ${category}`);
-          const response = await fetch(`/api/word/${category}`);
-
-          const data = await response.json();
-          console.log(`Raw API response for ${category}:`, data);
-
-          if (data.data) {
-            // Extract just the word values from the objects
-            const wordList = data.data.map((item) => item.word);
+        console.log(`Fetching words`);
+        const response = await fetch(`/api/word?categories=${categories.join(',')}`);
+        const data = await response.json();
+        console.log(`Raw API responses:`, data);
+        if (data.data) {
+          for (const category of categories) {
+            let list = data.data[category];
+            const wordList = list.map((item) => item.word);
 
             localStorage.setItem(
               `validWords_${category}`,
@@ -404,10 +402,10 @@
           }
     
           try {
-            const response = await fetch(`/api/word/${this.gameSession.currentCategory}`);
-            const data = await response.json();
-            const wordData = data.data.find(
-              (w) => w.word.toLowerCase() === aiResponse.word.toLowerCase()
+            const dataJson = localStorage.getItem(`validWords_${this.gameSession.currentCategory}`);
+            const data = JSON.parse(dataJson);
+            const wordData = data.find(
+              (w) => w.toLowerCase() === aiResponse.word.toLowerCase()
             );
             const count = wordData ? wordData.count : 0;
     
@@ -522,12 +520,10 @@
             (!player.scores[currentRound - 1] ||
              player.scores[currentRound - 1].answer === "")) {
           try {
-            const response = await fetch(
-              `/api/word/${this.gameSession.currentCategory}`
-            );
-            const data = await response.json();
-            const wordData = data.data.find(
-              (w) => w.word.toLowerCase() === aiResponse.word.toLowerCase()
+            const dataJson = localStorage.getItem(`validWords_${this.gameSession.currentCategory}`);
+            const data = JSON.parse(dataJson);
+            const wordData = data.find(
+              (w) => w.toLowerCase() === aiResponse.word.toLowerCase()
             );
             const count = wordData ? wordData.count : 0;
      
@@ -558,12 +554,10 @@
                   (!player.scores[currentRound - 1] ||
                    player.scores[currentRound - 1].answer === "")) {
           try {
-            const response = await fetch(
-              `/api/word/${this.gameSession.currentCategory}`
-            );
-            const data = await response.json();
-            const wordData = data.data.find(
-              (w) => w.word.toLowerCase() === aiResponse.word.toLowerCase()
+            const dataJson = localStorage.getItem(`validWords_${this.gameSession.currentCategory}`);
+            const data = JSON.parse(dataJson);
+            const wordData = data.find(
+              (w) => w.toLowerCase() === aiResponse.word.toLowerCase()
             );
             const count = wordData ? wordData.count : 0;
      

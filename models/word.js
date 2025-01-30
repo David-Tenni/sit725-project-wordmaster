@@ -3,13 +3,22 @@ let client = require('./connection');
 let db = client.db('words')
 
 // get all words in a category
-async function getWords(category, callback) {
-    try{
-        collection = db.collection(category);
-        const result = await collection.find({}).toArray();
-        callback(null, result);
-    }catch(error){
-        callback({message: "Error getting word list"}, null);
+async function getWords(categories, callback) {
+    try {
+        const results = await Promise.all(categories.map(async (category) => {
+            const collection = db.collection(category);
+            const words = await collection.find({}).toArray();
+            return { category, words };
+        }));
+        
+        const labeled = results.reduce((final, { category, words }) => {
+            final[category] = words;
+            return final;
+        }, {});
+
+        callback(null, labeled);
+    } catch (error) {
+        callback({ message: "Error getting word lists" }, null);
     }
 }
 

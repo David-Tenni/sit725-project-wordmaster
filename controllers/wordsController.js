@@ -3,16 +3,21 @@ let db = require('../models/word');
 //get all word in a category
 async function getWords(req,res) {
     // get parameters and validate them
-    let category = req.params.category;
-    if (!category) return res.status(400).json({ message: 'Word category is missing in path' });
+    let categories = req.query.categories ? req.query.categories.split(',') : null;
+    if (!categories) return res.status(400).json({ message: 'Word categories is missing in body' });
 
-    let isCategory = await db.isCategory(category);
-    if(!isCategory) return res.status(404).json({message:"Category not found"});
+    let isCategories = true;
+    for(const cat of categories){
+        let isCat = await db.isCategory(cat);
+        if(!isCat) isCategories = false;
+    }
+        
+    if(!isCategories) return res.status(404).json({message:"Category not found"});
 
     //make database call and respond
-    db.getWords(category, (error,result)=>{
+    db.getWords(categories, (error,result)=>{
         if (!error) {
-            res.status(200).json({data:result,message:'Word list successfully retrieved'});
+            res.status(200).json({data:result,message:'Word lists successfully retrieved'});
         }
         else{
             res.status(500).json({message:error.message});
