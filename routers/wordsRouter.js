@@ -6,7 +6,7 @@ routes.get('/categories', (req, res) => {
     controller.getCategories(req, res);
 });
 
-routes.get('/:category', (req, res) => {
+routes.get('/', (req, res) => {
     controller.getWords(req, res);
 });
 
