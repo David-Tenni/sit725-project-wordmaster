@@ -23,17 +23,31 @@ module.exports = function(io) {
                 return rankedUsers;
             }
 
+            function findSurpassingUser(prev, cur){
+                const length = Math.min(prev.length, cur.length);
+
+                for (let i = 0; i < length; i++) {
+                    
+                    if (prev[i].username != cur[i].username) {
+                        return cur[i];
+                    }
+                }
+                return -1;
+            }
+
             let previous = 0;
+            let previousRanking = null;
             const interval = setInterval(async () => {
                 let ranking = await getRankings();
                 let rank = ranking.findIndex(user => user.username === socket.username) + 1;
                 if(previous != 0 && rank != 0){
                     if(rank > previous){
-                        const surpassingUser = ranking[rank - 2];
+                        const surpassingUser = findSurpassingUser(previousRanking, ranking);
                         socket.emit("alert", `Your high score has been surpassed by ${surpassingUser.username}!`);
                     }
                 }
                 previous = rank;
+                previousRanking = ranking;
             }, 1000);
 
             socket.on("disconnect", () => {
