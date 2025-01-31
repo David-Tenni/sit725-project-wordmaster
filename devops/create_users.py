@@ -33,7 +33,7 @@ username_styles = [
     lambda f, l: f"{f}{random.randint(2000, 2024)}"  # James2024
 ]
 
-# List of all your categories
+# List of all  categories
 categories = [
     "ancient_greek_philosophers", "australian_prime_ministers", "best_picture_winning_movies",
     "bird_species", "board_games", "canadian_prime_ministers", "capital_cities", "card_games",
@@ -43,7 +43,7 @@ categories = [
     "islands", "notable_inventors"
 ]
 
-# Sample words for each category (replaced with your provided JSON data)
+# Sample words for each category 
 sample_words = {
     "historical_treaties": [
         "francomonegasquetreaty", "treatyofsaintpetersburg", "treatyofgyehae", "secondtreatyofbromsebro"
@@ -155,7 +155,7 @@ def create_user_json(username, password_idx):
     longest_word = ""
 
     for category in categories:
-        # If we have sample words for this category, use them, otherwise use a placeholder
+       
         if category in sample_words:
             word = random.choice(sample_words[category])
         else:
@@ -172,7 +172,7 @@ def create_user_json(username, password_idx):
     # Create user document
     user = {
         "username": username,
-        "password": f"$2b$10$examplehashedpassword{password_idx}",  # This is just a placeholder
+        "password": f"$2b$10$examplehashedpassword{password_idx}", 
         "created": datetime.utcnow().isoformat(),
         "answers": answers,
         "longest_word": longest_word,
