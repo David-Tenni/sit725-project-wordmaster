@@ -41,7 +41,7 @@ async function getRandomCategories(number, game, callback) {
 // Get random users with answers for given categories
 async function getRandomUsers(categories, number, username, callback) {
     try {
-        //ensure categories are an array
+        // Ensure categories is valid
         if (!categories || !Array.isArray(categories)) {
             console.error('Invalid categories:', categories);
             throw new Error('Categories must be an array');
@@ -49,9 +49,9 @@ async function getRandomUsers(categories, number, username, callback) {
 
         console.log('Getting random users:', { categories, number });
 
-        //make database query
-
-        let match = categories.map(category => ({ [`answers.${category}`]: { $exists: true } }));
+        let match = categories.map(category => ({ 
+            [`answers.${category}`]: { $exists: true } 
+        }));
 
         if(username) {
             match.push({ username: { $ne: username } });
@@ -63,8 +63,6 @@ async function getRandomUsers(categories, number, username, callback) {
         ]).toArray();
 
         console.log('Found players:', players.length);
-
-        //structure data in a way that will make it easier for the frontend
 
         let rounds = categories.map(category => ({
             category: category,
@@ -86,7 +84,6 @@ async function getRandomUsers(categories, number, username, callback) {
         callback({ message: "Error getting players" }, null);
     }
 }
-
 // Export as an object with named functions
 module.exports = {
     getRandomCategories,

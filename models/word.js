@@ -21,7 +21,24 @@ async function getWords(categories, callback) {
         callback({ message: "Error getting word lists" }, null);
     }
 }
-
+// checks for valid awnswers in a category
+async function getCategoryAnswerCounts() {
+    try {
+        let categories = await db.listCollections().toArray();
+        let counts = {};
+        
+        for (const category of categories) {
+            const collection = db.collection(category.name);
+            // Count documents that have been answered (count > 0)
+            const count = await collection.countDocuments({ count: { $gt: 0 } });
+            counts[category.name] = count;
+        }
+        return counts;
+    } catch(error) {
+        console.error('Error getting category counts:', error);
+        throw error;
+    }
+}
 //get a list of all categories
 async function getCategories(callback){
     try{
@@ -65,4 +82,4 @@ async function isCategory(category){
     }
 }
 
-module.exports = {getWords,getCategories,isCategory,addWordCount}
+module.exports = {getWords,getCategories,isCategory,addWordCount,getCategoryAnswerCounts}
