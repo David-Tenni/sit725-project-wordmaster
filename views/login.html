@@ -12,15 +12,7 @@
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
   </head>
   <body>
-    <div class="purple-blob"></div>
-    <div class="container">
-      <div class="brand-title">
-        <div class="logo-section">
-          <div class="logo">
-            <img src="img/new_logo.svg" alt="WordMaster Logo" class="logo-svg" />
-          </div>
-        </div>
-        <h4>WordMaster</h4>
+  <div id="nav-placeholder"></div>
       </div>
       <div class="tagline">
         Challenge your trivia knowledge with this daily word game
@@ -76,6 +68,27 @@
           $("#login-error").text("An error occurred. Please try again.");
         }
       });
+      document.addEventListener('DOMContentLoaded', function() {
+    const navPlaceholder = document.getElementById('nav-placeholder');
+    fetch('/navbar.html')
+        .then(response => response.text())
+        .then(data => {
+            navPlaceholder.innerHTML = data;
+            const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
+            if (!isLoggedIn) {
+                document.getElementById('settings-menu').style.display = 'none';
+                document.getElementById('profile-menu').style.display = 'none';
+            }
+            // Add active class to current page link
+            const currentPage = window.location.pathname.split('/').pop();
+            const navLinks = document.querySelectorAll('.navbar a');
+            navLinks.forEach(link => {
+                if (link.getAttribute('href') === currentPage) {
+                    link.classList.add('active');
+                }
+            });
+        });
+});
     </script>
   </body>
 </html>
