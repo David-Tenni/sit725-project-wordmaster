@@ -1,29 +1,31 @@
-var express = require("express")
-var app = express()
+var express = require("express");
+var app = express();
 let http = require('http').createServer(app);
 let io = require('socket.io')(http);
 const path = require('path');
 require('dotenv').config();
 const fs = require('fs');
 
-// Import controllers and routers
-const userController = require('./controllers/userController');
-const userProfileRouter = require('./routers/userProfileRouter');
-const wordLengthSocket = require('./sockets/wordLength');
-const totalScoreSocket = require('./sockets/totalScore');
-const highScoreSocket = require('./sockets/highScore');
-const winsSocket = require('./sockets/wins');
-const categoriesSocket = require('./sockets/categories');
-const notificationSocket = require('./sockets/notification');
+// Favicon route (place this at the top)
+app.use('/favicon.ico', (req, res) => {
+    console.log('Favicon requested');
+    const faviconPath = path.join(__dirname, 'views', 'img', 'logo.ico');
+    console.log('Favicon path:', faviconPath); // Debugging line
+    if (fs.existsSync(faviconPath)) {
+        res.sendFile(faviconPath);
+    } else {
+        res.status(404).send('Favicon not found');
+    }
+});
+
+// Static file serving (place this AFTER the favicon route)
+app.use(express.static(__dirname));
+app.use(express.static(path.join(__dirname, 'views')));
 
 // Default route
 app.get('/', (req, res) => {
     res.redirect('/mainMenu.html');
 });
-
-// Static file serving
-app.use(express.static(__dirname)) 
-app.use(express.static(__dirname+'/views'))
 
 // Middleware
 app.use(express.json());
@@ -42,19 +44,20 @@ app.use('/api/user', usersApiRoutes);
 app.use('/api/game', gameDataApiRoutes);
 
 // User Profile Routes
-app.use('/user', userProfileRouter);
-app.get('/api/user/:username', userController.getUserByUsername);
+app.use('/user', require('./routers/userProfileRouter'));
+app.get('/api/user/:username', require('./controllers/userController').getUserByUsername);
 
 // Socket Setup
-wordLengthSocket(io.of('/word_length'));
-totalScoreSocket(io.of('/total_score'));
-highScoreSocket(io.of('/high_score'));
-winsSocket(io.of('/wins'));
-categoriesSocket(io.of('/categories'));
-notificationSocket(io.of('/notification'));
+require('./sockets/wordLength')(io.of('/word_length'));
+require('./sockets/totalScore')(io.of('/total_score'));
+require('./sockets/highScore')(io.of('/high_score'));
+require('./sockets/wins')(io.of('/wins'));
+require('./sockets/categories')(io.of('/categories'));
+require('./sockets/notification')(io.of('/notification'));
 
+// Start server
 module.exports = http.listen(port, () => {
     console.log(`App is listening on port ${port}`);
-}).on('error',(err) => {
+}).on('error', (err) => {
     console.error("Failed to start server:", err);
 });

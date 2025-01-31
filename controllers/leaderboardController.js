@@ -14,40 +14,70 @@ $(document).ready(function () {
     $("#table-header").html(headerRow);
   }
 
+  let previousData = null;
+
   function updateTableBody(data, keys) {
-    // Check if data is actually changing
-    if (!data || data.length === 0) {
-      console.warn("No data received. Skipping update.");
-      return;
-    }
-    //clear the table when changing filters
-    $("#leaderboard-body").empty();
-
-    //filter out rows where values are zero, empty, or null
-    const filteredData = data.filter((item) => {
-      const valueKey = keys[1];
-      const value = item[valueKey];
-      return (
-        value !== undefined && value !== null && value !== 0 && value !== ""
-      );
-    });
-
-    const rows = filteredData
-      .map((item) => {
-        const cells = keys
-          .map((key, index) => {
-            // add links to the users profile
-            if (key === "username") {
-              return `<td><a href="/user/${item[key]}" class="username-link">${item[key]}</a></td>`;
-            }
-            return `<td>${item[key]}</td>`;
-          })
-          .join("");
-        return `<tr>${cells}</tr>`;
-      })
-      .join("");
-
-    $("#leaderboard-body").html(rows);
+      // Check if data is actually changing
+      if (!data || data.length === 0) {
+          console.warn("No data received. Skipping update.");
+          return;
+      }
+  
+      // Filter out rows where values are zero, empty, or null
+      const filteredData = data.filter((item) => {
+          const valueKey = keys[1];
+          const value = item[valueKey];
+          return (
+              value !== undefined && 
+              value !== null && 
+              value !== 0 && 
+              value !== ""
+          );
+      });
+  
+      // If this is the first time, create the table structure
+      if (!previousData) {
+          $("#leaderboard-body").empty();
+          const rows = filteredData
+              .map((item) => {
+                  const cells = keys
+                      .map((key, index) => {
+                          if (key === "username") {
+                              return `
+                                  <td>
+                                      <div class="link-wrapper">
+                                          <a href="/user/${item[key]}" class="username-link">
+                                              <span class="link-content">${item[key]}</span>
+                                          </a>
+                                      </div>
+                                  </td>`;
+                          }
+                          if (key === "category") {
+                              return `<td class="value-cell" data-username="${item.username}" data-key="${key}">${item[key].replace(/_/g, " ")}</td>`;
+                          }
+                          return `<td class="value-cell" data-username="${item.username}" data-key="${key}">${item[key]}</td>`;
+                      })
+                      .join("");
+                  return `<tr>${cells}</tr>`;
+              })
+              .join("");
+          $("#leaderboard-body").html(rows);
+      } else {
+          // Only update changed values
+          filteredData.forEach((item) => {
+              keys.forEach((key) => {
+                  if (key !== "username") {
+                      const cell = $(`.value-cell[data-username="${item.username}"][data-key="${key}"]`);
+                      const value = key === "category" ? item[key].replace(/_/g, " ") : item[key];
+                      if (cell.text() !== String(value)) {
+                          cell.text(value);
+                      }
+                  }
+              });
+          });
+      }
+  
+      previousData = filteredData;
   }
   function connectSocket(filter) {
     if (socket) {
@@ -91,17 +121,17 @@ $(document).ready(function () {
         });
         break;
 
-        case "categories":
-          socket = io("/categories");
-          updateTableHeader(["Category", "Name", "Word"]);
-          socket.on("Categories", (data) => {
-            const updatedData = data.map(item => ({
-              ...item,
-              category: item.category.replace(/_/g, " ") 
-            }));
-            updateTableBody(updatedData, ["category", "username", "word"]);
-          });
-          break;
+      case "categories":
+        socket = io("/categories");
+        updateTableHeader(["Category", "Name", "Word"]);
+        socket.on("Categories", (data) => {
+          const updatedData = data.map((item) => ({
+            ...item,
+            category: item.category.replace(/_/g, " "),
+          }));
+          updateTableBody(updatedData, ["category", "username", "word"]);
+        });
+        break;
 
       default:
         console.error("Unknown filter:", filter);
