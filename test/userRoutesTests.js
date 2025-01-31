@@ -188,5 +188,56 @@ module.exports = (server) => {
                 expect(response.status).toBe(204);
             });
         });
+
+        describe('POST api/user/game', () => {
+            it('should respond with a 401 error if the user is unauthenicated', async () => {
+                const response = await request(server).post('/api/user/game').set('Authorization', 'FakeToken');
+                expect(response.status).toBe(401);
+                expect(response.body.message).toBe('Invalid token');
+            });
+            it('should respond with a 400 error if no win or score is given', async () => {
+                const response = await request(server).post('/api/user/game').set('Authorization', 'Token');
+                expect(response.status).toBe(400);
+                expect(response.body.message).toBe('Request must contain win and score');
+            });
+            it('should respond with a 400 error if score is not a number', async () => {
+                const payload = {win: true, score: "not a number"};
+                const response = await request(server).post('/api/user/game').send(payload).set('Authorization', 'Token');
+                expect(response.status).toBe(400);
+                expect(response.body.message).toBe('Score must be a number');
+            });
+            it('should respond with a 400 error if win is not a boolean', async () => {
+                const payload = {win: "not a bool", score: 12};
+                const response = await request(server).post('/api/user/game').send(payload).set('Authorization', 'Token');
+                expect(response.status).toBe(400);
+                expect(response.body.message).toBe('Win must be true or false');
+            });
+            it('should respond with a 400 error if win is not a boolean', async () => {
+                const payload = {win: true, score: 12};
+                const response = await request(server).post('/api/user/game').send(payload).set('Authorization', 'OldToken');
+                expect(response.status).toBe(404);
+                expect(response.body.message).toBe('User does not exist');
+            });
+            it('should respond with 201 if it is successful', async () => {
+                const payload = {win: true, score: 12};
+                const response = await request(server).post('/api/user/game').send(payload).set('Authorization', 'Token');
+                expect(response.status).toBe(201);
+                expect(response.body.message).toBe('Game data added to user');
+            });
+        });
+        
+        describe('POST api/user/game', () => {
+            it('should respond with a 400 error if win is not a boolean', async () => {
+                const response = await request(server).get('/api/user/DeletedUser');
+                expect(response.status).toBe(404);
+                expect(response.body.message).toBe('User not found');
+            });
+            it('should respond with 200 if it is successfully found', async () => {
+                const response = await request(server).get('/api/user/TestUser');
+                expect(response.status).toBe(200);
+                expect(response.body.data.username).toBe("TestUser");
+                expect(response.body.message).toBe('User successfully retrieved');
+            });
+        });
     });
 }

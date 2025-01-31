@@ -33,5 +33,31 @@ module.exports = (server) => {
                 expect(response.body.data.length).toBe(2); // only responds with 2 since there is only 2 history categories
             });
         });
+
+        describe('GET api/game/players/:number', () => {
+            it('should return with a 400 error if categories are not given', async () => {
+                const response = await request(server).post('/api/game/players/2');
+                expect(response.status).toBe(400);
+            });
+            it('should respond with a 200 with both users if not logged in', async () => {
+                const payload = {categories: ['domesticated_animals']};
+                const response = await request(server).post('/api/game/players/2').send(payload);
+                expect(response.status).toBe(200);
+                expect(Object.keys(response.body.data[0].answers).length).toBe(2);
+            });
+            it('should respond with a 200 with only one user if only one has the category', async () => {
+                const payload = {categories: ['ancient_greek_philosophers']};
+                const response = await request(server).post('/api/game/players/1').send(payload);
+                expect(response.status).toBe(200);
+                expect(Object.keys(response.body.data[0].answers).length).toBe(1);
+            });
+            it('should respond with a 200 without the current user if logged in', async () => {
+                const payload = {categories: ['domesticated_animals']};
+                const response = await request(server).post('/api/game/players/1').send(payload).set('Authorization', 'Token');
+                expect(response.status).toBe(200);
+                expect(Object.keys(response.body.data[0].answers).length).toBe(1);
+                expect(response.body.data[0].answers).toHaveProperty('Username');
+            });
+        });
     });
 }

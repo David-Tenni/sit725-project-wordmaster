@@ -35,4 +35,8 @@ routes.post('/game', authenticator.protect, (req, res) => {
     controller.postUserGame(req, res);
 })
 
+routes.get('/:username', (req, res) => {
+    controller.getUserByUsername(req, res);
+})
+
 module.exports = routes;
