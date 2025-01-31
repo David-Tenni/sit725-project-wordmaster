@@ -32,13 +32,17 @@ const getRandomCategories = async (req, res) => {
 //get random players for a specific list of categories
 const getRandomUsers = async (req, res) => {
     try {
-        //get current user (if ther is one), the number of players wanted and the categories
         let username = req.user?.username;
-        console.log('getRandomUsers called with params:', req.params);
         const number = parseInt(req.params.number);
-        const {categories} = req.body;
+        const categories = req.body.categories;
 
-        // Then get random users for those categories
+        // Validate categories
+        if (!categories || !Array.isArray(categories)) {
+            return res.status(400).json({ 
+                message: 'Categories must be provided as an array' 
+            });
+        }
+
         gameData.getRandomUsers(categories, number, username, (userError, rounds) => {
             if (userError) {
                 console.error('User error:', userError);
@@ -56,7 +60,6 @@ const getRandomUsers = async (req, res) => {
         res.status(500).json({ message: 'Internal server error' });
     }
 };
-
 module.exports = {
     getRandomCategories,
     getRandomUsers
