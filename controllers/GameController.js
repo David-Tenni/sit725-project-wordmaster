@@ -214,7 +214,6 @@
         }
 
         const categoriesData = await categoriesResponse.json();
-        console.log("Categories data:", categoriesData);
         const playersUrl = "/api/game/players/3";
         const playersResponse = await fetch(playersUrl, {
           method: "POST",
@@ -250,12 +249,9 @@
       }
     }
     async fetchAndStoreValidWords(categories) {
-      console.log("Starting to fetch valid words for categories:", categories);
       try {
-        console.log(`Fetching words`);
         const response = await fetch(`/api/word?categories=${categories.join(',')}`);
         const data = await response.json();
-        console.log(`Raw API responses:`, data);
         if (data.data) {
           for (const category of categories) {
             let list = data.data[category];

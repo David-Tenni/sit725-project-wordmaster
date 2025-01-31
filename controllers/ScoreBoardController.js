@@ -168,7 +168,6 @@
     }
 
     handleGameStateUpdate(gameState) {
-      // console.log("Received game state update:", gameState);
 
       if (gameState.currentCategory) {
         this.updateCategoryDisplay(gameState.currentCategory);
@@ -329,7 +328,7 @@
         .map(
           ({ name, score }) => `
             <li class="final-score">
-              <span class="player-name">${name}${score === highestScore ? ' 👑' : ''}</span>
+              <a  href="/user/${name}"  class="username-link">${name}${score === highestScore ? ' 👑' : ''}</a>
               <span class="score">${score} points</span>
             </li>
           `

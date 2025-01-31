@@ -476,12 +476,52 @@
 .username-link {
   color: #a388ee;
   text-decoration: none;
-  transition: color 0.3s ease;
+  position: relative;
+  display: inline-block;
+  padding: 2px 4px;
+  transition: all 0.2s ease-in-out;
 }
 
 .username-link:hover {
   color: #6a1b9a;
   text-decoration: underline;
+  background-color: rgba(163, 136, 238, 0.1);
+}
+
+.username-link:active {
+  color: #6a1b9a;
+  text-decoration: underline;
+}
+.link-wrapper {
+  position: relative;
+  display: block;
+  padding: 4px;
+}
+
+.link-wrapper:hover {
+  background-color: rgba(163, 136, 238, 0.1);
+}
+
+.username-link {
+  color: #a388ee;
+  text-decoration: none;
+  position: relative;
+  z-index: 1;
+}
+
+.link-wrapper:hover .username-link {
+  color: #6a1b9a;
+  text-decoration: underline;
+}
+
+/* Remove pointer events from the content that updates */
+.link-content {
+  pointer-events: none;
+}
+
+/* Add position relative to table cells containing links */
+#leaderboard-body td {
+  position: relative;
 }
 /* leaderboard links end */
 
