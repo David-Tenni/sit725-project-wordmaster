@@ -44,6 +44,7 @@ app.use('/api/user', usersApiRoutes);
 app.use('/api/game', gameDataApiRoutes);
 
 // User Profile Route
+const userProfileRouter = require('./routers/userProfileRouter');
 app.use('/user', userProfileRouter);
 
 // Socket Setup
