@@ -138,6 +138,7 @@ jest.mock('../models/connection', () => ({
                         toArray: jest.fn(() => [{word:'Cat'}, {word:'Dog'}, {word:'Cow'}, {word:'Horse'}]) 
                     }),
                     updateOne: jest.fn(() => { acknowledged: true }),
+                    countDocuments: jest.fn().mockResolvedValue(5),
                 }),
                 listCollections: jest.fn().mockReturnValue({
                     toArray: jest.fn(() => [{ name: 'domesticated_animals' }, { name: "dog_breeds"}, { name: "bird_species" }, { name: "autralian_prime_ministers" }, { name: "ancient_greek_philosophers" }]),
