@@ -4,6 +4,9 @@ module.exports = function(io) {
     io.on('connection', (socket) => {
         console.log('User connected');
 
+        let interval;
+        let queryPending = false;
+
         async function getLongestWordForEachCategory() {
             let categories = await client.db("words").listCollections().toArray();
             let collection = client.db('authentication').collection("users");
@@ -39,12 +42,29 @@ module.exports = function(io) {
             return result;
         }
 
-        const interval = setInterval(async () => {
-            let categories = await getLongestWordForEachCategory()
-            let filtered = categories.map(cat => ({ category: cat.category, username: cat.username, word: cat.word }));
-            socket.emit('Categories', filtered);
-            //console.log('Emitting:', filtered);
-        }, 100);
+        // Start emitting data
+        const startEmitting = () => {
+            interval = setInterval(async () => {
+                if (queryPending) return;
+
+                queryPending = true;
+
+                try {
+                    let categories = await getLongestWordForEachCategory();
+                    let filtered = categories.map(cat => ({ category: cat.category, username: cat.username, word: cat.word }));
+                    socket.emit('Categories', filtered);
+                    console.log('Emitting categories:', filtered );
+                } catch (error) {
+                    console.error("Error fetching categories:", error);
+                } finally {
+                    queryPending = false;
+                }
+            }, 100);
+        };
+
+        if (!interval) {
+            startEmitting();
+        }
 
         socket.on('disconnect', () => {
             console.log('User disconnected');

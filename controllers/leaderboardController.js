@@ -17,6 +17,7 @@ $(document).ready(function () {
   let previousData = null;
 
   function updateTableBody(data, keys) {
+    console.log("data:", data);
       // Check if data is actually changing
       if (!data || data.length === 0) {
           console.warn("No data received. Skipping update.");
@@ -91,6 +92,7 @@ $(document).ready(function () {
     switch (filter) {
       case "highScore":
         socket = io("/high_score");
+        previousData = null;
         updateTableHeader(["Name", "High Score"]);
         socket.on("Users_by_high_score", (data) => {
           updateTableBody(data, ["username", "high_score"]);
@@ -99,6 +101,7 @@ $(document).ready(function () {
 
       case "totalScore":
         socket = io("/total_score");
+        previousData = null;
         updateTableHeader(["Name", "Total Score"]);
         socket.on("Users_by_total_score", (data) => {
           updateTableBody(data, ["username", "total_score"]);
@@ -107,6 +110,7 @@ $(document).ready(function () {
 
       case "wins":
         socket = io("/wins");
+        previousData = null;
         updateTableHeader(["Name", "Wins"]);
         socket.on("Users_by_wins", (data) => {
           updateTableBody(data, ["username", "wins"]);
@@ -115,6 +119,7 @@ $(document).ready(function () {
 
       case "wordLength":
         socket = io("/word_length");
+        previousData = null;
         updateTableHeader(["Name", "Longest Word"]);
         socket.on("Users_by_word_length", (data) => {
           updateTableBody(data, ["username", "longest_word"]);
@@ -123,6 +128,7 @@ $(document).ready(function () {
 
       case "categories":
         socket = io("/categories");
+        previousData = null;
         updateTableHeader(["Category", "Name", "Word"]);
         socket.on("Categories", (data) => {
           const updatedData = data.map((item) => ({
