@@ -1,5 +1,5 @@
 describe("Unit tests", () => {
-    // unit tests here
+    require("./unitTests")();
 });
   
 describe("Integration tests", () => {
