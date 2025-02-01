@@ -54,6 +54,11 @@ const getRandomUsers = async (req, res) => {
         let username = req.user?.username;
         const number = parseInt(req.params.number);
         const {categories} = req.body;
+        if (!categories || !Array.isArray(categories)) {
+            return res.status(400).json({ 
+                message: 'Request must include categories' 
+            });
+        }
 
         gameData.getRandomUsers(categories, number, username, (userError, rounds) => {
             if (userError) {

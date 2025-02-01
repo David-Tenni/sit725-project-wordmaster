@@ -30,7 +30,7 @@ module.exports = (server) => {
             it('should respond with a 200 if categories are successfully retrieved', async () => {
                 const response = await request(server).get('/api/game/categories/3/History');
                 expect(response.status).toBe(200);
-                expect(response.body.data.length).toBe(3);
+                expect(response.body.data.length).toBe(2); //since only two history categories
             });
         });
 
