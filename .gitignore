@@ -6,3 +6,6 @@ node_modules/
 
 # Ignore environment variables file
 .env
+
+# Ignore coverage folder
+/coverage

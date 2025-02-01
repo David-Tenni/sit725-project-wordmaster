@@ -122,7 +122,7 @@ jest.mock('../models/connection', () => ({
             };
         }
         else if(name == 'games'){
-            const games = [{game:'Animals',categories:["domesticated_animals", "dog_breeds", "bird_species"]}, {game:'History',categories:["autralian_prime_ministers", "ancient_greek_philosophers"]}]
+            const games = [{game:'Animals',categories:["domesticated_animals", "dog_breeds", "bird_species"]}, {game:'History',categories:["australian_prime_ministers", "ancient_greek_philosophers"]}]
             return {
                 collection: jest.fn().mockReturnValue({
                     findOne: jest.fn((filter) => 
