@@ -1,154 +1,147 @@
 $(document).ready(function () {
-  const isLoggedIn = localStorage.getItem("isLoggedIn") === "true";
-  if (!isLoggedIn) {
-    $("#settings-menu").hide();
-  }
+  let currentSocket = null;  // Track current socket connection
+  let previousData = null;   // Track previous data state
 
-  //select dropdown
+  // Initialize form selects
   $("select").formSelect();
 
-  let socket;
-
   function updateTableHeader(headers) {
-    const headerRow = headers.map((header) => `<th>${header}</th>`).join("");
-    $("#table-header").html(headerRow);
+    $("#table-header").empty().html(
+      headers.map((header) => `<th>${header}</th>`).join("")
+    );
   }
 
-  let previousData = null;
+  function clearTable() {
+    $("#leaderboard-body").empty();
+    previousData = null;
+  }
 
   function updateTableBody(data, keys) {
-      // Check if data is actually changing
-      if (!data || data.length === 0) {
-          console.warn("No data received. Skipping update.");
-          return;
-      }
-  
-      // Filter out rows where values are zero, empty, or null
-      const filteredData = data.filter((item) => {
-          const valueKey = keys[1];
-          const value = item[valueKey];
-          return (
-              value !== undefined && 
-              value !== null && 
-              value !== 0 && 
-              value !== ""
-          );
-      });
-  
-      // If this is the first time, create the table structure
-      if (!previousData) {
-          $("#leaderboard-body").empty();
-          const rows = filteredData
-              .map((item) => {
-                  const cells = keys
-                      .map((key, index) => {
-                          if (key === "username") {
-                              return `
-                                  <td>
-                                      <div class="link-wrapper">
-                                          <a href="/user/${item[key]}" class="username-link">
-                                              <span class="link-content">${item[key]}</span>
-                                          </a>
-                                      </div>
-                                  </td>`;
-                          }
-                          if (key === "category") {
-                              return `<td class="value-cell" data-username="${item.username}" data-key="${key}">${item[key].replace(/_/g, " ")}</td>`;
-                          }
-                          return `<td class="value-cell" data-username="${item.username}" data-key="${key}">${item[key]}</td>`;
-                      })
-                      .join("");
-                  return `<tr>${cells}</tr>`;
-              })
-              .join("");
-          $("#leaderboard-body").html(rows);
-      } else {
-          // Only update changed values
-          filteredData.forEach((item) => {
-              keys.forEach((key) => {
-                  if (key !== "username") {
-                      const cell = $(`.value-cell[data-username="${item.username}"][data-key="${key}"]`);
-                      const value = key === "category" ? item[key].replace(/_/g, " ") : item[key];
-                      if (cell.text() !== String(value)) {
-                          cell.text(value);
-                      }
-                  }
-              });
-          });
-      }
-  
-      previousData = filteredData;
-  }
-  function connectSocket(filter) {
-    if (socket) {
-      socket.disconnect();
+    if (!data || data.length === 0) {
+      return;
     }
 
-    //clear the table body and header when switching filters
-    $("#leaderboard-body").empty();
-    $("#table-header").empty();
+    // Filter out invalid entries
+    const filteredData = data.filter((item) => {
+      return keys.every(key => item[key] !== undefined && item[key] !== null);
+    });
 
+    if (JSON.stringify(filteredData) === JSON.stringify(previousData)) {
+      return; // No changes, skip update
+    }
+
+    $("#leaderboard-body").empty();
+    const rows = filteredData.map((item) => {
+      const cells = keys.map((key) => {
+        if (key === "username") {
+          return `
+            <td>
+              <div class="link-wrapper">
+                <a href="/user/${item[key]}" class="username-link">
+                  <span class="link-content">${item[key]}</span>
+                </a>
+              </div>
+            </td>`;
+        }
+        if (key === "category") {
+          return `<td class="value-cell">${item[key].replace(/_/g, " ")}</td>`;
+        }
+        return `<td class="value-cell">${item[key]}</td>`;
+      }).join("");
+      return `<tr>${cells}</tr>`;
+    }).join("");
+    
+    $("#leaderboard-body").html(rows);
+    previousData = filteredData;
+  }
+
+  function disconnectCurrentSocket() {
+    if (currentSocket) {
+      currentSocket.off();  
+      currentSocket.disconnect();
+      currentSocket = null;
+    }
+  }
+
+  function connectSocket(filter) {
+    disconnectCurrentSocket();
+    clearTable();
+
+    // Set up new connection based on filter
     switch (filter) {
       case "highScore":
-        socket = io("/high_score");
+        currentSocket = io("/high_score");
         updateTableHeader(["Name", "High Score"]);
-        socket.on("Users_by_high_score", (data) => {
+        currentSocket.on("Users_by_high_score", (data) => {
           updateTableBody(data, ["username", "high_score"]);
         });
         break;
 
       case "totalScore":
-        socket = io("/total_score");
+        currentSocket = io("/total_score");
         updateTableHeader(["Name", "Total Score"]);
-        socket.on("Users_by_total_score", (data) => {
+        currentSocket.on("Users_by_total_score", (data) => {
           updateTableBody(data, ["username", "total_score"]);
         });
         break;
 
       case "wins":
-        socket = io("/wins");
+        currentSocket = io("/wins");
         updateTableHeader(["Name", "Wins"]);
-        socket.on("Users_by_wins", (data) => {
+        currentSocket.on("Users_by_wins", (data) => {
           updateTableBody(data, ["username", "wins"]);
         });
         break;
 
       case "wordLength":
-        socket = io("/word_length");
+        currentSocket = io("/word_length");
         updateTableHeader(["Name", "Longest Word"]);
-        socket.on("Users_by_word_length", (data) => {
+        currentSocket.on("Users_by_word_length", (data) => {
           updateTableBody(data, ["username", "longest_word"]);
         });
         break;
 
       case "categories":
-        socket = io("/categories");
+        currentSocket = io("/categories");
         updateTableHeader(["Category", "Name", "Word"]);
-        socket.on("Categories", (data) => {
-          const updatedData = data.map((item) => ({
-            ...item,
-            category: item.category.replace(/_/g, " "),
-          }));
-          updateTableBody(updatedData, ["category", "username", "word"]);
+        currentSocket.on("Categories", (data) => {
+          updateTableBody(data, ["category", "username", "word"]);
         });
         break;
 
       default:
         console.error("Unknown filter:", filter);
+        return;
     }
+
+    // Add error handling for socket connection
+    currentSocket.on("connect_error", (error) => {
+      console.error("Socket connection error:", error);
+      M.toast({html: 'Connection error. Please try again.'});
+    });
+
+    currentSocket.on("disconnect", () => {
+      console.log("Socket disconnected");
+    });
   }
 
+  // Initial connection
   connectSocket($("#leaderboard-filter").val());
 
-  //change socket connection on filter change
+  // Handle filter changes
   $("#leaderboard-filter").on("change", function () {
     const selectedFilter = $(this).val();
     connectSocket(selectedFilter);
   });
 
-  //update results per page
+  // Handle results per page changes
   $("#results-per-page").on("change", function () {
     const selectedResults = parseInt($(this).val());
     $(".scrollable-table").css("max-height", `${selectedResults * 40}px`);
+  });
+
+  // Clean up
+  $(window).on("beforeunload", function() {
+    disconnectCurrentSocket();
   });
 });
