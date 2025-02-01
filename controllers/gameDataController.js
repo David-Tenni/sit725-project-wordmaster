@@ -39,7 +39,7 @@ const getRandomUsers = async (req, res) => {
         // Validate categories
         if (!categories || !Array.isArray(categories)) {
             return res.status(400).json({ 
-                message: 'Categories must be provided as an array' 
+                message: 'Request must include categories' 
             });
         }
 

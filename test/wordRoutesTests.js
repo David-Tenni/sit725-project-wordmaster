@@ -28,5 +28,20 @@ module.exports = (server) => {
                 expect(response.body.message).toBe('Category list successfully retrieved');
             });
         });
+
+        describe('PATCH api/word/count', () => {
+            it('should be successful and return 201 if category and word are both given', async () => {
+                const payload = {category: 'domesticated_animals', word: 'pig' };
+                const response = await request(server).patch('/api/word/count').send(payload);
+                expect(response.status).toBe(201);
+                expect(response.body.message).toBe('Word count updated');
+            });
+            it('should respond with an 400 error if the category or word are not given', async () => {
+                const payload = {category: 'domesticated_animals' };
+                const response = await request(server).patch('/api/word/count').send(payload);
+                expect(response.status).toBe(400);
+                expect(response.body.message).toBe('Answer must contain category and word');
+            });
+        });
     });
 }

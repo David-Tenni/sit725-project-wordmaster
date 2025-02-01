@@ -43,9 +43,9 @@ app.use('/api/word', wordsApiRoutes);
 app.use('/api/user', usersApiRoutes);
 app.use('/api/game', gameDataApiRoutes);
 
-// User Profile Routes
-app.use('/user', require('./routers/userProfileRouter'));
-app.get('/api/user/:username', require('./controllers/userController').getUserByUsername);
+// User Profile Route
+const userProfileRouter = require('./routers/userProfileRouter');
+app.use('/user', userProfileRouter);
 
 // Socket Setup
 require('./sockets/wordLength')(io.of('/word_length'));
