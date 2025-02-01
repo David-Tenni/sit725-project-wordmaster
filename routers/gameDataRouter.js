@@ -3,11 +3,11 @@ let express = require('express');
 let routes = express.Router();
 let authenticator = require('../authenticator');
 
-routes.get('/categories/:number/:game', (req, res) => {
+routes.get('/categories/:number/:game', authenticator.check, (req, res) => {
     controller.getRandomCategories(req, res);
 });
 
-routes.get('/categories/:number', (req, res) => {
+routes.get('/categories/:number', authenticator.check, (req, res) => {
     controller.getRandomCategories(req, res);
 });
 
