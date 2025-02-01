@@ -53,7 +53,7 @@ module.exports = function(io) {
                     let categories = await getLongestWordForEachCategory();
                     let filtered = categories.map(cat => ({ category: cat.category, username: cat.username, word: cat.word }));
                     socket.emit('Categories', filtered);
-                    console.log('Emitting categories:', filtered );
+                    //console.log('Emitting categories:', filtered );
                 } catch (error) {
                     console.error("Error fetching categories:", error);
                 } finally {
