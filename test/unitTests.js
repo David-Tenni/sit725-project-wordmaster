@@ -1,12 +1,12 @@
 module.exports = () => {
     describe("Testing Models", () => {
-        //gameData - BE
+        require('./gameDataTests')();
         //GameSession - FE
         //Player - FE
         //PlayerScore - FE
         //ScoreBoard - FE
-        //user - BE
-        //word - BE
+        require('./userTests')();
+        require('./wordTests')();
     });
     describe("Testing Controllers", () => {
         //categorySelectionController - BE

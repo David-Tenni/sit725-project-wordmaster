@@ -33,12 +33,13 @@ async function postUser(user, callback) {
 async function addRefreshToken(username, token) {
     try{
         const user = await collection.findOne({ username: username });
-        await collection.updateOne(
+        if(!user) throw new Error("User dose not exist");
+        return await collection.updateOne(
             { username },
             { $set: { 'token': token } }
         );
     }catch(error){
-        callback({message: "Error refreshing token"}, user);
+         return {message: "Error refreshing token"};
     }
 }
 
@@ -142,7 +143,7 @@ async function updateUserPassword(username, password, callback){
     try{
         //check if the user exists
         const user = await collection.findOne({ username: username });
-        if (!user) return callback({ message: "User does not exist" }, null);
+        if (!user) return callback({ message: "User does not exist" });
         
         //update the password
         await collection.updateOne(
