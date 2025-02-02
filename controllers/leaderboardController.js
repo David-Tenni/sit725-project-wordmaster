@@ -121,7 +121,7 @@ $(document).ready(function () {
     });
 
     currentSocket.on("disconnect", () => {
-      console.log("Socket disconnected");
+      // console.log("Socket disconnected");
     });
   }
 

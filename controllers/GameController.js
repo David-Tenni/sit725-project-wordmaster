@@ -33,7 +33,7 @@
   
       // Take only the first 3 AI players
       const aiPlayerNames = allAiPlayerNames.slice(0, 3);
-      console.log("Selected AI Player Names:", aiPlayerNames);
+      // console.log("Selected AI Player Names:", aiPlayerNames);
   
       const aiPlayers = aiPlayerNames.map(
           (name, index) => new window.Player(index + 1, name)
@@ -331,10 +331,10 @@
           });
 
           if(response.status === 201){
-            console.log("Answer saved to database:", response);
+            // console.log("Answer saved to database:", response);
           }
           else{
-            console.error("Error saving answer:", error);
+            // console.error("Error saving answer:", error);
           }
         }
       }
@@ -410,7 +410,7 @@
               aiResponse.time
             );
     
-            console.log(`AI ${player.playerName} score calculated:`, calculatedScore);
+            // console.log(`AI ${player.playerName} score calculated:`, calculatedScore);
     
             // Pass the calculated score to PlayerScore
             const aiScore = new window.PlayerScore(
@@ -470,8 +470,8 @@
         );
         return { isValid, wordData };
       } catch (error) {
-        console.error("Error parsing valid words:", error);
-        console.log("Raw localStorage content:", validWordsJson);
+        // console.error("Error parsing valid words:", error);
+        // console.log("Raw localStorage content:", validWordsJson);
         return { isValid: false, wordData: null };
       }
     }
@@ -691,7 +691,7 @@
           throw new Error(`Failed to update game stats: ${response.status}`);
         }
 
-        console.log("Game stats updated successfully");
+        // console.log("Game stats updated successfully");
       } catch (error) {
         console.error("Error updating game stats:", error);
         if (window.M && window.M.toast) {

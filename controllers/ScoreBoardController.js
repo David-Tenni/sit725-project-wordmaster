@@ -1,7 +1,6 @@
 (function (window) {
   class ScoreBoardController {
     constructor(containerId, totalRounds = 5) {
-      console.log("ScoreBoardController initializing...");
       this.containerId = containerId;
       this.timerInterval = null;
       this.timeLimit = 7000;
@@ -48,7 +47,6 @@
     }
 
     createScoreBoardHTML() {
-      console.log("Creating ScoreBoard HTML...");
       const container = document.getElementById(this.containerId);
       if (!container) {
         console.error("Container not found:", this.containerId);
@@ -344,7 +342,6 @@
             dismissible: false,
             onCloseEnd: () => location.reload(),
           });
-          console.log("Modal initialized successfully");
         }
 
         M.AutoInit();

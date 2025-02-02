@@ -3,7 +3,7 @@ const categorySelector = require('./categorySelectionController');
 
 const getRandomCategories = async (req, res) => {
     try {
-        console.log('getRandomCategories called with params:', req.params);
+        // console.log('getRandomCategories called with params:', req.params);
         const number = parseInt(req.params.number);
         if (isNaN(number)) {
             return res.status(400).json({ message: 'number must be a number' });
@@ -66,7 +66,7 @@ const getRandomUsers = async (req, res) => {
                 return res.status(500).json({ message: userError.message });
             }
             
-            console.log('Successfully got rounds:', rounds.length);
+            // console.log('Successfully got rounds:', rounds.length);
             res.status(200).json({
                 data: rounds,
                 message: 'Players successfully retrieved'

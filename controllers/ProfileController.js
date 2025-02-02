@@ -1,7 +1,6 @@
 (function(window) {
     class ProfileController {
         constructor() {
-            console.log('ProfileController initializing...');
             this.initializeProfile();
         }
 
@@ -24,7 +23,7 @@
             }
 
             // If we get here, we have the required auth items
-            console.log('Auth passed - continuing to load profile');
+            // console.log('Auth passed - continuing to load profile');
 
             $('#profile-username').text(username);
             this.fetchUserData(accessToken);
@@ -40,14 +39,6 @@
                 
                 if(response.status === 200){
                     const data = await response.json();
-
-                    console.log('API response:', data);
-                    if (!data.data) {
-                        console.error('No data in response');
-                        M.toast({html: 'Error: Invalid response format'});
-                        return;
-                    }
-                    
                     this.updateUI(data.data);
                 }else{
                     M.toast({html: `Error: ${'Unknown error'}`});
