@@ -50,9 +50,9 @@ jest.mock('../models/connection', () => ({
                             return user.token === filter.token;
                         })
                     ),
-                    insertOne: jest.fn(() => { acknowledged: true }),
-                    updateOne: jest.fn(() => { acknowledged: true }),
-                    deleteOne: jest.fn(() => { acknowledged: true }),
+                    insertOne: jest.fn(() => ({ acknowledged: true })),
+                    updateOne: jest.fn(() => ({ acknowledged: true })),
+                    deleteOne: jest.fn(() => ({ acknowledged: true })),
                     aggregate: jest.fn((pipeline) => {
                         if (pipeline[0].$match && pipeline[0].$match.$and) { //This must be the query to get players to play against
                             if (pipeline[0].$match.$and.some(m => m.hasOwnProperty('answers.ancient_greek_philosophers'))) {
@@ -137,7 +137,7 @@ jest.mock('../models/connection', () => ({
                     find: jest.fn().mockReturnValue({ 
                         toArray: jest.fn(() => [{word:'Cat'}, {word:'Dog'}, {word:'Cow'}, {word:'Horse'}]) 
                     }),
-                    updateOne: jest.fn(() => { acknowledged: true }),
+                    updateOne: jest.fn(() => ({ acknowledged: true })),
                     countDocuments: jest.fn().mockResolvedValue(5),
                 }),
                 listCollections: jest.fn().mockReturnValue({

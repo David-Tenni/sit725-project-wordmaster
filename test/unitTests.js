@@ -5,7 +5,7 @@ module.exports = () => {
         //Player - FE
         //PlayerScore - FE
         //ScoreBoard - FE
-        //user - BE
+        require('./userTests')();
         //word - BE
     });
     describe("Testing Controllers", () => {
