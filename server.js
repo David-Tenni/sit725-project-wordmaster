@@ -8,9 +8,7 @@ const fs = require('fs');
 
 // Favicon route (place this at the top)
 app.use('/favicon.ico', (req, res) => {
-    console.log('Favicon requested');
     const faviconPath = path.join(__dirname, 'views', 'img', 'logo.ico');
-    console.log('Favicon path:', faviconPath); // Debugging line
     if (fs.existsSync(faviconPath)) {
         res.sendFile(faviconPath);
     } else {

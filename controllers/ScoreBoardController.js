@@ -16,7 +16,6 @@
           this.setupMaterializeComponents();
         });
         this.initializeEventListeners();
-        console.log("ScoreBoardController initialization complete");
       } catch (error) {
         console.error(
           "Error during ScoreBoardController initialization:",
@@ -35,7 +34,6 @@
           scores: [],
           eliminated: false,
         });
-        console.log(`Added player: ${playerName}`);
         this.updateBars();
       }
     }
@@ -281,8 +279,6 @@
     }
 
     handleGameOver(gameState) {
-      console.log("Game Over triggered with state:", gameState);
-
       const modal = document.getElementById("gameOverModal");
       if (!modal) {
         console.error("Game over modal not found");
@@ -318,7 +314,6 @@
     }
 
     generateFinalScores(scores) {
-      console.log("Generating final scores:", scores);
       
       // Find highest score
       const highestScore = Math.max(...scores.map(score => score.score));

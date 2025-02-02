@@ -95,7 +95,7 @@ $(document).ready(function () {
 
       case "wordLength":
         currentSocket = io("/word_length");
-        updateTableHeader(["Name", "Longest Word"]);
+        updateTableHeader(["Name", "Longest Answer"]);
         currentSocket.on("Users_by_word_length", (data) => {
           updateTableBody(data, ["username", "longest_word"]);
         });
@@ -103,7 +103,7 @@ $(document).ready(function () {
 
       case "categories":
         currentSocket = io("/categories");
-        updateTableHeader(["Category", "Name", "Word"]);
+        updateTableHeader(["Category", "Name", "Answer"]);
         currentSocket.on("Categories", (data) => {
           updateTableBody(data, ["category", "username", "word"]);
         });

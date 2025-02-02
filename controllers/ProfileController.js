@@ -6,8 +6,6 @@
         }
 
         async initializeProfile() {
-            console.log('Page loading...');
-            
             const username = localStorage.getItem('user');
             const accessToken = localStorage.getItem('accessToken');
 
@@ -20,7 +18,7 @@
 
             // Check auth before doing anything else
             if (!username || !accessToken) {
-                console.log('Auth failed - redirecting to login');
+                // console.log('Auth failed - redirecting to login');
                 window.location.href = '/login.html';
                 return;
             }

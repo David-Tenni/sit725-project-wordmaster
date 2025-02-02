@@ -2,7 +2,7 @@
   class GameController {
     //added a parameter selected category
     constructor(totalRounds = 5, selectedCategory = null) {
-      console.log("GameController initializing...");
+      // console.log("GameController initializing...");
       this.timeLimit = 7000;
       this.startTime = null;
       this.timerInterval = null;
@@ -16,7 +16,7 @@
     }
     
     async initializeGame() {
-      console.log("Initializing game...");
+      // console.log("Initializing game...");
   
       const dataFetched = await this.fetchGameData();
       if (!dataFetched) {
@@ -190,8 +190,6 @@
 
     async fetchGameData() {
       try {
-        console.log("Starting data fetch...");
-        //updated the api call for the selected category and kept a default number 7 for sub categories
         let categoriesResponse;
         if (this.selectedCategory) {
           categoriesResponse = await fetch(
@@ -638,7 +636,6 @@
     }
 
     handleGameOver() {
-      console.log("Game over!");
       clearInterval(this.timerInterval);
 
       const finalScores = this.calculateFinalScores();
@@ -661,7 +658,7 @@
       const accessToken = localStorage.getItem("accessToken");
 
       if (!isLoggedIn || !accessToken) {
-        console.log("User not logged in, skipping stats update");
+        // console.log("User not logged in, skipping stats update");
         return;
       }
 
@@ -688,7 +685,7 @@
           }),
         });
 
-        console.log(response);
+        // console.log(response);
 
         if (!response.ok) {
           throw new Error(`Failed to update game stats: ${response.status}`);
