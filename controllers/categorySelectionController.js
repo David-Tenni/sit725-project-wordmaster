@@ -24,7 +24,6 @@ async function selectCategories(numberOfCategories, gameType = null, username = 
 
         // If no categories found, return a safe default
         if (!sortedCategories.length) {
-            console.log('No categories found, using fallback');
             return ['Geography', 'Science', 'History', 'Entertainment', 'Animals']
                 .slice(0, numberOfCategories);
         }

@@ -11,13 +11,12 @@ async function getRandomCategories(number, game, callback) {
         if(game){
             const categories = await games.findOne({ game: game });
             const names = categories.categories;
-            console.log(categories);
             //select random categories
             const randomCategories = names
             .sort(() => Math.random() - 0.5)
             .slice(0, number);
         
-            console.log('Selected categories:', randomCategories);
+            // console.log('Selected categories:', randomCategories);
             callback(null, randomCategories);
         }else{
             //if game is null then that means we can take any categories
@@ -29,7 +28,7 @@ async function getRandomCategories(number, game, callback) {
                 .sort(() => Math.random() - 0.5)
                 .slice(0, number);
             
-            console.log('Selected categories:', randomCategories);
+            // console.log('Selected categories:', randomCategories);
             callback(null, randomCategories);
         }
     } catch (error) {
@@ -47,7 +46,7 @@ async function getRandomUsers(categories, number, username, callback) {
             throw new Error('Categories must be an array');
         }
 
-        console.log('Getting random users:', { categories, number });
+        // console.log('Getting random users:', { categories, number });
 
         let match = categories.map(category => ({ 
             [`answers.${category}`]: { $exists: true } 
@@ -62,7 +61,7 @@ async function getRandomUsers(categories, number, username, callback) {
             { $sample: { size: parseInt(number) } }
         ]).toArray();
 
-        console.log('Found players:', players.length);
+        // console.log('Found players:', players.length);
 
         let rounds = categories.map(category => ({
             category: category,
@@ -77,7 +76,7 @@ async function getRandomUsers(categories, number, username, callback) {
             }, {})
         }));
 
-        console.log('Generated rounds:', JSON.stringify(rounds, null, 2));
+        // console.log('Generated rounds:', JSON.stringify(rounds, null, 2));
         callback(null, rounds);
     } catch (error) {
         console.error('Error getting users:', error);

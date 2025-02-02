@@ -12,7 +12,7 @@
       this.aiResponded = new Set();
       this.roundComplete = false;
 
-      console.log("Initialized basic ScoreBoard");
+      // console.log("Initialized basic ScoreBoard");
     }
 
     initializeAIPlayers(gameData) {

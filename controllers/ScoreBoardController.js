@@ -1,7 +1,6 @@
 (function (window) {
   class ScoreBoardController {
     constructor(containerId, totalRounds = 5) {
-      console.log("ScoreBoardController initializing...");
       this.containerId = containerId;
       this.timerInterval = null;
       this.timeLimit = 7000;
@@ -16,7 +15,6 @@
           this.setupMaterializeComponents();
         });
         this.initializeEventListeners();
-        console.log("ScoreBoardController initialization complete");
       } catch (error) {
         console.error(
           "Error during ScoreBoardController initialization:",
@@ -35,7 +33,6 @@
           scores: [],
           eliminated: false,
         });
-        console.log(`Added player: ${playerName}`);
         this.updateBars();
       }
     }
@@ -50,7 +47,6 @@
     }
 
     createScoreBoardHTML() {
-      console.log("Creating ScoreBoard HTML...");
       const container = document.getElementById(this.containerId);
       if (!container) {
         console.error("Container not found:", this.containerId);
@@ -281,8 +277,6 @@
     }
 
     handleGameOver(gameState) {
-      console.log("Game Over triggered with state:", gameState);
-
       const modal = document.getElementById("gameOverModal");
       if (!modal) {
         console.error("Game over modal not found");
@@ -318,7 +312,6 @@
     }
 
     generateFinalScores(scores) {
-      console.log("Generating final scores:", scores);
       
       // Find highest score
       const highestScore = Math.max(...scores.map(score => score.score));
@@ -349,7 +342,6 @@
             dismissible: false,
             onCloseEnd: () => location.reload(),
           });
-          console.log("Modal initialized successfully");
         }
 
         M.AutoInit();

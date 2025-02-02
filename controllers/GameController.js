@@ -2,7 +2,7 @@
   class GameController {
     //added a parameter selected category
     constructor(totalRounds = 5, selectedCategory = null) {
-      console.log("GameController initializing...");
+      // console.log("GameController initializing...");
       this.timeLimit = 7000;
       this.startTime = null;
       this.timerInterval = null;
@@ -16,7 +16,7 @@
     }
     
     async initializeGame() {
-      console.log("Initializing game...");
+      // console.log("Initializing game...");
   
       const dataFetched = await this.fetchGameData();
       if (!dataFetched) {
@@ -33,7 +33,7 @@
   
       // Take only the first 3 AI players
       const aiPlayerNames = allAiPlayerNames.slice(0, 3);
-      console.log("Selected AI Player Names:", aiPlayerNames);
+      // console.log("Selected AI Player Names:", aiPlayerNames);
   
       const aiPlayers = aiPlayerNames.map(
           (name, index) => new window.Player(index + 1, name)
@@ -190,8 +190,6 @@
 
     async fetchGameData() {
       try {
-        console.log("Starting data fetch...");
-        //updated the api call for the selected category and kept a default number 7 for sub categories
         let categoriesResponse;
         if (this.selectedCategory) {
           categoriesResponse = await fetch(
@@ -333,10 +331,10 @@
           });
 
           if(response.status === 201){
-            console.log("Answer saved to database:", response);
+            // console.log("Answer saved to database:", response);
           }
           else{
-            console.error("Error saving answer:", error);
+            // console.error("Error saving answer:", error);
           }
         }
       }
@@ -412,7 +410,7 @@
               aiResponse.time
             );
     
-            console.log(`AI ${player.playerName} score calculated:`, calculatedScore);
+            // console.log(`AI ${player.playerName} score calculated:`, calculatedScore);
     
             // Pass the calculated score to PlayerScore
             const aiScore = new window.PlayerScore(
@@ -472,8 +470,8 @@
         );
         return { isValid, wordData };
       } catch (error) {
-        console.error("Error parsing valid words:", error);
-        console.log("Raw localStorage content:", validWordsJson);
+        // console.error("Error parsing valid words:", error);
+        // console.log("Raw localStorage content:", validWordsJson);
         return { isValid: false, wordData: null };
       }
     }
@@ -638,7 +636,6 @@
     }
 
     handleGameOver() {
-      console.log("Game over!");
       clearInterval(this.timerInterval);
 
       const finalScores = this.calculateFinalScores();
@@ -661,7 +658,7 @@
       const accessToken = localStorage.getItem("accessToken");
 
       if (!isLoggedIn || !accessToken) {
-        console.log("User not logged in, skipping stats update");
+        // console.log("User not logged in, skipping stats update");
         return;
       }
 
@@ -688,13 +685,13 @@
           }),
         });
 
-        console.log(response);
+        // console.log(response);
 
         if (!response.ok) {
           throw new Error(`Failed to update game stats: ${response.status}`);
         }
 
-        console.log("Game stats updated successfully");
+        // console.log("Game stats updated successfully");
       } catch (error) {
         console.error("Error updating game stats:", error);
         if (window.M && window.M.toast) {
