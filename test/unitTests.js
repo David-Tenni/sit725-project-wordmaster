@@ -1,12 +1,9 @@
 module.exports = () => {
     describe("Testing Models", () => {
         require('./gameDataTests')();
-        //GameSession - FE
-        //Player - FE
-        //PlayerScore - FE
-        //ScoreBoard - FE
         require('./userTests')();
         require('./wordTests')();
+        require('./categorySelectionControllerTests')();
     });
     describe("Testing Controllers", () => {
         //categorySelectionController - BE
@@ -20,4 +17,4 @@ module.exports = () => {
         //usercontroller - BE
         //wordscontroller - BE
     });
-}
+};
