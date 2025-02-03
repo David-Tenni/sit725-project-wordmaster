@@ -12,6 +12,18 @@ After this run the following:
 node server.js
 ```
 
+You can also run this project in docker using the following commands:
+
+To build the image:
+```bash
+docker build -t word-master .
+```
+
+To run the image:
+```bash
+docker run -p 3000:3000 word-master
+```
+
 ## File structure
 ```markdown
 ├── controllers
