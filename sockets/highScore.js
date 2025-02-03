@@ -2,7 +2,7 @@ const client = require('../models/connection');
 
 module.exports = function(io) {
     io.on('connection', (socket) => {
-        console.log('User connected');
+        //console.log('User connected');
 
         async function getUserByHighScore() {
             let collection = client.db('authentication').collection("users");
@@ -24,7 +24,7 @@ module.exports = function(io) {
         }, 100);
 
         socket.on('disconnect', () => {
-            console.log('User disconnected');
+            //console.log('User disconnected');
             clearInterval(interval);
         });
     });

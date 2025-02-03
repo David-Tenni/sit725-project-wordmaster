@@ -2,7 +2,7 @@ const client = require('../models/connection');
 
 module.exports = function(io) {
     io.on('connection', (socket) => {
-        console.log('User connected');
+        //console.log('User connected');
 
         let interval;
         let queryPending = false;

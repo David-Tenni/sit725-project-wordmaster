@@ -15,10 +15,12 @@ node server.js
 ## File structure
 ```markdown
 ├── controllers
+│   ├── categorySelectionController.js
 │   ├── categoryController.js
 │   ├── GameController.js
 │   ├── gameDataController.js
 │   ├── leaderboardController.js
+│   ├── notificationController.js
 │   ├── ProfileController.js
 │   ├── ScoreBoardController.js
 │   ├── userController.js
@@ -47,21 +49,35 @@ node server.js
 │   ├── wins.js
 │   ├── wordLength.js
 ├── test
-│   ├── gameData.test.js
+│   ├── categoriesTests.js
+│   ├── dbMock.js
+│   ├── gameDataRoutesTests.js
+│   ├── gameDataTests.js
 │   ├── gameTestData.js
+│   ├── highScoreTests.js
+│   ├── integration.js
 │   ├── testGameSession.js
-│   ├── user.test.js
-│   ├── word.test.js
+│   ├── tests.test.js
+│   ├── totalScoreTests.js
+│   ├── unitTests.js
+│   ├── userRoutesTests.js
+│   ├── userTests.js
+│   ├── winsTests.js
+│   ├── wordLengthTests.js
+│   ├── wordRoutesTests.js
+│   ├── wordTests.js
 ├── views
 │   ├── img
-│   │   ├── logo.png
+│   │   ├── logo.ico
 │   │   ├── new_logo.svg
 │   ├── js
 │   │   ├── script.js
 │   ├── index.html
+│   ├── instructions.html
 │   ├── leaderboard.html
 │   ├── login.html
 │   ├── mainMenu.html
+│   ├── navbar.html
 │   ├── Profile.html
 │   ├── scoreBoard.css
 │   ├── settings.html
