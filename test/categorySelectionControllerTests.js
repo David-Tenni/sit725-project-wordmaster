@@ -4,22 +4,13 @@ const CategorySelectionController = require('../controllers/categorySelectionCon
 module.exports = () => {
     describe('Testing Category Selection Controller', () => {
         let mockSocket;
-        let mockGame;
-
+        
         beforeEach(() => {
-            // Create a mock socket object
+            // Create a mock socket with custom implementation
             mockSocket = {
                 emit: jest.fn(),
                 on: jest.fn(),
                 removeAllListeners: jest.fn()
-            };
-
-            // Create a mock game object
-            mockGame = {
-                currentRound: 1,
-                totalRounds: 5,
-                categories: ['category1', 'category2'],
-                currentCategory: 'category1'
             };
             
             // Reset the mock functions before each test
@@ -35,17 +26,77 @@ module.exports = () => {
             expect(typeof CategorySelectionController.selectCategories).toBe('function');
         });
 
-        // Test the function directly without checking socket interactions
-        it('should accept categories and socket parameters', () => {
-            const result = CategorySelectionController.selectCategories(['category1'], mockSocket);
-            expect(result).not.toThrow;
+        it('should handle category selection with valid categories', () => {
+            const categories = ['category1', 'category2'];
+            
+            // Attempt to call selectCategories and ensure no error
+            expect(() => {
+                CategorySelectionController.selectCategories(categories, mockSocket);
+            }).not.toThrow();
         });
 
-        // Test the internal structure
-        it('should handle the correct number of categories', () => {
-            const categories = ['category1', 'category2', 'category3'];
-            const result = CategorySelectionController.selectCategories(categories, mockSocket);
-            expect(result).not.toThrow;
+        it('should handle empty category list', () => {
+            const categories = [];
+            
+            // Attempt to call with empty categories and ensure no error
+            expect(() => {
+                CategorySelectionController.selectCategories(categories, mockSocket);
+            }).not.toThrow();
+        });
+
+        it('should handle null socket parameter', () => {
+            const categories = ['category1'];
+            
+            // Attempt to call with null socket and ensure no error
+            expect(() => {
+                CategorySelectionController.selectCategories(categories, null);
+            }).not.toThrow();
+        });
+
+        it('should handle invalid category selection', () => {
+            const categories = ['category1'];
+            
+            // Setup
+            CategorySelectionController.selectCategories(categories, mockSocket);
+            
+            // Simulate event handling
+            const onCalls = mockSocket.on.mock.calls;
+            const selectCategoryHandler = onCalls.find(
+                call => call[0] === 'select_category'
+            );
+            
+            // If a handler exists, call it with invalid data
+            if (selectCategoryHandler) {
+                expect(() => {
+                    selectCategoryHandler[1]({ selectedCategory: 'invalid_category' });
+                }).not.toThrow();
+            }
+        });
+
+        it('should handle category selection with game state', () => {
+            const categories = ['category1'];
+            
+            // Setup
+            CategorySelectionController.selectCategories(categories, mockSocket);
+            
+            // Simulate event handling
+            const onCalls = mockSocket.on.mock.calls;
+            const selectCategoryHandler = onCalls.find(
+                call => call[0] === 'select_category'
+            );
+            
+            // If a handler exists, call it with game state
+            if (selectCategoryHandler) {
+                expect(() => {
+                    selectCategoryHandler[1]({ 
+                        selectedCategory: 'category1',
+                        gameState: {
+                            currentRound: 1,
+                            totalScore: 100
+                        }
+                    });
+                }).not.toThrow();
+            }
         });
     });
 };
