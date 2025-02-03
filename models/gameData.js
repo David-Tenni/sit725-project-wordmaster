@@ -6,7 +6,7 @@ const games = client.db('games').collection("categories");
 // Get random categories from the words database
 async function getRandomCategories(number, game, callback) {
     try {
-        console.log('Getting random categories, number:', number);
+        //console.log('Getting random categories, number:', number);
         //if game is not null then only get categories in that game
         if(game){
             const categories = await games.findOne({ game: game });
@@ -32,7 +32,7 @@ async function getRandomCategories(number, game, callback) {
             callback(null, randomCategories);
         }
     } catch (error) {
-        console.error('Error getting categories:', error);
+        //console.error('Error getting categories:', error);
         callback({ message: "Error getting categories list" }, null);
     }
 }
@@ -42,7 +42,7 @@ async function getRandomUsers(categories, number, username, callback) {
     try {
         // Ensure categories is valid
         if (!categories || !Array.isArray(categories)) {
-            console.error('Invalid categories:', categories);
+            //console.error('Invalid categories:', categories);
             throw new Error('Categories must be an array');
         }
 
@@ -79,7 +79,7 @@ async function getRandomUsers(categories, number, username, callback) {
         // console.log('Generated rounds:', JSON.stringify(rounds, null, 2));
         callback(null, rounds);
     } catch (error) {
-        console.error('Error getting users:', error);
+        //console.error('Error getting users:', error);
         callback({ message: "Error getting players" }, null);
     }
 }

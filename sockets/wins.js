@@ -2,7 +2,7 @@ const client = require('../models/connection');
 
 module.exports = function(io) {
     io.on('connection', (socket) => {
-        console.log('User connected');
+        //console.log('User connected');
 
         async function getUserByWins() {
             let collection = client.db('authentication').collection("users");
