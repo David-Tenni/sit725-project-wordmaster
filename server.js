@@ -6,7 +6,17 @@ const path = require('path');
 require('dotenv').config();
 const fs = require('fs');
 
-// Favicon route (place this at the top)
+// Important: Move the default route BEFORE static file serving so mainmenyu is first
+app.get('/', (req, res) => {
+    const mainMenuPath = path.join(__dirname, 'views', 'mainMenu.html');
+    if (fs.existsSync(mainMenuPath)) {
+        res.sendFile(mainMenuPath);
+    } else {
+        res.status(404).send('mainMenu.html not found');
+    }
+});
+
+// Favicon route
 app.use('/favicon.ico', (req, res) => {
     const faviconPath = path.join(__dirname, 'views', 'img', 'logo.ico');
     if (fs.existsSync(faviconPath)) {
@@ -16,14 +26,9 @@ app.use('/favicon.ico', (req, res) => {
     }
 });
 
-// Static file serving (place this AFTER the favicon route)
-app.use(express.static(__dirname));
+// Static file serving - keep these in this order
 app.use(express.static(path.join(__dirname, 'views')));
-
-// Default route
-app.get('/', (req, res) => {
-    res.redirect('/mainMenu.html');
-});
+app.use(express.static(__dirname));
 
 // Middleware
 app.use(express.json());
