@@ -104,14 +104,14 @@
     <div class="modal-footer">
       <a href="/index.html" class="waves-effect waves-light btn btn-custom play-btn">Play Again</a>
       <a href="/leaderboard.html" class="waves-effect waves-light btn btn-custom signup-btn">LeaderBoard</a>
-      <a href="/mainmenu.html" class="waves-effect waves-light btn btn-custom signup-btn">Main Menu</a>
+      <a href="/mainMenu.html" class="waves-effect waves-light btn btn-custom signup-btn">Main Menu</a>
     </div>
   </div>`;
 
       const exitButton = document.getElementById("exitGame");
       if (exitButton) {
         exitButton.addEventListener("click", () => {
-          window.location.href = "mainmenu.html";
+          window.location.href = "mainMenu.html";
         });
       }
     }

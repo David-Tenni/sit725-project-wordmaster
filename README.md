@@ -91,7 +91,6 @@ docker run -p 3000:3000 word-master
 │   ├── mainMenu.html
 │   ├── navbar.html
 │   ├── Profile.html
-│   ├── scoreBoard.css
 │   ├── settings.html
 │   ├── signup.html
 │   ├── userProfile.html
@@ -104,6 +103,8 @@ docker run -p 3000:3000 word-master
 ├── README.md
 ├── requestWithRefresh.js
 ├── server.js
+├── Dockerfile
+├── .dockerignore
 ```
 
 
