@@ -106,7 +106,7 @@ docker run -p 3000:3000 word-master
 ├── Dockerfile
 ├── .dockerignore
 ```
-
+start
 
 ## Basic explantion of system
 
