@@ -65,22 +65,14 @@ pipeline {
                         bat 'npm install eslint --save-dev --no-package-lock'
                         
                         bat '''
-                            if not exist ".eslintrc.json" (
-                                echo {
-                                echo   "env": {
-                                echo     "browser": true,
-                                echo     "commonjs": true,
-                                echo     "es2021": true,
-                                echo     "node": true
-                                echo   },
-                                echo   "extends": "eslint:recommended",
-                                echo   "parserOptions": {
-                                echo     "ecmaVersion": 12
-                                echo   },
-                                echo   "rules": {}
-                                echo } > .eslintrc.json
-                            )
-                        '''
+    if not exist "eslint.config.js" (
+        echo export default {
+        echo   env: { browser: true, commonjs: true, es2021: true, node: true },
+        echo   extends: ["eslint:recommended"],
+        echo   parserOptions: { ecmaVersion: 12 }
+        echo }; > eslint.config.js
+    )
+'''
                         
                         bat 'npx eslint . --ext .js --format html -o eslint-report.html --ignore-pattern node_modules/ --ignore-pattern coverage/ || echo "ESLint analysis completed"'
                         
