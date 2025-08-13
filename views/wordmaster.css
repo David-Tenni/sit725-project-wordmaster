@@ -1,0 +1,1001 @@
+/* Main menu  styles */
+.mainmenu .brand-title {
+  display: flex;
+  flex-direction: column;  
+  align-items: center;     
+  text-align: center;     
+  margin-bottom: 0px;
+  padding-top: -50px;     
+}
+
+.mainmenu .brand-title h4 {
+  font-size: 48px;        
+  margin-top: 2px;       
+  font-weight: bold;
+}
+
+.mainmenu .tagline {
+  color: var(--primary-purple);
+  font-style: italic;
+  margin-bottom: 40px;
+  font-size: 1.4rem;       
+  text-align: center;      
+  max-width: 400px;      
+  margin-left: auto;      
+  margin-right: auto;
+}
+
+.mainmenu-logo {
+  width: 80px;             
+  height: 80px;
+  margin: 0px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.logo-svg {
+  width: 150px;  
+  height: 150px; 
+  display: block;
+  position: relative;
+  margin: 0;   
+}
+
+
+.brand-title {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  margin-bottom: 40px;
+  padding-top: 20px; 
+}
+
+.logo-section {
+  display: flex;
+  align-items: center;
+  text-decoration: none;
+  margin: 0;   
+  padding: 0; 
+}
+
+
+.navbar {
+  position: absolute;
+  background-color: transparent;
+  border: none;
+  box-shadow: none;
+  top: 24px;
+  right: 0;     
+  max-width: 80em;
+}
+
+.brand-title h4 {
+  margin: 0;    
+  padding: 0;  
+  font-size: 24px; 
+}
+
+
+
+
+/* General Brand Colors and Common Styles */
+:root {
+  --primary-purple: #a388ee;
+  --light-gray: #ddd;
+}
+
+
+
+/* Card and Layout Styles */
+.welcome-card {
+  max-width: 400px;
+  margin: 20px auto;
+  padding: 20px;
+  border: 2px solid var(--primary-purple);
+  border-radius: 15px;
+}
+
+
+.tagline {
+  color: var(--primary-purple);
+  font-style: italic;
+  margin-bottom: 40px;
+  font-size: 1.2rem;
+  max-width: 300px;
+}
+
+/* Button Styles */
+.btn-custom {
+  width: 100%;
+  margin: 10px 0;
+  border-radius: 5px;
+}
+
+.play-btn {
+  background-color: var(--primary-purple) !important;
+}
+
+.login-btn,
+.signup-btn,
+.leaderboard-btn,
+.logout-btn,
+.settings-btn,
+.profile-btn, 
+.instructions-btn{
+  background-color: white !important;
+  color: black !important;
+  border: 1px solid var(--light-gray) !important;
+}
+
+/* Decorative Elements */
+.purple-blob {
+  position: fixed;
+  top: 0;
+  right: 0;
+  width: 300px;
+  height: 300px;
+  background-color: var(--primary-purple);
+  opacity: 0.2;
+  border-radius: 50%;
+  transform: translate(30%, -30%);
+  z-index: -1;
+}
+
+/* Typography */
+.wave-text {
+  font-size: 1.5rem;
+  font-weight: bold;
+}
+
+/* General Brand Colors and Common Styles */
+:root {
+  --primary-purple: #a388ee;
+  --light-gray: #ddd;
+}
+
+/* Logo Styling */
+.logo {
+  width: 60px;
+  height: 60px;
+  background-color: var(--primary-purple);
+  border-radius: 50%;
+  margin: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-weight: bold;
+}
+
+/* Card and Layout Styles */
+.welcome-card {
+  max-width: 400px;
+  margin: 20px auto;
+  padding: 20px;
+  border: 2px solid var(--primary-purple);
+  border-radius: 15px;
+}
+
+.brand-title {
+  display: flex;
+  align-items: center;
+  margin-bottom: 40px;
+}
+
+.tagline {
+  color: var(--primary-purple);
+  font-style: italic;
+  margin-bottom: 40px;
+  font-size: 1.2rem;
+  max-width: 300px;
+}
+
+/* Button Styles */
+.btn-custom {
+  width: 100%;
+  margin: 10px 0;
+  border-radius: 5px;
+}
+
+.play-btn {
+  background-color: var(--primary-purple) !important;
+}
+
+.login-btn,
+.signup-btn,
+.leaderboard-btn,
+.logout-btn,
+.settings-btn,
+.profile-btn, 
+.instructions-btn{
+  background-color: white !important;
+  color: black !important;
+  border: 1px solid var(--light-gray) !important;
+}
+
+/* Decorative Elements */
+.purple-blob {
+  position: fixed;
+  top: 0;
+  right: 0;
+  width: 300px;
+  height: 300px;
+  background-color: var(--primary-purple);
+  opacity: 0.2;
+  border-radius: 50%;
+  transform: translate(30%, -30%);
+  z-index: -1;
+}
+
+/* Typography */
+.wave-text {
+  font-size: 1.5rem;
+  font-weight: bold;
+}
+
+/* Game Page stuff */
+/* Game Page Layout */
+.game-container {
+  padding: 20px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.header-section {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 30px;
+}
+
+
+.game-content {
+  background: white;
+  border-radius: 15px;
+  padding: 20px;
+  box-shadow: 0 2px 10px rgba(163, 136, 238, 0.1);
+}
+
+/* Modal Styling */
+.modal {
+  border-radius: 15px;
+}
+
+.modal .modal-content h4 {
+  color: var(--primary-purple);
+}
+
+.modal .modal-footer .btn-flat:hover {
+  background-color: var(--primary-purple) !important;
+  color: white;
+}
+
+/* ScoreBoard Specific Styles */
+#scoreBoard .title {
+  color: var(--primary-purple);
+}
+
+#scoreBoard .btn {
+  background-color: var(--primary-purple);
+}
+
+#scoreBoard input {
+  border: 2px solid var(--light-gray);
+  border-radius: 5px;
+}
+
+#scoreBoard input:focus {
+  border-color: var(--primary-purple);
+  box-shadow: 0 1px 0 0 var(--primary-purple);
+}
+
+/* LEADERBOARD STUFF*/
+
+/* Table Styles */
+.striped {
+  margin: 20px 0;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.striped thead {
+  background-color: var(--primary-purple);
+  color: white;
+}
+
+.striped thead th {
+  padding: 15px;
+  font-weight: bold;
+}
+
+.striped tbody tr:nth-child(odd) {
+  background-color: rgba(163, 136, 238, 0.1);
+}
+
+.striped tbody td {
+  padding: 12px;
+}
+
+/* Adjust welcome-card for leaderboard */
+.welcome-card table {
+  width: 100%;
+  margin-bottom: 30px;
+}
+/*leaderboard table*/
+.scrollable-table {
+  max-height: 400px;
+  overflow-y: auto;
+  display: block;
+}
+.scrollable-table table {
+  width: 100%;
+  border-collapse: collapse;
+}
+.scrollable-table th,
+.scrollable-table td {
+  padding: 8px 12px;
+  text-align: center;
+}
+
+/*signup and login forms */
+.input-field input {
+  border: 1px solid #e0e0e0;
+  border-radius: 4px;
+  padding: 10px;
+}
+
+.error-message {
+  color: red;
+  font-size: 14px;
+  margin-top: 10px;
+}
+
+
+.navbar ul {
+  display: flex;
+  gap: 20px;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  float: right;
+}
+
+.navbar ul li a {
+  text-decoration: none;
+  color: #a388ee;
+  font-weight: bold;
+  font-size: 16px;
+  transition: color 0.3s ease;
+}
+
+.navbar ul li a:hover {
+  color: #4a148c;
+}
+
+.navbar ul li a.active {
+  color: #6a1b9a;
+}
+
+/* Collapsible Styling */
+.collapsible-header {
+  background-color: #6a1b9a;
+  color: white;
+  font-weight: bold;
+  padding: 15px;
+  border: none;
+  border-radius: 5px;
+  padding: 10px 20 px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 50px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.collapsible-header:hover {
+  background-color: #4a148c;
+}
+
+.collapsible-body {
+  padding: 20px;
+  background-color: #f8f8f8;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  margin-top: 10px;
+}
+
+/* Input Field Styling */
+.input-field input {
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  padding: 10px;
+  width: 100%;
+  margin-bottom: 15px;
+  font-size: 16px;
+}
+
+.input-field input:focus {
+  border-color: #6a1b9a;
+  outline: none;
+  box-shadow: 0 0 5px rgba(106, 27, 154, 0.5);
+}
+
+/* Action Buttons Container */
+.action-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  justify-content: space-between;
+  margin-top: 30px;
+}
+
+/* Logout Button Styling */
+#logout-button {
+  background-color: #a388ee;
+  color: white;
+  font-weight: bold;
+  border: none;
+  border-radius: 5px;
+  padding: 10px 20px;
+  height: 50px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+#logout-button:hover {
+  background-color: #4a148c;
+}
+
+/* Delete Account Button Styling */
+#delete-account-button {
+  background-color: #d32f2f;
+  color: white;
+  font-weight: bold;
+  border: none;
+  border-radius: 5px;
+  padding: 10px 20px;
+  height: 50px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+#delete-account-button:hover {
+  background-color: #b71c1c;
+}
+
+/* Error and Success Messages */
+.error-message {
+  color: #d32f2f;
+  font-size: 14px;
+  margin-top: 10px;
+}
+
+.success-message {
+  color: #388e3c;
+  font-size: 14px;
+  margin-top: 10px;
+}
+/* Category button */
+.category-btn {
+  background-color: var(--primary-purple) !important;
+}
+
+/* LEADERBOARD STUFF Ends*/
+
+/* Profile Stats Styling */
+.stats-card {
+  padding: 20px;
+  margin: 10px;
+  border-radius: 8px;
+}
+
+.stat-value {
+  font-size: 2em;
+  font-weight: bold;
+  color: #a388ee;
+}
+
+.stat-label {
+  color: #666;
+  font-size: 1.1em;
+}
+
+.category-achievements {
+  margin-top: 20px;
+}
+
+.achievement-card {
+  margin: 10px;
+  padding: 15px;
+  border-radius: 8px;
+  background: #f5f5f5;
+}
+
+/* Profile Stats Styling ENds */
+
+/* Leadboard links */
+.username-link {
+  color: #a388ee;
+  text-decoration: none;
+  position: relative;
+  display: inline-block;
+  padding: 2px 4px;
+  transition: all 0.2s ease-in-out;
+}
+
+.username-link:hover {
+  color: #6a1b9a;
+  text-decoration: underline;
+  background-color: rgba(163, 136, 238, 0.1);
+}
+
+.username-link:active {
+  color: #6a1b9a;
+  text-decoration: underline;
+}
+.link-wrapper {
+  position: relative;
+  display: block;
+  padding: 4px;
+}
+
+.link-wrapper:hover {
+  background-color: rgba(163, 136, 238, 0.1);
+}
+
+.username-link {
+  color: #a388ee;
+  text-decoration: none;
+  position: relative;
+  z-index: 1;
+}
+
+.link-wrapper:hover .username-link {
+  color: #6a1b9a;
+  text-decoration: underline;
+}
+
+/* Remove pointer events from the content that updates */
+.link-content {
+  pointer-events: none;
+}
+
+/* Add position relative to table cells containing links */
+#leaderboard-body td {
+  position: relative;
+}
+/* leaderboard links end */
+
+/* instuctions page */
+
+.instructions-container {
+  padding: 20px;
+  line-height: 1.8;
+}
+.instructions-container h5 {
+  margin-top: 20px;
+  color: #6a1b9a;
+}
+.instructions-container ul, .instructions-container ol {
+  margin-left: 20px;
+}
+.instructions-container li {
+  margin-bottom: 10px;
+}
+.instructions-container .emoji {
+  font-size: 1.2em;
+}
+/*notification toast */
+.toast {
+  font-size: 16px;
+  font-weight: bold;
+  text-align: center;
+  background-color: #ff5252;
+  color: white;
+}
+/* Add these styles to your wordmaster.css file */
+
+/* Make instructions page wider */
+.instructions-container.welcome-card {
+  max-width: 800px; /* Increased from 400px */
+  width: 90%;
+  margin: 20px auto;
+  padding: 40px; /* Increased padding */
+}
+
+/* Style the headings */
+.instructions-container h5 {
+  font-size: 24px;
+  color: #a388ee;
+  margin: 30px 0 20px 0;
+}
+
+.instructions-container h6 {
+  font-size: 20px;
+  margin: 25px 0 15px 0;
+}
+
+/* Style the paragraphs */
+.instructions-container p {
+  font-size: 16px;
+  line-height: 1.8;
+  margin: 15px 0;
+}
+
+/* Style the lists */
+.instructions-container ul, 
+.instructions-container ol {
+  padding-left: 20px;
+  margin: 15px 0;
+}
+
+/* Style the sections */
+.instructions-container section {
+  margin: 30px 0;
+}
+
+/* Make the back button wider */
+.instructions-container .buttons-container {
+  margin-top: 40px;
+}
+
+.instructions-container .btn-custom {
+  max-width: 300px;
+  margin: 20px auto;
+}
+
+/* Add some responsive design */
+@media screen and (max-width: 600px) {
+  .instructions-container.welcome-card {
+    width: 95%;
+    padding: 20px;
+  }
+  
+  .instructions-container h5 {
+    font-size: 20px;
+  }
+  
+  .instructions-container h6 {
+    font-size: 18px;
+  }
+  
+  .instructions-container p {
+    font-size: 15px;
+  }
+}
+
+/* leaderboard */
+.new-welcome-card {
+  max-width: 800px; /* Match instructions page width */
+  width: 90%;
+  margin: 20px auto;
+  padding: 40px;
+  border: 2px solid var(--primary-purple);
+  border-radius: 15px;
+}
+
+/* Style the table container */
+.new-welcome-card .scrollable-table {
+  margin: 20px 0;
+  width: 100%;
+}
+
+/* Style the filter row */
+.new-welcome-card .row {
+  margin-bottom: 30px;
+}
+
+/* Make sure table is full width within container */
+.new-welcome-card table.striped {
+  width: 100%;
+}
+
+/* Center the tagline */
+.tagline {
+  text-align: center;
+  max-width: none;
+  margin: 20px auto 40px auto;
+}
+
+/* Style the buttons container */
+.new-welcome-card .buttons-container {
+  margin-top: 40px;
+}
+
+.new-welcome-card .btn-custom {
+  max-width: 300px;
+  margin: 20px auto;
+}
+
+/* Responsive design */
+@media screen and (max-width: 600px) {
+  .new-welcome-card {
+    width: 95%;
+    padding: 20px;
+  }
+  
+  .new-welcome-card .input-field.col.s6 {
+    width: 100%;
+  }
+}
+/* leaderboard  */
+/* Everything following this is for the scoreboard  */
+#scoreBoard .chart-container {
+  padding: 20px;
+  max-width: 600px;
+  font-family: system-ui, sans-serif;
+  margin: 0 auto;
+  margin-top: 0; 
+  height: auto;   
+}
+
+#exitGame {
+  background-color: black !important; 
+  margin: 10px 0;
+}
+
+#scoreBoard .chart {
+  padding: 10px;
+  height: 60vh;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  gap: 40px;
+  margin-top: 10px;
+}
+
+#scoreBoard .title {
+  margin: 0;
+  padding: 5px 0;   
+  font-size: 2em;    
+}
+#scoreBoard .bar-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+}
+#scoreBoard .round-display,
+#scoreBoard .category-display {
+  margin-top: 5px;   
+}
+#scoreBoard .round-display h5,
+#scoreBoard .category-display h5 {
+  margin: 5px 0;     
+}
+#scoreBoard .bar {
+  width: 120px;
+  min-height: 0;
+  transition: height 1s ease-out;
+  position: relative;
+}
+#scoreBoard .exit-game-container {
+  text-align: center;
+  margin: 20px 0;  
+}
+#scoreBoard .player-name {
+  font-weight: bold;
+  margin-top: 10px;
+}
+#scoreBoard .exit-game-btn {
+  margin-top: 10px;  
+}
+#scoreBoard #emma { background: #FF6B6B; }
+#scoreBoard #james { background: #4ECDC4; }
+#scoreBoard #sofia { background: #9B59B6; }
+#scoreBoard #lucas { background: #F7D794; }
+#scoreBoard #ante { 
+  background: #000000;
+  border: 3px solid red;
+}
+#scoreBoard .word-line {
+  position: absolute;
+  width: 100%;
+  text-align: center;
+  top: 40%;
+  color: white;
+  text-shadow: 1px 1px 2px rgba(0,0,0,0.7);
+  font-weight: bold;
+}
+
+#scoreBoard .score-line {
+  position: absolute;
+  width: 100%;
+  text-align: center;
+  top: 60%;
+  color: white;
+  text-shadow: 1px 1px 2px rgba(0,0,0,0.7);
+  font-weight: bold;
+}
+
+#scoreBoard #player {
+  width: 120px;
+  min-height: 0;
+  transition: height 1s ease-out;
+}
+
+#scoreBoard .eliminated {
+  opacity: 0.2;
+  filter: grayscale(100%);
+}
+
+#scoreBoard .eliminated-label {
+  color: red;
+  font-size: 14px;
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  font-weight: bold;
+}
+
+#scoreBoard #player {
+  background: #4CAF50;
+  width: 130px;
+  min-height: 0;
+  transition: height 1s ease-out;
+}
+.input-section {
+  text-align: center;
+  margin: 20px 0 10px 0;  
+}
+
+.input-section input {
+  margin-right: 10px;
+  padding: 5px;
+  width: 200px;
+}
+.category-display {
+  text-align: center;
+  margin-top: 20px;
+}
+
+.category-display h5 {
+  color: #333;
+  font-size: 1.2em;
+}
+.round-display {
+  text-align: center;
+  margin-top: 20px;
+}
+
+.round-display h5 {
+  color: #000000;
+  font-size: 1.2em;
+}
+#scoreBoard .timer-container {
+  width: 100%;
+  height: 20px;
+  background-color: #eee;
+  border-radius: 10px;
+  margin: 20px auto;
+  max-width: 800px;
+  overflow: hidden;
+}
+
+#scoreBoard .timer-bar {
+  width: 0%;
+  height: 100%;
+  background-color: #4CAF50;
+  transition: width 0.1s linear;
+}
+
+#scoreBoard .timer-bar.warning {
+  background-color: #ff9800;
+}
+
+#scoreBoard .timer-bar.danger {
+  background-color: #f44336;
+}
+/* additional style for game over modall */
+#gameOverModal {
+  height: 600px !important;
+  max-height: 80vh !important;
+}
+
+
+/* Scorebnoard Modal */
+#scoreBoard .modal {
+  background-color: white;
+  border-radius: 8px;
+  max-width: 500px;
+  padding: 20px;
+}
+
+#scoreBoard .modal .modal-content {
+  padding: 24px;
+}
+
+#scoreBoard .modal h3 {
+  color: #A388EE;
+  margin-top: 0;
+  font-size: 1.5em;
+}
+
+#scoreBoard .final-scores-list {
+  list-style: none;
+  padding: 0;
+  margin: 20px 0;
+}
+
+#scoreBoard .final-scores-list li {
+  display: flex;
+  justify-content: space-between;
+  padding: 12px 0;
+  border-bottom: 1px solid #eee;
+  font-size: 1.1em;
+}
+
+#scoreBoard .final-scores-list li .player-name {
+  color: #333;
+  font-weight: bold;
+}
+
+#scoreBoard .final-scores-list li .score {
+  color: #4CAF50;
+  font-weight: bold;
+}
+
+/* Color code player scores in the final list */
+#scoreBoard .final-scores-list li[data-player="player"] .score { color: #4CAF50; }
+#scoreBoard .final-scores-list li[data-player="james"] .score { color: #4ECDC4; }
+#scoreBoard .final-scores-list li[data-player="sofia"] .score { color: #9B59B6; }
+#scoreBoard .final-scores-list li[data-player="lucas"] .score { color: #F7D794; }
+#scoreBoard .final-scores-list li[data-player="ante"] .score { color: #000000; }
+
+#scoreBoard .modal .modal-footer {
+  padding: 15px;
+  text-align: right;
+  border-top: 1px solid #eee;
+}
+
+#scoreBoard .modal .modal-footer .btn {
+  background-color: #4CAF50;
+  color: white;
+  margin-left: 10px;
+  text-transform: uppercase;
+  font-weight: bold;
+}
+
+/* score display */
+#scoreBoard .scoring-box {
+  position: absolute;
+  top: 80px;
+  left: -80px;
+  background-color: white;
+  border: 2px solid #a388ee;
+  border-radius: 8px;
+  padding: 10px;
+  width: 180px;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+  z-index: 1;
+}
+#scoreBoard .chart-container {
+  position: relative;
+}
+
+#scoreBoard .scoring-detail {
+  font-size: 14px;
+  margin: 4px 0;
+  color: #333;
+}
+
+.final-score {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 0;
+  border-bottom: 1px solid #eee;
+}
+
+.final-score .player-name {
+  font-weight: bold;
+  color: #333;
+}
+
+.final-score .score {
+  color: #4CAF50;
+  font-weight: bold;
+}

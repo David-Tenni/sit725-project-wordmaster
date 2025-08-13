@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Welcome Menu - WordMaster</title>
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+    <link rel="stylesheet" href="wordmaster.css">
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="/controllers/notificationController.js"></script>
+  </head>
+  <body>
+    <div class="purple-blob"></div>
+    
+    <div class="container mainmenu">
+      <div class="brand-title">
+          <div class="logo-section">
+              <div class="mainmenu-logo">
+                  <img src="img/logo.ico" alt="WordMaster Logo" />
+              </div>
+          </div>
+      </div>
+
+      <div class="tagline">
+        Challenge your trivia knowledge with this daily word game
+      </div>
+
+      <div class="welcome-card">
+        <h5 id="welcome-user" class="wave-text"></h5>
+        <div class="buttons-container">
+          <a href="/index.html" class="waves-effect waves-light btn btn-custom play-btn">
+            Play &#128377
+          </a>
+          <div class="category-buttons">
+            <a href="#" class="waves-effect waves-light btn btn-custom category-btn" data-category="Geography">Geography &#127759</a>
+            <a href="#" class="waves-effect waves-light btn btn-custom category-btn" data-category="Science">Science &#128300</a>
+            <a href="#" class="waves-effect waves-light btn btn-custom category-btn" data-category="Entertainment">Entertainment &#128250</a>
+            <a href="#" class="waves-effect waves-light btn btn-custom category-btn" data-category="Animals">Animals &#128037</a>
+            <a href="#" class="waves-effect waves-light btn btn-custom category-btn" data-category="History">History &#127963</a>
+          </div>
+          <a href="/login.html" class="waves-effect waves-light btn btn-custom login-btn">
+            Log in
+          </a>
+          <a href="signup.html" class="waves-effect waves-light btn btn-custom signup-btn">
+            Sign up
+          </a>
+          <a href="/leaderboard.html" class="waves-effect waves-light btn btn-custom leaderboard-btn">
+            LeaderBoard
+          </a>
+          <a href="/instructions.html" class="waves-effect waves-light btn btn-custom instructions-btn">
+            Game Instructions
+          </a>
+          <a href="/Profile.html" class="waves-effect waves-light btn btn-custom profile-btn">
+            Profile
+          </a>
+          <a href="/settings.html" class="waves-effect waves-light btn btn-custom settings-btn">
+            Settings
+          </a>
+          <button id="logout-btn" class="waves-effect waves-light btn btn-custom logout-btn">Logout</button>
+        </div>
+      </div>
+    </div> 
+    <script>
+      $(document).ready(function(){
+        const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
+        if(isLoggedIn){
+          $('.login-btn').hide();          
+          $('.signup-btn').hide();
+          $('.settings-btn').show();
+          $('.logout-btn').show();
+          $('.profile-btn').show();
+          document.getElementById('welcome-user').innerText = `Welcome back ${localStorage.getItem('user')} 👋`;
+        } else {
+          $('.login-btn').show();
+          $('.signup-btn').show();
+          $('.settings-btn').hide();
+          $('.logout-btn').hide();
+          $('.profile-btn').hide();
+        }
+        $('.modal').modal();
+      });
+      //Logout function
+      $('#logout-btn').on('click', function() {
+      // Clear tokens and user data from localStorage
+      localStorage.removeItem('accessToken');
+      localStorage.removeItem('refreshToken');
+      localStorage.removeItem('isLoggedIn');
+      localStorage.removeItem('user');
+
+      // Redirect to mainMenu.html
+      window.location.href = '/mainMenu.html';
+    });
+//category game play
+    $('.category-btn').on('click', function () {
+    const selectedCategory = $(this).data('category');
+
+    //selected category in localStorage
+    localStorage.setItem('selectedCategory', selectedCategory);
+
+    //redirect to the game page
+    window.location.href = '/index.html';
+  });
+  $('.play-btn').on('click', function(){
+    localStorage.removeItem('selectedCategory')
+  });
+    </script>
+  </body>
+</html>

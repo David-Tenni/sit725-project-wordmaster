@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Game Instructions - WordMaster</title>
+  <script src="https://code.jquery.com/jquery-3.7.1.min.js"
+    integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+  <link rel="stylesheet" href="wordmaster.css" />
+</head>
+
+<body>
+  <div id="nav-placeholder"></div>
+
+  <div class="welcome-card instructions-container">
+    <section class="intro">
+      <h5 class="center-align">Game Instructions: Word Master</h5>
+      <p class="lead">
+        Welcome to Word Master, a knowledge word quiz where you compete against others to
+        think of words within specific categories. Can you outwit your
+        opponents and claim victory?
+      </p>
+    </section>
+
+    <div class="divider"></div>
+
+    <section class="how-to-play">
+      <h5>How to Play</h5>
+      
+      <div class="section-content">
+        <h6><b>Objective</b></h6>
+        <p>
+          Score points by submitting the longest words in a quick time for the
+          given category. The player with the most points at the end of 5 rounds wins!
+        </p>
+
+        <h6><b>Basics</b></h6>
+        <p><span class="emoji-bullet">1️⃣</span> Either you can select a genre for categories or play with them all!</p>
+        <p><span class="emoji-bullet">2️⃣</span> Each game consists of 5 rounds</p>
+        <p><span class="emoji-bullet">3️⃣</span> At the start of each round, a sub category (e.g., "🌎 Countries") will appear.</p>
+      </div>
+    </section>
+
+    <div class="divider"></div>
+
+    <section class="gameplay">
+      <h5>Gameplay Details</h5>
+      
+      <div class="section-content">
+        <h6><b>Submitting Your Word</b></h6>
+        <p>
+          Once the round starts, you'll have 7 seconds to think of and submit a
+          word. Make it count!
+        </p>
+
+        <h6><b>Scoring System</b></h6>
+        <div class="card-panel">
+          <p><b>Base Score:</b> The longer your word, the higher your base score!</p>
+          <p><b>Rarity Bonus:</b> Unique words are rewarded! The rarer your word, the bigger the bonus.</p>
+          <p><b>Time Bonus:</b> The faster you enter your word, the bigger the multiplier bonus!</p>
+        </div>
+        
+        <p>After each round, scores will be displayed as a colorful bar graph.</p>
+        <p>Your bar grows based on the points scored.</p>
+      </div>
+    </section>
+
+    <div class="divider"></div>
+
+    <section class="winning">
+      <h5>Winning the Game</h5>
+      
+      <div class="section-content">
+        <p>The game ends after 5 rounds.</p>
+        <p>
+          Combine your longest, rarest, and fastest words to become the ultimate
+          Word Master!
+        </p>
+        <p>Play until the final round and score as many points as possible!</p>
+      </div>
+    </section>
+
+    <div class="divider"></div>
+
+    <section class="rules">
+      <h5>Important Rules</h5>
+      
+      <div class="section-content">
+        <div class="card-panel">
+          <p><span class="emoji-bullet">1️⃣</span> Words must match the category provided.</p>
+          <p><span class="emoji-bullet">2️⃣</span> Words with symbols or spaces do not require the symbols or spaces
+            to be typed:</p>
+          <p class="example">&emsp;Example: "🇺🇸 United States" → You can type "unitedstates"</p>
+          <p><span class="emoji-bullet">3️⃣</span> Misspelled words will not be accepted.</p>
+        </div>
+      </div>
+    </section>
+
+    <div class="divider"></div>
+
+    <section class="features">
+      <h5>Additional Features</h5>
+      
+      <div class="section-content">
+        <h6><b>Leaderboard</b></h6>
+        <p>Track your performance in real-time!</p>
+        <p>View rankings by high score, longest word, total wins, and more.</p>
+        <p>Get notifications if your ranking drops!</p>
+
+        <h6><b>Face real opponents!</b></h6>
+        <p>
+          While playing, opponents' answers will be simulated using real player
+          data
+        </p>
+      </div>
+    </section>
+
+    <div class="buttons-container">
+      <a href="/mainMenu.html" class="waves-effect waves-light btn btn-custom play-btn">
+        <i class="material-icons left"></i>
+        Back to Menu
+      </a>
+    </div>
+  </div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      const navPlaceholder = document.getElementById('nav-placeholder');
+      fetch('/navbar.html')
+        .then(response => response.text())
+        .then(data => {
+          navPlaceholder.innerHTML = data;
+          const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
+          if (!isLoggedIn) {
+            document.getElementById('settings-menu').style.display = 'none';
+            document.getElementById('profile-menu').style.display = 'none';
+          }
+          // Add active class to current page link
+          const currentPage = window.location.pathname.split('/').pop();
+          const navLinks = document.querySelectorAll('.navbar a');
+          navLinks.forEach(link => {
+            if (link.getAttribute('href') === currentPage) {
+              link.classList.add('active');
+            }
+          });
+        });
+    });
+  </script>
+</body>
+</html>

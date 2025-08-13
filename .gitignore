@@ -1,0 +1,11 @@
+# Ignore user data folder
+user_data/
+
+# Ignore Node.js dependencies
+node_modules/
+
+# Ignore environment variables file
+.env
+
+# Ignore coverage folder
+/coverage

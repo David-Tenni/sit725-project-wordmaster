@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Settings - WordMaster</title>
+  <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+  <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+  <link rel="stylesheet" href="wordmaster.css">
+</head>
+<body>
+  <div id="nav-placeholder"></div>
+
+  <!-- Collapsible Reset Password Section -->
+  <div class="container">
+    <div class="welcome-card">
+      <ul class="collapsible">
+        <li>
+          <div class="collapsible-header">Reset Password</div>
+          <div class="collapsible-body">
+            <form id="reset-password-form">
+              <div class="input-field">
+                <input type="password" id="new-password" placeholder="New Password" required>
+              </div>
+              <button type="submit" class="waves-effect waves-light btn btn-custom play-btn">Update Password</button>
+            </form>
+            <p id="reset-password-error" class="error-message"></p>
+            <p id="reset-password-success" class="success-message"></p>
+          </div>
+        </li>
+      </ul>
+   <!-- Logout and Delete Account Buttons -->
+   <div class="action-buttons">
+    <button id="delete-account-button" class="waves-effect waves-light">Delete Account</button>
+    <button id="logout-button" class="waves-effect waves-light">Logout</button>
+  </div>
+  <p id="delete-account-error" class="error-message"></p>
+  <p id="delete-account-success" class="success-message"></p>
+</div>
+<script src="/requestWithRefresh.js"></script>
+<script>
+  //collapse reset section
+  $(document).ready(function() {
+     $('.collapsible').collapsible();
+   });
+   
+   $('#reset-password-form').on('submit', async function(e) {
+     e.preventDefault();
+     const newPassword = $('#new-password').val();
+     const accessToken = localStorage.getItem('accessToken');
+
+
+     if (!accessToken) {
+       $('#reset-password-error').text('You are not logged in.');
+       return;
+     }
+
+     try{
+      const response = await requestWithRefresh('/api/user/password', {
+        method: 'PATCH',
+        headers: {
+          Accept: "application/json",
+          'Authorization': accessToken,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ password: newPassword })
+      });
+
+      if(response.status === 201){
+        $('#reset-password-success').text('Password updated successfully.');
+        $('#reset-password-error').text('');
+      }
+      else if(response.status === 400){
+        $('#reset-password-error').text('Password is required.');
+        $('#reset-password-success').text('');
+      }
+      else if(response.status === 401){
+        $('#reset-password-error').text('Invalid or expired token. Please log in again.');
+        $('#reset-password-success').text('');
+      }
+      else{
+        $('#reset-password-error').text('An error occurred. Please try again.');
+        $('#reset-password-success').text('');
+      }
+     }
+     catch{
+      $('#reset-password-error').text('An error occurred. Please try again.');
+      $('#reset-password-success').text('');
+     }
+
+   });
+  $('#logout-button').on('click', function() {
+    //clear tokens and user data from localStorage
+    localStorage.removeItem('accessToken');
+    localStorage.removeItem('refreshToken');
+    localStorage.removeItem('isLoggedIn');
+    localStorage.removeItem('user');
+    //redirect to mainMenu.html
+    window.location.href = '/mainMenu.html';
+ });
+ 
+ //delete account
+ $('#delete-account-button').on('click', async function() {
+    const accessToken = localStorage.getItem('accessToken');
+    if (!accessToken) {
+        $('#delete-account-error').text('You are not logged in.');
+        return;
+    }
+    //delete confirmation
+    if (!confirm('Are you sure you want to delete your account? This action cannot be undone.')) {
+        return;
+    }
+    try{
+      const response = await requestWithRefresh('api/user', {
+          method: 'DELETE',
+            headers: {
+              'Authorization': accessToken
+            }
+        });
+
+      if(response.status === 204){
+        localStorage.removeItem('accessToken');
+        localStorage.removeItem('refreshToken');
+        localStorage.removeItem('isLoggedIn');
+        localStorage.removeItem('user');
+
+        //success message and redirect to mainMenu.html
+        $('#delete-account-success').text('Account deleted successfully.');
+        setTimeout(() => {
+          window.location.href = '/mainMenu.html';
+        }, 2000);
+      }
+      else if(respone.status === 401) {
+        $('#delete-account-error').text('Invalid or expired token. Please log in again.');
+      }
+      else{
+        $('#delete-account-error').text('An error occurred. Please try again.');
+      }
+    }catch{
+      $('#delete-account-error').text('An error occurred. Please try again.');
+    }
+   });
+   document.addEventListener('DOMContentLoaded', function () {
+      // Find the placeholder div
+      const navPlaceholder = document.getElementById('nav-placeholder');
+
+      fetch('/navbar.html')
+        .then(response => response.text())
+        .then(data => {
+          // Insert the navbar HTML
+          navPlaceholder.innerHTML = data;
+
+          // Handle visibility of menu items based on login status
+          const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
+          if (!isLoggedIn) {
+            document.getElementById('settings-menu').style.display = 'none';
+            document.getElementById('profile-menu').style.display = 'none';
+          }
+        });
+    });
+  </script>
+</body>
+</html>

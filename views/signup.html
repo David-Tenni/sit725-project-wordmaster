@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Sign Up - WordMaster</title>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css"
+    />
+    <link rel="stylesheet" href="wordmaster.css" />
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  </head>
+  <body>
+    <div id="nav-placeholder"></div>
+      <div class="welcome-card">
+        <h5 class="wave-text">Create an account</h5>
+        <form id="signup-form">
+          <div class="input-field">
+            <input type="text" id="username" placeholder="User name" required />
+          </div>
+          <div class="input-field">
+            <input
+              type="password"
+              id="password"
+              placeholder="Password"
+              required
+            />
+          </div>
+          <button
+            type="submit"
+            class="waves-effect waves-light btn btn-custom play-btn"
+          >
+            Sign up
+          </button>
+        </form>
+        <p id="signup-error" class="error-message"></p>
+      </div>
+    </div>
+    <script>
+      $("#signup-form").on("submit", async function (e) {
+        e.preventDefault();
+        const username = $("#username").val();
+        const password = $("#password").val();
+
+        const response = await fetch("/api/user/signup", {
+          method: "POST",
+          headers: {
+            Accept: "application/json",
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ username, password })
+        })
+        if(response.status === 201){
+          window.location.href = "/login.html";
+        }else if(response.status === 409){
+          $("#signup-error").text("Username already exists.");
+        }else{
+          $("#signup-error").text("An error occurred. Please try again.");
+        }
+      });
+      const navPlaceholder = document.getElementById('nav-placeholder');
+    fetch('/navbar.html')
+        .then(response => response.text())
+        .then(data => {
+            navPlaceholder.innerHTML = data;
+            const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
+            if (!isLoggedIn) {
+                document.getElementById('settings-menu').style.display = 'none';
+                document.getElementById('profile-menu').style.display = 'none';
+            }
+            // Add active class to current page link
+            const currentPage = window.location.pathname.split('/').pop();
+            const navLinks = document.querySelectorAll('.navbar a');
+            navLinks.forEach(link => {
+                if (link.getAttribute('href') === currentPage) {
+                    link.classList.add('active');
+                }
+            });
+        });
+    </script>
+  </body>
+</html>

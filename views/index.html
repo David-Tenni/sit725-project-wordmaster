@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Home - WordMaster</title>
+  <script src="https://code.jquery.com/jquery-3.7.1.min.js"
+    integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+  <link rel="stylesheet" href="wordmaster.css">
+  <script src="/socket.io/socket.io.js"></script>
+  <script src="/controllers/catergoryController.js"></script>
+  <script src="/controllers/notificationController.js"></script>
+</head>
+
+<body>
+  <div id="nav-placeholder"></div>
+
+  <div class="game-container">
+    <div class="game-content">
+      <div id="scoreBoard" style="margin-top: -65px;"></div>
+    </div>
+  </div>
+  <!-- Scripts -->
+  <script src="/requestWithRefresh.js"></script>
+  <script src="/test/gameTestData.js"></script>
+  <script src="/models/PlayerScore.js"></script>
+  <script src="/models/Player.js"></script>
+  <script src="/models/GameSession.js"></script>
+  <script src="/models/ScoreBoard.js"></script>
+  <script src="/controllers/GameController.js"></script>
+  <script src="/controllers/ScoreBoardController.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const scoreBoardController = new ScoreBoardController('scoreBoard');
+
+      $('.modal').modal({
+        dismissible: false,
+        onCloseEnd: function () {
+        }
+      });
+      $('#modal1').modal('open');
+      //reset the logged in flag
+      $('#exit-game').on('click', function () {
+        localStorage.removeItem('isLoggedIn');
+      });
+      const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
+      if (!isLoggedIn) {
+        $('#settings-menu').hide();
+      }
+    });
+    const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
+    if (!isLoggedIn) {
+      $('#profile-menu').hide();
+    }
+    document.addEventListener('DOMContentLoaded', function () {
+      // Find the placeholder div
+      const navPlaceholder = document.getElementById('nav-placeholder');
+
+      fetch('/navbar.html')
+        .then(response => response.text())
+        .then(data => {
+          // Insert the navbar HTML
+          navPlaceholder.innerHTML = data;
+
+          // Handle visibility of menu items based on login status
+          const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
+          if (!isLoggedIn) {
+            document.getElementById('settings-menu').style.display = 'none';
+            document.getElementById('profile-menu').style.display = 'none';
+          }
+        });
+    });
+  </script>
+</body>
+
+</html>
