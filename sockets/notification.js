@@ -1,4 +1,4 @@
-const client = require('../models/connection');
+const { client } = require('../models/connection');
 const jwt = require("jsonwebtoken");
 
 module.exports = function(io) {

@@ -1,4 +1,4 @@
-const client = require('../models/connection');
+const { client } = require('../models/connection');
 
 module.exports = function(io) {
     io.on('connection', (socket) => {
